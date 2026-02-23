@@ -15,11 +15,13 @@ public:
 	// Sets default values for this actor's properties
 	ALilyPads();
 
+
+
+	void ReApplyStaticMesh(int32 WhichMesh);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	void ReApplyStaticMesh(int32 WhichMesh);
 
 	/** StaticMesh component */
 	UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -45,6 +47,7 @@ public:
 	//XP to get to the given level from the previous level
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = LevelUp)
 	FString LillyPadMeshAssetLink;
+
 };
 //
 //USTRUCT()
@@ -69,49 +72,3 @@ public:
 //	//TArray<FVector2D> AiOrder;
 //
 //};
-USTRUCT()
-struct FLevelsDataList : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	FLevelsDataList()
-		: FrogsList(0)
-		, LilyPadsMeshNumList(0)
-		, DistanceList(2048.0f)
-		, CamLoc(FVector(0.0f, 0.0f, 0.0f))
-		, Level({ FVector2D(0.0f,0.0f) })
-	{}
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	int32 FrogsList;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	int32 LilyPadsMeshNumList;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	float DistanceList;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	FVector CamLoc;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	TArray<FVector2D> Level;
-};
-USTRUCT()
-struct FTelAndBombsDataList : public FTableRowBase
-{
-	GENERATED_USTRUCT_BODY()
-
-public:
-
-	FTelAndBombsDataList()
-		: NumOfBombsList(0)
-		, TelDataList({ 0.0f })
-		, TeleportersList({ FVector(0.0f,0.0f,0.0f) })
-	{}
-
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	int32 NumOfBombsList;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	TArray<float> TelDataList;
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "SpawnLevels")
-	TArray<FVector> TeleportersList;
-};
