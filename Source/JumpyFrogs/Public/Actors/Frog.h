@@ -28,6 +28,7 @@ protected:
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animations)
 	TArray<UAnimMontage*> JumpAnims;
 
+
 	//USkeletalMeshComponent* FrogSkelMesh;
 	//USkeletalMeshComponent* FrogLOD0;
 	//USkeletalMeshComponent* FrogLOD0NoBones;

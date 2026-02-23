@@ -97,6 +97,10 @@ AFrog::AFrog()
 	MatBombFrog = ConstructorStatics.BombFrogMaterial.Get();
 	//RedMatBombFrog = ConstructorStatics.RedBombFrogMaterial.Get();
 
+	/*FrogMesh->OnClicked.AddDynamic(this, &AFrog::OnClicked);
+	FrogMesh->OnReleased.AddDynamic(this, &AFrog::OnReleased);
+	FrogMesh->OnInputTouchBegin.AddDynamic(this, &AFrog::OnTouchStart);
+	FrogMesh->OnInputTouchEnd.AddDynamic(this, &AFrog::OnTouchEnd);*/
 
 	//FrogLOD0 = ConstructorStatics.skelMesh.Get();
 	//FrogLOD0NoBones = ConstructorStatics.skelMeshLOD0NoBones.Get();
@@ -127,6 +131,7 @@ AFrog::AFrog()
 }
 
 // Called when the game starts or when spawned
+
 void AFrog::BeginPlay()
 {
 	Super::BeginPlay();
