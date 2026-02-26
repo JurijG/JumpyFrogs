@@ -13,6 +13,7 @@
 
 class UInputAction;
 class UInputMappingContext;
+class AJumpVisualizer;
 
 UCLASS()
 class JUMPYFROGS_API AJumpyFrogsPlayerController : public APlayerController
@@ -25,6 +26,8 @@ class JUMPYFROGS_API AJumpyFrogsPlayerController : public APlayerController
 
 protected:
 	void BeginPlay() override;
+
+	void UpdateJumpVisualizer();
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* IA_MouseClick;
@@ -40,7 +43,16 @@ protected:
 
 	
 	void OnMouseClicked();
+	void OnMousePulse();
 	void OnMouseReleased();
 	void OnTouchStart(const FInputActionValue& Value);
 	void OnTouchEnd(const FInputActionValue& Value);
+
+	bool IsSlotAlreadyMarked(const FVector SlotLoc);
+
+	TArray<FVector> JumpPathLocations;
+	//TArray<UObject*> MarkedSlots;
+	TArray<FVector> MarkedSlots;
+	UObject* SelectedFrog;
+	AJumpVisualizer* JumpVisualizer = nullptr;
 };

@@ -35,6 +35,8 @@ APlayerPawn::APlayerPawn()
 	Camera->bUsePawnControlRotation = false; // We don't want the controller rotating the camera
 	//Camera->bUsePawnControlRotation = true;
 	Camera->FieldOfView = 90.f;
+
+	this->SetActorLocation(FVector(250.f, 300.f, 200.f));
 }
 
 

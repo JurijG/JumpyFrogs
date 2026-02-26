@@ -4,30 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/EmptySlotInterface.h"
-#include "EmptySlot.generated.h"
+#include "Water.generated.h"
 
 class UBoxComponent;
+class UStaticMeshComponent;
+
 UCLASS()
-class JUMPYFROGS_API AEmptySlot : public AActor, public IEmptySlotInterface
+class JUMPYFROGS_API AWater : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AEmptySlot();
+	AWater();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
 	UBoxComponent* Box;
-
-	//FVector GetLocation_Implementation();
-
+	UStaticMeshComponent* WaterMesh;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
 };

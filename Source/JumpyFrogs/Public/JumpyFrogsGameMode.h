@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 //#include "Engine/DataTable.h"
+#include "Interfaces/GameModeInterface.h"
 #include "JumpyFrogsGameMode.generated.h"
 
 /**
@@ -19,16 +20,19 @@ class AEmptySlot;
 //class FVector2D;
 
 UCLASS()
-class JUMPYFROGS_API AJumpyFrogsGameMode : public AGameModeBase
+class JUMPYFROGS_API AJumpyFrogsGameMode : public AGameModeBase, public IGameModeInterface
 {
 	GENERATED_BODY()
 
 public:
 	AJumpyFrogsGameMode();
 
-	int32 CurrentLevel = 5;
+	
 	
 protected:
+
+	int32 CurrentLevel = 225;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	int32 FrogsRemaining = 0;
@@ -49,6 +53,8 @@ protected:
 
 	void AddSlot(FVector2D Pos);
 
+	bool IsMoveValidCheck_Implementation(FVector Location);
+	void RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
 	void SpawnFrogsAndProps(int32 SelectedLevel);
 
 

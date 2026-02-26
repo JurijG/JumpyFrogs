@@ -10,10 +10,11 @@ AEmptySlot::AEmptySlot()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	BoxMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
-	BoxMesh->bHiddenInGame = false;
-	BoxMesh->SetBoxExtent(FVector(50.f, 50.f, 10.f));
-	BoxMesh->SetCollisionProfileName(TEXT("EmptySlotProfile"));
+	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	Box->bHiddenInGame = false;
+	Box->SetBoxExtent(FVector(100.f, 100.f, 10.f));	
+	Box->SetCollisionProfileName(TEXT("EmptySlotProfile"));
+	RootComponent = Box;
 
 }
 
@@ -23,7 +24,11 @@ void AEmptySlot::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
+//
+//FVector AEmptySlot::GetLocation_Implementation()
+//{
+//	return GetActorLocation();
+//}
 // Called every frame
 void AEmptySlot::Tick(float DeltaTime)
 {

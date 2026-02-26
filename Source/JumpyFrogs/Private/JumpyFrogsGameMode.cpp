@@ -7,6 +7,7 @@
 #include "Actors/Frog.h"
 #include "Actors/LilyPads.h"
 #include "Actors/EmptySlot.h"
+#include "Actors/Water.h"
 
 
 //#include "Actors/EmptySlot.h"
@@ -138,6 +139,8 @@ void AJumpyFrogsGameMode::BeginPlay()
 	//AddFlowers(FVector2D(1200.0f, -250.0f));
 	//AddFlowers(FVector2D(300.0f, 1250.0f));
 
+	GetWorld()->SpawnActor<AWater>(FVector(0.0f, 0.0f, 181.0f), FRotator::ZeroRotator);
+
 }
 #pragma region SpawningLevels
 
@@ -146,7 +149,8 @@ void AJumpyFrogsGameMode::AddFrog(FVector2D Pos)
 	FVector T;
 	T.X = Pos.X;
 	T.Y = Pos.Y;
-	T.Z = 278.0f;
+	T.Z = 202.0f;
+	//T.Z = 278.0f;
 	FrogsArray.Add(GetWorld()->SpawnActor<AFrog>(T, FRotator::ZeroRotator));
 }
 void AJumpyFrogsGameMode::AddSlot(FVector2D Pos)
@@ -154,8 +158,63 @@ void AJumpyFrogsGameMode::AddSlot(FVector2D Pos)
 	FVector T;
 	T.X = Pos.X;
 	T.Y = Pos.Y;
-	T.Z = 278.0f;
+	//T.Z = 278.0f-70.f;
+	T.Z = 202.0f;
 	TheSlotsArray.Add(GetWorld()->SpawnActor<AEmptySlot>(T, FRotator::ZeroRotator));
+}
+
+bool AJumpyFrogsGameMode::IsMoveValidCheck_Implementation(FVector Location)
+{
+	for (AActor* Frog : FrogsArray)
+	{
+		if (!IsValid(Frog)) continue;
+		if (Frog->GetActorLocation() == Location)
+		{
+
+			return true;
+		}
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
+	return false;
+}
+void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots)
+{
+	//remove slot from the new frog location 
+	for (AActor* Slot : TheSlotsArray)
+	{
+		if (!IsValid(Slot)) continue;
+		if (Slot->GetActorLocation() == InMarkedSlots[InMarkedSlots.Num()-1])
+		{
+			Slot->Destroy();
+			break;
+		}
+	}
+
+	TArray<FVector> MarkedSlots = InMarkedSlots;
+	MarkedSlots.Insert(SelectedFrogLoc, 0);
+	//MarkedSlots.Pop();//remove last item from array, because there will be the frog after jump
+	TArray<FVector> RemoveFrogLocations;
+	//calculate in between positions to remove the frogs and spawn slots:
+	for (uint8 i = 0; i < MarkedSlots.Num()-1; i++)
+	{
+		RemoveFrogLocations.Add((MarkedSlots[i] + MarkedSlots[i+1]) / 2);
+	}
+	//now find the frogs in those mid locations and eliminate them, and also spawn slots in those locations
+	for (FVector FrogLoc : RemoveFrogLocations)
+	{
+		for (AActor* Frog : FrogsArray)
+		{
+			if (!IsValid(Frog)) continue;
+			if (Frog->GetActorLocation() == FrogLoc)
+			{
+				IFrogInterface::Execute_Eliminate(Frog);
+				AddSlot(FVector2d(FrogLoc.X, FrogLoc.Y));
+			}
+		}
+		
+	}
+	//Spawn slot where the frog was before jumping:
+	AddSlot(FVector2d(SelectedFrogLoc.X, SelectedFrogLoc.Y));
 }
 void AJumpyFrogsGameMode::SpawnFrogsAndProps(int32 SelectedLevel)
 {
@@ -184,6 +243,8 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps(int32 SelectedLevel)
 	SpawnLevelsDT->GetAllRows<FLevelsDataList>("Some Debug Message String if Fails", SpawnLevelsList);
 	TelAndBombsDT->GetAllRows<FTelAndBombsDataList>("Some Debug Message String if Fails", TelAndBombsList);
 
+	FrogsRemaining = SpawnLevelsList[CurrentLevel]->FrogsList;
+	 
 	ALilyPads* LilyPadsObject = GetWorld()->SpawnActor<ALilyPads>(FVector(0.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
 	//LilyPadsObject->ReApplyStaticMesh(LilyPadsMeshNumList[CurrentLevel]);
 	LilyPadsObject->ReApplyStaticMesh(SpawnLevelsList[CurrentLevel]->LilyPadsMeshNumList);
@@ -201,7 +262,7 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps(int32 SelectedLevel)
 			//FrogsArray[i]->IsThisBomb = true;
 		}
 	}
-	iMax = FrogsRemaining = 4;
+	iMax = FrogsRemaining;
 	for (int32 i = 0 + deltai; i < iMax; i++)
 	{
 		//AddFrog(LevelsList[CurrentLevel][i]);
