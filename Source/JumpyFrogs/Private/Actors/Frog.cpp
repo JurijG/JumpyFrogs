@@ -44,30 +44,32 @@ AFrog::AFrog()
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpRightShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpRightShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpRightShortInOutObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpRightShortObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortInOutObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortObj;
 
 	/*	ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdRightShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdRightShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdRightShortInOutObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdRightShortObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdLeftShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdLeftShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdLeftShortInOutObj;*/
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdLeftShortObj;*/
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortInOutObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdLeftShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdLeftShortOutObj;
-		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdLeftShortInOutObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdLeftShortObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownRightToDownLeftObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownRightShortToRightObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownLeftToDownRightObj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownLeftShortToLeftObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownRightToRightObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpDownRightToLeftObj;
@@ -102,37 +104,42 @@ AFrog::AFrog()
 
 			, JumpRightShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpRightShortIn_Montage"))
 			, JumpRightShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpRightShortOut_Montage"))
-			, JumpRightShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpRightShortInOut_Montage"))
+			, JumpRightShortObj(TEXT("/Game/Frog/Animations/Montages/JumpRightShort_Montage"))
 			
 			, JumpLeftShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpLeftShortIn_Montage"))
 			, JumpLeftShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpLeftShortOut_Montage"))
-			, JumpLeftShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpLeftShortInOut_Montage"))
+			, JumpLeftShortObj(TEXT("/Game/Frog/Animations/Montages/JumpLeftShort_Montage"))
 
 			/*, JumpFwdRightShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdRightShortIn_Montage"))
 			, JumpFwdRightShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdRightShortOut_Montage"))
-			, JumpFwdRightShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdRightShortInOut_Montage"))
+			, JumpFwdRightShortObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdRightShort_Montage"))
 
 			, JumpFwdLeftShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShortIn_Montage"))
 			, JumpFwdLeftShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShortOut_Montage"))
-			, JumpFwdLeftShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShortInOut_Montage"))*/
+			, JumpFwdLeftShortObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShort_Montage"))*/
 
 			, JumpBwdRightShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShortIn_Montage"))
 			, JumpBwdRightShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShortOut_Montage"))
-			, JumpBwdRightShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShortInOut_Montage"))
+			, JumpBwdRightShortObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShort_Montage"))
 
 			, JumpBwdLeftShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftShortIn_Montage"))
 			, JumpBwdLeftShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftShortOut_Montage"))
-			, JumpBwdLeftShortInOutObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftShortInOut_Montage"))
+			, JumpBwdLeftShortObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftShort_Montage"))
 
 			, JumpDownRightToDownLeftObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightToBwdLeft_Montage"))
+			, JumpDownRightShortToRightObj(TEXT("/Game/Frog/Animations/New/JumpBwdRightShortToRight_Montage"))
 			, JumpDownLeftToDownRightObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftToBwdRight_Montage"))
+			, JumpDownLeftShortToLeftObj(TEXT("/Game/Frog/Animations/New/JumpBwdLeftShortToLeft_Montage"))
+			//...addd JumpDownLeftShortToLeftObj
+			/// Script / Engine.AnimMontage'/Game/Frog/Animations/New/JumpDownRightToRight_Montage.JumpDownRightToRight_Montage'
 
-			, JumpDownRightToRightObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightToRight_Montage"))
+			, JumpDownRightToRightObj(TEXT("/Game/Frog/Animations/New/JumpDownRightToRight_Montage"))
 			, JumpDownRightToLeftObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightToLeft_Montage"))
 			, JumpDownLeftToRightObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftToRightObj_Montage"))
 			, JumpDownLeftToLeftObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdLeftToLeftObj"))
+
 			
-			/*/Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/JumpLeftShorInOut_Montage.JumpLeftShorInOut_Montage'
+			/*/Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/JumpLeftShor_Montage.JumpLeftShor_Montage'
 /Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/JumpLeftShorOut_Montage.JumpLeftShorOut_Montage'
 /Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/JumpLeftShortIn_Montage.JumpLeftShortIn_Montage'*/
 
@@ -164,41 +171,45 @@ AFrog::AFrog()
 		FrogMesh->SetAnimInstanceClass(ConstructorStatics.FrogAnimBPObj.Class);
 	}
 
-	JumpRightMontage = ConstructorStatics.JumpRightObj.Object;
-	JumpLeftMontage = ConstructorStatics.JumpLeftObj.Object;
-	JumpUpRightMontage = ConstructorStatics.JumpFwdRightObj.Object;
-	JumpUpLeftMontage = ConstructorStatics.JumpFwdLeftObj.Object;
-	JumpDownRightMontage = ConstructorStatics.JumpBwdRightObj.Object;
-	JumpDownLeftMontage = ConstructorStatics.JumpBwdLeftObj.Object;
+	JumpRight = ConstructorStatics.JumpRightObj.Object;
+	JumpLeft = ConstructorStatics.JumpLeftObj.Object;
+	JumpUpRight = ConstructorStatics.JumpFwdRightObj.Object;
+	JumpUpLeft = ConstructorStatics.JumpFwdLeftObj.Object;
+	JumpDownRight = ConstructorStatics.JumpBwdRightObj.Object;
+	JumpDownLeft = ConstructorStatics.JumpBwdLeftObj.Object;
 
 	JumpRightShortIn = ConstructorStatics.JumpRightShortInObj.Object;
 	JumpRightShortOut = ConstructorStatics.JumpRightShortOutObj.Object;
-	JumpRightShortInOut = ConstructorStatics.JumpRightShortInOutObj.Object;
+	JumpRightShort = ConstructorStatics.JumpRightShortObj.Object;
 
 	JumpLeftShortIn = ConstructorStatics.JumpLeftShortInObj.Object;
 	JumpLeftShortOut = ConstructorStatics.JumpLeftShortOutObj.Object;
-	JumpLeftShortInOut = ConstructorStatics.JumpLeftShortInOutObj.Object;
+	JumpLeftShort = ConstructorStatics.JumpLeftShortObj.Object;
 
 	/*JumpUpRightShortIn = ConstructorStatics.JumpFwdRightShortInObj.Object;
 	JumpUpRightShortOut = ConstructorStatics.JumpFwdRightShortOutObj.Object;
-	JumpUpRightShortInOut = ConstructorStatics.JumpFwdRightShortInOutObj.Object;
+	JumpUpRightShort = ConstructorStatics.JumpFwdRightShortObj.Object;
 
 	JumpUpLeftShortIn = ConstructorStatics.JumpFwdLeftShortInObj.Object;
 	JumpUpLeftShortOut = ConstructorStatics.JumpFwdLeftShortOutObj.Object;
-	JumpUpLeftShortInOut = ConstructorStatics.JumpFwdLeftShortInOutObj.Object;*/
+	JumpUpLeftShort = ConstructorStatics.JumpFwdLeftShortObj.Object;*/
 
 	JumpDownRightShortIn = ConstructorStatics.JumpBwdRightShortInObj.Object;
 	JumpDownRightShortOut = ConstructorStatics.JumpBwdRightShortOutObj.Object;
-	JumpDownRightShortInOut = ConstructorStatics.JumpBwdRightShortInOutObj.Object;
+	JumpDownRightShort = ConstructorStatics.JumpBwdRightShortObj.Object;
 
 	JumpDownLeftShortIn = ConstructorStatics.JumpBwdLeftShortInObj.Object;
 	JumpDownLeftShortOut = ConstructorStatics.JumpBwdLeftShortOutObj.Object;
-	JumpDownLeftShortInOut = ConstructorStatics.JumpBwdLeftShortInOutObj.Object;
+	JumpDownLeftShort = ConstructorStatics.JumpBwdLeftShortObj.Object;
 
-	JumpDownRightToDownLeft = ConstructorStatics.JumpDownRightToLeftObj.Object;
-	JumpDownLeftToDownRight = ConstructorStatics.JumpDownLeftToRightObj.Object;
+	/*	JumpDownRightToDownLeft = ConstructorStatics.JumpDownRightToLeftObj.Object;
+	JumpDownLeftToDownRight = ConstructorStatics.JumpDownLeftToRightObj.Object;*/
+	JumpDownRightToDownLeft = ConstructorStatics.JumpDownRightToDownLeftObj.Object;
+	JumpDownRightShortToRight = ConstructorStatics.JumpDownRightShortToRightObj.Object;
+	JumpDownLeftToDownRight = ConstructorStatics.JumpDownLeftToDownRightObj.Object;
+	JumpDownLeftShortToLeft = ConstructorStatics.JumpDownLeftShortToLeftObj.Object;
 
-	JumpDownRightToRight = ConstructorStatics.JumpDownRightToRightObj.Object;
+	JumpDownRightToRight = ConstructorStatics.JumpDownRightToRightObj.Object; //done
 	JumpDownRightToLeft = ConstructorStatics.JumpDownRightToLeftObj.Object;
 	JumpDownLeftToRight = ConstructorStatics.JumpDownLeftToRightObj.Object;
 	JumpDownLeftToLeft = ConstructorStatics.JumpDownLeftToLeftObj.Object;
@@ -211,72 +222,160 @@ AFrog::AFrog()
 	MatBombFrog = ConstructorStatics.BombFrogMaterial.Get();
 	//RedMatBombFrog = ConstructorStatics.RedBombFrogMaterial.Get();
 
-	JumpMontageMap =
-	{
-		// Base directions
-		{ EFrogJump::Right,        JumpRightMontage },
-		{ EFrogJump::Left,         JumpLeftMontage },
-		{ EFrogJump::UpRight,      JumpUpRightMontage },
-		{ EFrogJump::UpLeft,       JumpUpLeftMontage },
-		{ EFrogJump::DownRight,    JumpDownRightMontage },
-		{ EFrogJump::DownLeft,     JumpDownLeftMontage },
+	//JumpMontageMap =
+	//{
+	//	// Base directions
+	//	{ EFrogJump::Right,        JumpRightMontage },
+	//	{ EFrogJump::Left,         JumpLeftMontage },
+	//	{ EFrogJump::UpRight,      JumpUpRightMontage },
+	//	{ EFrogJump::UpLeft,       JumpUpLeftMontage },
+	//	{ EFrogJump::DownRight,    JumpDownRightMontage },
+	//	{ EFrogJump::DownLeft,     JumpDownLeftMontage },
 
-		// Right short variants
-		{ EFrogJump::RightShortIn,    JumpRightShortIn },
-		{ EFrogJump::RightShortOut,   JumpRightShortOut },
-		{ EFrogJump::RightShortInOut, JumpRightShortInOut },
+	//	// Right short variants
+	//	{ EFrogJump::RightShortIn,    JumpRightShortIn },
+	//	{ EFrogJump::RightShortOut,   JumpRightShortOut },
+	//	{ EFrogJump::RightShort, JumpRightShort },
 
-		// Left short variants
-		{ EFrogJump::LeftShortIn,    JumpLeftShortIn },
-		{ EFrogJump::LeftShortOut,   JumpLeftShortOut },
-		{ EFrogJump::LeftShortInOut, JumpLeftShortInOut },
+	//	// Left short variants
+	//	{ EFrogJump::LeftShortIn,    JumpLeftShortIn },
+	//	{ EFrogJump::LeftShortOut,   JumpLeftShortOut },
+	//	{ EFrogJump::LeftShort, JumpLeftShort },
 
-		// UpRight short variants
-		//{ EFrogJump::UpRightShortIn,    JumpUpRightShortIn },
-		//{ EFrogJump::UpRightShortOut,   JumpUpRightShortOut },
-		//{ EFrogJump::UpRightShortInOut, JumpUpRightShortInOut },
+	//	// UpRight short variants
+	//	//{ EFrogJump::UpRightShortIn,    JumpUpRightShortIn },
+	//	//{ EFrogJump::UpRightShortOut,   JumpUpRightShortOut },
+	//	//{ EFrogJump::UpRightShort, JumpUpRightShort },
 
-		//// UpLeft short variants
-		//{ EFrogJump::UpLeftShortIn,    JumpUpLeftShortIn },
-		//{ EFrogJump::UpLeftShortOut,   JumpUpLeftShortOut },
-		//{ EFrogJump::UpLeftShortInOut, JumpUpLeftShortInOut },
+	//	//// UpLeft short variants
+	//	//{ EFrogJump::UpLeftShortIn,    JumpUpLeftShortIn },
+	//	//{ EFrogJump::UpLeftShortOut,   JumpUpLeftShortOut },
+	//	//{ EFrogJump::UpLeftShort, JumpUpLeftShort },
 
-		// DownRight short variants
-		{ EFrogJump::DownRightShortIn,    JumpDownRightShortIn },
-		{ EFrogJump::DownRightShortOut,   JumpDownRightShortOut },
-		{ EFrogJump::DownRightShortInOut, JumpDownRightShortInOut },
+	//	// DownRight short variants
+	//	{ EFrogJump::DownRightShortIn,    JumpDownRightShortIn },
+	//	{ EFrogJump::DownRightShortOut,   JumpDownRightShortOut },
+	//	{ EFrogJump::DownRightShort, JumpDownRightShort },
 
-		// DownLeft short variants
-		{ EFrogJump::DownLeftShortIn,    JumpDownLeftShortIn },
-		{ EFrogJump::DownLeftShortOut,   JumpDownLeftShortOut },
-		{ EFrogJump::DownLeftShortInOut, JumpDownLeftShortInOut },
+	//	// DownLeft short variants
+	//	{ EFrogJump::DownLeftShortIn,    JumpDownLeftShortIn },
+	//	{ EFrogJump::DownLeftShortOut,   JumpDownLeftShortOut },
+	//	{ EFrogJump::DownLeftShort, JumpDownLeftShort },
 
-		{ EFrogJump::DownRightToRight,     JumpDownRightToRight },
-		{ EFrogJump::DownRightToLeft,      JumpDownRightToLeft },
-		{ EFrogJump::DownLeftToRight,      JumpDownLeftToRight },
-		{ EFrogJump::DownLeftToLeft,       JumpDownLeftToLeft },
+	//	{ EFrogJump::DownRightToRight,     JumpDownRightToRight },
+	//	{ EFrogJump::DownRightToLeft,      JumpDownRightToLeft },
+	//	{ EFrogJump::DownLeftToRight,      JumpDownLeftToRight },
+	//	{ EFrogJump::DownLeftToLeft,       JumpDownLeftToLeft },
 
-		{ EFrogJump::DownRightToDownLeft,  JumpDownRightToDownLeft },
-		{ EFrogJump::DownLeftToDownRight,  JumpDownLeftToDownRight },
-	};
+	//	{ EFrogJump::DownRightToDownLeft,  JumpDownRightToDownLeft },
+	//	{ EFrogJump::DownLeftToDownRight,  JumpDownLeftToDownRight },
+	//};
 
-	TMap<TPair<EFrogJump, EFrogJump>, EFrogJump> JumpTransitions =
-	{
-		{ {EFrogJump::Left, EFrogJump::Left}, EFrogJump::LeftShortInOut },
-		{ {EFrogJump::Left, EFrogJump::DownLeft}, EFrogJump::LeftToDownLeft },
-		{ {EFrogJump::Right, EFrogJump::Right}, EFrogJump::RightShortInOut },
-		{ {EFrogJump::Right, EFrogJump::DownRight}, EFrogJump::RightToDownRight },
-		{ {EFrogJump::DownLeft, EFrogJump::DownLeft}, EFrogJump::DownLeftShortInOut },
-		{ {EFrogJump::DownLeft, EFrogJump::Left}, EFrogJump::DownLeftToLeft },
-		{ {EFrogJump::DownLeft, EFrogJump::Right}, EFrogJump::DownLeftToRight },
-		{ {EFrogJump::DownLeft, EFrogJump::DownRight}, EFrogJump::DownLeftToDownRight },
-		{ {EFrogJump::DownRight, EFrogJump::DownRight}, EFrogJump::DownRightShortInOut },
-		{ {EFrogJump::DownRight, EFrogJump::Left}, EFrogJump::DownRightToLeft },
-		{ {EFrogJump::DownRight, EFrogJump::Right}, EFrogJump::DownRightToRight },
-		{ {EFrogJump::DownRight, EFrogJump::DownLeft}, EFrogJump::DownRightToDownLeft },
-	};
+	//JumpTransitions =
+	//{
+	//	{ {EFrogJump::Left, EFrogJump::Left}, EFrogJump::LeftShortIn },
+	//	{ {EFrogJump::Left, EFrogJump::Left}, EFrogJump::LeftShort },
+	//	{ {EFrogJump::Left, EFrogJump::DownLeft}, EFrogJump::LeftToDownLeft },
+	//	{ {EFrogJump::Right, EFrogJump::Right}, EFrogJump::RightShort },
+	//	{ {EFrogJump::Right, EFrogJump::DownRight}, EFrogJump::RightToDownRight },
+	//	{ {EFrogJump::DownLeft, EFrogJump::DownLeft}, EFrogJump::DownLeftShort },
+	//	{ {EFrogJump::DownLeft, EFrogJump::Left}, EFrogJump::DownLeftToLeft },
+	//	{ {EFrogJump::DownLeft, EFrogJump::Right}, EFrogJump::DownLeftToRight },
+	//	{ {EFrogJump::DownLeft, EFrogJump::DownRight}, EFrogJump::DownLeftToDownRight },
+	//	{ {EFrogJump::DownRight, EFrogJump::DownRight}, EFrogJump::DownRightShort },
+	//	{ {EFrogJump::DownRight, EFrogJump::Left}, EFrogJump::DownRightToLeft },
+	//	{ {EFrogJump::DownRight, EFrogJump::Right}, EFrogJump::DownRightToRight },
+	//	{ {EFrogJump::DownRight, EFrogJump::DownLeft}, EFrogJump::DownRightToDownLeft },
+	//};
 
-	EFrogJump LastJump = EFrogJump::None;
+	/*Jump UpLeft variations*/
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::UpLeft, EJumpDirection::None, EJumpMontage::UpLeft, JumpUpLeft) });
+
+	/*Jump UpRight variations*/
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::UpRight, EJumpDirection::None,  EJumpMontage::UpRight, JumpUpRight) });
+	/*Jump Left variations*/
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::None,  EJumpMontage::Left, JumpLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::None, EJumpMontage::LeftShortIn, JumpLeftShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::Left, EJumpMontage::LeftShort, JumpLeftShort) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::UpLeft, EJumpMontage::LeftShort, JumpLeftShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::UpRight, EJumpMontage::LeftShort, JumpLeftShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::Left, EJumpMontage::LeftShortOut, JumpLeftShortOut) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::DownLeft, EJumpMontage::LeftToDownLeft, JumpLeftToDownLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::DownLeft, EJumpMontage::LeftShortInToDownLeft, JumpLeftShortInToDownLeft) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::Left, EJumpDirection::None, EJumpMontage::LeftShortIn, JumpLeftShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::Left, EJumpDirection::Left, EJumpMontage::LeftShort, JumpLeftShort) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::Left, EJumpDirection::DownLeft, EJumpMontage::LeftShortToDownLeft, JumpLeftShortToDownLeft) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::DownRight, EJumpMontage::LeftToDownRight, JumpLeftToDownRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::Left, EJumpDirection::DownRight, EJumpMontage::LeftShortToDownRight, JumpLeftShortToDownRight) });
+
+	/*Jump Right variations*/
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::None, EJumpMontage::Right, JumpRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::None, EJumpMontage::RightShortIn, JumpRightShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::Right, EJumpMontage::RightShort, JumpRightShort) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::Right, EJumpMontage::UpLeft, JumpRightShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::Right, EJumpMontage::UpRight, JumpRightShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::Right, EJumpMontage::RightShortOut, JumpRightShortOut) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightToDownRight, JumpRightToDownRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightShortInToDownRight, JumpRightShortInToDownRight) });
+	
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::Right, EJumpDirection::None, EJumpMontage::RightShortIn,JumpRightShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::Right, EJumpDirection::Right, EJumpMontage::RightShort, JumpRightShort) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightShortToDownRight, JumpRightShortToDownRight) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::DownLeft, EJumpMontage::RightToDownLeft, JumpRightToDownLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::DownLeft, EJumpMontage::RightShortToDownLeft, JumpRightShortToDownLeft) });
+	
+	/*Jump DownLeft variations*/
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownLeft, EJumpDirection::None, EJumpMontage::DownLeft, JumpDownLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpMontage::DownLeftShortOut, JumpDownLeftShortOut) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpDirection::None, EJumpMontage::DownLeftShortIn, JumpDownLeftShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpMontage::DownLeftShort, JumpDownLeftShort) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownLeft, EJumpDirection::Left, EJumpMontage::DownLeftToLeft, JumpDownLeftToLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpDirection::Left, EJumpMontage::DownLeftShortToLeft, JumpDownLeftShortToLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpMontage::DownLeftToDownRight, JumpDownLeftToDownRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpMontage::DownLeftShortToDownRight, JumpDownLeftShortToDownRight) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpDirection::Left, EJumpMontage::DownLeftShortToLeft, JumpDownLeftShortToLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpMontage::DownLeftShortToDownRight, JumpDownLeftShortToDownRight) });
+
+	/*Jump DownRight variations*/
+
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownRight, EJumpDirection::None, EJumpMontage::DownRight, JumpDownRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpMontage::DownRightShortOut, JumpDownRightShortOut) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpDirection::None, EJumpMontage::DownRightShortIn, JumpDownRightShortIn) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpMontage::DownRightShort, JumpDownRightShort) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownRight, EJumpDirection::Right, EJumpMontage::DownRightToRight, JumpDownRightToRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpDirection::Right, EJumpMontage::DownRightShortToRight, JumpDownRightShortToRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpMontage::DownRightToDownLeft, JumpDownRightToDownLeft) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpMontage::DownRightShortToDownLeft, JumpDownRightShortToDownLeft) });
+
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpDirection::Right, EJumpMontage::DownRightShortToRight, JumpDownRightShortToRight) });
+	MappedJumps.Add({ FFrogJump(EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpMontage::DownRightShortToDownLeft, JumpDownRightShortToDownLeft) });
+
+
+
+
+
+
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightToDownLeft) });
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightShortInToDownLeft) });
+
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightToDownRight) });
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::Right, EJumpDirection::DownRight, EJumpMontage::RightShortToDownRight) });
+
+
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::DownLeft, EJumpMontage::LeftShortIn) });
+	//MappedJumps.Add({ FFrogJump(EJumpDirection::None, EJumpDirection::Left, EJumpDirection::DownRight, EJumpMontage::LeftShortIn) });
+
+
+
+	//EFrogJump LastJump = EFrogJump::None;
 
 	
 	/*FrogMesh->OnClicked.AddDynamic(this, &AFrog::OnClicked);
@@ -317,6 +416,9 @@ AFrog::AFrog()
 void AFrog::Jump_Implementation(const TArray<FVector>& InMarkedSlots)
 {
 	MarkedJumpDirections.Empty();
+	MarkedJumpAnims.Empty();
+	MarkedJumps.Empty();
+
 	MarkedSlots = InMarkedSlots;
 	MarkedSlots.Insert(GetActorLocation(), 0);
 	CurrentJumpIndex = 0;
@@ -326,31 +428,43 @@ void AFrog::Jump_Implementation(const TArray<FVector>& InMarkedSlots)
 		FVector Delta = MarkedSlots[i+1] - MarkedSlots[i];
 		if (Delta.X == 0 && Delta.Y > 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::Right);
+			MarkedJumpDirections.Add(EJumpDirection::Right);
+			MarkedJumpAnims.Add(JumpRight);
+			MarkedJumps.Add(EJumpMontage::Right);
 		}
 		else if (Delta.X == 0 && Delta.Y < 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::Left);
+			MarkedJumpDirections.Add(EJumpDirection::Left);
+			MarkedJumpAnims.Add(JumpLeft);
+			MarkedJumps.Add(EJumpMontage::Left);
 			// Left
 		}
 		else if (Delta.X > 0 && Delta.Y > 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::UpRight);
+			MarkedJumpDirections.Add(EJumpDirection::UpRight);
+			MarkedJumpAnims.Add(JumpUpRight);
+			MarkedJumps.Add(EJumpMontage::UpRight);
 			// UpRight
 		}
 		else if (Delta.X > 0 && Delta.Y < 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::UpLeft);
+			MarkedJumpDirections.Add(EJumpDirection::UpLeft);
+			MarkedJumpAnims.Add(JumpUpLeft);
+			MarkedJumps.Add(EJumpMontage::UpLeft);
 			// UpLeft
 		}
 		else if (Delta.X < 0 && Delta.Y > 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::DownRight);
+			MarkedJumpDirections.Add(EJumpDirection::DownRight);
+			MarkedJumpAnims.Add(JumpDownRight);
+			MarkedJumps.Add(EJumpMontage::DownRight);
 			// DownRight
 		}
 		else if (Delta.X < 0 && Delta.Y < 0)
 		{
-			MarkedJumpDirections.Add(EFrogJump::DownLeft);
+			MarkedJumpDirections.Add(EJumpDirection::DownLeft);
+			MarkedJumpAnims.Add(JumpDownLeft);
+			MarkedJumps.Add(EJumpMontage::DownLeft);
 			// DownLeft
 		}
 		i++;
@@ -359,23 +473,131 @@ void AFrog::Jump_Implementation(const TArray<FVector>& InMarkedSlots)
 	PerformJump(); 
 	
 }
-
-void AFrog::Eliminate_Implementation()
+//void AFrog::AddJumpSingle()
+//{
+//	switch (CurrentJump)
+//	{
+//	case EJumpDirection::Right:
+//		MarkedJumpAnims.Add(JumpRight);
+//		MarkedJumps.Add(EJumpMontage::Right);
+//		break;
+//	case EJumpDirection::Left:
+//		MarkedJumpAnims.Add(JumpLeft);
+//		MarkedJumps.Add(EJumpMontage::Left);
+//		break;
+//	case EJumpDirection::UpRight:
+//		MarkedJumpAnims.Add(JumpUpRight);
+//		MarkedJumps.Add(EJumpMontage::UpRight);
+//		break;
+//	case EJumpDirection::UpLeft:
+//		MarkedJumpAnims.Add(JumpUpLeft);
+//		MarkedJumps.Add(EJumpMontage::UpLeft);
+//		break;
+//	case EJumpDirection::DownRight:
+//		MarkedJumpAnims.Add(JumpDownRight);
+//		MarkedJumps.Add(EJumpMontage::DownRight);
+//		break;
+//	case EJumpDirection::DownLeft:
+//		MarkedJumpAnims.Add(JumpDownLeft);
+//		MarkedJumps.Add(EJumpMontage::DownLeft);
+//		break;
+//	default:
+//		break;
+//	}
+//}
+void AFrog::GenerateMergedJumps()
 {
-	//TODO:: Add frog jumping into water animation
-	Destroy();
+	if (MarkedJumpDirections.Num() > 1)
+	{
+		MarkedJumpAnims.Empty();
+		MarkedJumps.Empty();
+
+		EJumpDirection LastJump = EJumpDirection::None;
+		for (int32 i = 0; i < MarkedJumpDirections.Num(); i++)
+		{
+			EJumpDirection CurrentJump = MarkedJumpDirections[i];
+			EJumpDirection NextJump = EJumpDirection::None;
+			if (MarkedJumpDirections.Num() > i + 1)
+			{
+				NextJump = MarkedJumpDirections[i + 1];
+			}
+			bool bFoundVariant = false;
+			//FFrogJump Variant = { LastJump, CurrentJump, NextJump };
+
+			for (FFrogJump& Variant : MappedJumps)
+			{
+				if (Variant.Prev == LastJump && Variant.Current == CurrentJump && Variant.Next == NextJump)
+				{
+					MarkedJumpAnims.Add(Variant.Montage);
+					MarkedJumps.Add(Variant.MontageName);
+					LastJump = CurrentJump;
+					bFoundVariant = true;
+					break;
+				}
+			}
+		}
+	}
+
+	 
+	//for (int32 i = 0; i < MarkedJumpDirections.Num(); i++)
+	//{
+	//	EJumpDirection CurrentJump = MarkedJumpDirections[i];
+
+	//	bool bTransitionPlayed = false;
+
+	//	// Check if a transition montage is needed
+	//	TPair<EFrogJump, EFrogJump> Key = { LastJump, CurrentJump };
+	//	if (JumpTransitions.Contains(Key))
+	//	{
+	//		MarkedJumps.Add(JumpTransitions[Key]);
+	//		bTransitionPlayed = true;
+
+	//		// Only advance LastJump if transition represents a new "effective" jump
+	//		LastJump = JumpTransitions[Key];
+	//	}
+
+	//	// Only add the base jump if the transition did NOT replace it
+	//	if (!bTransitionPlayed)
+	//	{
+	//		MarkedJumps.Add(CurrentJump);
+	//		LastJump = CurrentJump;
+	//	}
+	//}
+
+	UE_LOG(LogTemp, Log, TEXT("=== Generated Jump Sequence ==="));
+	for (int32 i = 0; i < MarkedJumpDirections.Num(); i++)
+	{
+		FString JumpName = StaticEnum<EJumpDirection>()->GetNameStringByValue((int64)MarkedJumpDirections[i]);
+		UE_LOG(LogTemp, Log, TEXT("%d: %s"), i, *JumpName);
+	}
+	UE_LOG(LogTemp, Log, TEXT("=== End of Sequence ==="));
+
+	UE_LOG(LogTemp, Log, TEXT("=== Generated MarkedJumps enums ==="));
+	for (int32 i = 0; i < MarkedJumps.Num(); i++)
+	{
+		FString JumpName = StaticEnum<EJumpMontage>()->GetNameStringByValue((int64)MarkedJumps[i]);
+		UE_LOG(LogTemp, Log, TEXT("%d: %s"), i, *JumpName);
+	}
+	UE_LOG(LogTemp, Log, TEXT("=== End of Sequence ==="));
 }
+
 
 void AFrog::PerformJump()
 {
 	UAnimInstance* AnimInstance = FrogMesh->GetAnimInstance();
 	if (AnimInstance)
 	{
-		if (UAnimMontage* FoundMontage = JumpMontageMap.FindRef(MarkedJumps[CurrentJumpIndex]))
+		if (UAnimMontage* FoundMontage = MarkedJumpAnims[CurrentJumpIndex])
+		{
+			AnimInstance->Montage_Play(FoundMontage);
+
+		}
+
+		/*if (UAnimMontage* FoundMontage = JumpMontageMap.FindRef(MarkedJumps[CurrentJumpIndex]))
 		{
 			AnimInstance->Montage_Play(FoundMontage);
 			
-		}
+		}*/
 		/*if (UAnimMontage** FoundMontage = JumpMontageMap.Find(MarkedJumps[CurrentJumpIndex]))
 		{
 			MontageToPlay = *FoundMontage;
@@ -383,335 +605,18 @@ void AFrog::PerformJump()
 		}*/
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("WARNING: No montage found for jump type %d"), (int32)MarkedJumps[CurrentJumpIndex]);
+			//UE_LOG(LogTemp, Warning, TEXT("WARNING: No montage found for jump type %d"), (int32)MarkedJumps[CurrentJumpIndex]);
+			FString JumpName = StaticEnum<EJumpMontage>()->GetNameStringByValue((int64)MarkedJumps[CurrentJumpIndex]);
+			FString JumpNameAnim = StaticEnum<EJumpDirection>()->GetNameStringByValue((int64)MarkedJumpDirections[CurrentJumpIndex]);
+			UE_LOG(LogTemp, Warning, TEXT("WARNING: No montage found for jump direction: %s, variant: %s"),  *JumpNameAnim, *JumpName);
 		}
 	}
 }
-void AFrog::AddMergedDirection(
-	EFrogJump Single,
-	EFrogJump Out,
-	EFrogJump InOut,
-	EFrogJump In,
-	int32 RepeatCount)
+void AFrog::Eliminate_Implementation()
 {
-	// If the "short variants" are invalid (like swap montages or Fwd jumps), just repeat Single
-	bool bHasShortVariants = (Out != Single || InOut != Single || In != Single);
-
-	if (!bHasShortVariants)
-	{
-		// Just repeat the single montage
-		for (int32 j = 0; j < RepeatCount; j++)
-		{
-			MarkedJumps.Add(Single);
-		}
-		return;
-	}
-
-	// Standard merged ShortIn/Out/InOut logic
-	if (RepeatCount >= 3)
-	{
-		MarkedJumps.Add(Out);
-
-		for (int32 j = 1; j < RepeatCount - 1; j++)
-		{
-			MarkedJumps.Add(InOut);
-		}
-
-		MarkedJumps.Add(In);
-	}
-	else if (RepeatCount == 2)
-	{
-		MarkedJumps.Add(Out);
-		MarkedJumps.Add(In);
-	}
-	else
-	{
-		MarkedJumps.Add(Single);
-	}
+	//TODO:: Add frog jumping into water animation
+	Destroy();
 }
-void AFrog::GenerateMergedJumps()
-{
-	MarkedJumps.Empty();
-
-	int32 i = 0;
-
-	while (i < MarkedJumpDirections.Num())
-	{
-		// Transition detection FIRST
-		if (i + 1 < MarkedJumpDirections.Num())
-		{
-			EFrogJump Current = MarkedJumpDirections[i];
-			EFrogJump Next = MarkedJumpDirections[i + 1];
-
-			// ---------------------------------
-			// DownRight transitions
-			// ---------------------------------
-
-			if (Current == EFrogJump::DownRight)
-			{
-				if (Next == EFrogJump::DownLeft)
-				{
-					MarkedJumps.Add(EFrogJump::DownRightToDownLeft);
-					i += 2;
-					continue;
-				}
-
-				if (Next == EFrogJump::Right)
-				{
-					MarkedJumps.Add(EFrogJump::DownRightToRight);
-					i += 2;
-					continue;
-				}
-
-				if (Next == EFrogJump::Left)
-				{
-					MarkedJumps.Add(EFrogJump::DownRightToLeft);
-					i += 2;
-					continue;
-				}
-			}
-
-			// ---------------------------------
-			// DownLeft transitions
-			// ---------------------------------
-
-			if (Current == EFrogJump::DownLeft)
-			{
-				if (Next == EFrogJump::DownRight)
-				{
-					MarkedJumps.Add(EFrogJump::DownLeftToDownRight);
-					i += 2;
-					continue;
-				}
-
-				if (Next == EFrogJump::Left)
-				{
-					MarkedJumps.Add(EFrogJump::DownLeftToLeft);
-					i += 2;
-					continue;
-				}
-
-				if (Next == EFrogJump::Right)
-				{
-					MarkedJumps.Add(EFrogJump::DownLeftToRight);
-					i += 2;
-					continue;
-				}
-			}
-		}
-
-		// ---------------------------------
-		// Normal grouping logic
-		// ---------------------------------
-
-		EFrogJump CurrentDir = MarkedJumpDirections[i];
-		int32 RepeatCount = 1;
-
-		while (i + RepeatCount < MarkedJumpDirections.Num() &&
-			MarkedJumpDirections[i + RepeatCount] == CurrentDir)
-		{
-			RepeatCount++;
-		}
-
-		switch (CurrentDir)
-		{
-		case EFrogJump::Right:
-			AddMergedDirection(
-				EFrogJump::Right,
-				EFrogJump::RightShortOut,
-				EFrogJump::RightShortInOut,
-				EFrogJump::RightShortIn,
-				RepeatCount);
-			break;
-
-		case EFrogJump::Left:
-			AddMergedDirection(
-				EFrogJump::Left,
-				EFrogJump::LeftShortOut,
-				EFrogJump::LeftShortInOut,
-				EFrogJump::LeftShortIn,
-				RepeatCount);
-			break;
-
-		case EFrogJump::UpRight:
-			for (int32 j = 0; j < RepeatCount; j++)
-				MarkedJumps.Add(EFrogJump::UpRight);
-			break;
-
-		case EFrogJump::UpLeft:
-			for (int32 j = 0; j < RepeatCount; j++)
-				MarkedJumps.Add(EFrogJump::UpLeft);
-			break;
-
-		case EFrogJump::DownRight:
-			AddMergedDirection(
-				EFrogJump::DownRight,
-				EFrogJump::DownRightShortOut,
-				EFrogJump::DownRightShortInOut,
-				EFrogJump::DownRightShortIn,
-				RepeatCount);
-			break;
-
-		case EFrogJump::DownLeft:
-			AddMergedDirection(
-				EFrogJump::DownLeft,
-				EFrogJump::DownLeftShortOut,
-				EFrogJump::DownLeftShortInOut,
-				EFrogJump::DownLeftShortIn,
-				RepeatCount);
-			break;
-		}
-
-		i += RepeatCount;
-	}
-}
-//void AFrog::GenerateMergedJumps() //this WORKS FOR LEFT AND RIGHT
-//{
-//	MarkedJumps.Empty();
-//
-//	int32 i = 0;
-//	while (i < MarkedJumpDirections.Num())
-//	{
-//		EFrogJump CurrentDir = MarkedJumpDirections[i];
-//		int32 RepeatCount = 1;
-//
-//		// Count how many times this direction repeats
-//		while (i + RepeatCount < MarkedJumpDirections.Num() && MarkedJumpDirections[i + RepeatCount] == CurrentDir)
-//		{
-//			RepeatCount++;
-//		}
-//
-//		// Procedurally generate merged montages based on RepeatCount
-//		if (CurrentDir == EFrogJump::Right)
-//		{
-//			if (RepeatCount >= 3)
-//			{
-//				MarkedJumps.Add(EFrogJump::RightShortOut);
-//				for (int32 j = 1; j < RepeatCount - 1; j++)
-//				{
-//					MarkedJumps.Add(EFrogJump::RightShortInOut);
-//				}
-//				MarkedJumps.Add(EFrogJump::RightShortIn);
-//			}
-//			else if (RepeatCount == 2)
-//			{
-//				MarkedJumps.Add(EFrogJump::RightShortOut);
-//				MarkedJumps.Add(EFrogJump::RightShortIn);
-//			}
-//			else
-//			{
-//				MarkedJumps.Add(EFrogJump::Right);
-//			}
-//		}
-//		else if (CurrentDir == EFrogJump::Left)
-//		{
-//			if (RepeatCount >= 3)
-//			{
-//				MarkedJumps.Add(EFrogJump::LeftShortOut);
-//				for (int32 j = 1; j < RepeatCount - 1; j++)
-//				{
-//					MarkedJumps.Add(EFrogJump::LeftShortInOut);
-//				}
-//				MarkedJumps.Add(EFrogJump::LeftShortIn);
-//			}
-//			else if (RepeatCount == 2)
-//			{
-//				MarkedJumps.Add(EFrogJump::LeftShortOut);
-//				MarkedJumps.Add(EFrogJump::LeftShortIn);
-//			}
-//			else
-//			{
-//				MarkedJumps.Add(EFrogJump::Left);
-//			}
-//		}
-//		else
-//		{
-//			// Diagonals or other directions: just add the normal jumps
-//			for (int32 j = 0; j < RepeatCount; j++)
-//			{
-//				MarkedJumps.Add(CurrentDir);
-//			}
-//		}
-//
-//		i += RepeatCount; // skip over all repeats we just handled
-//	}
-//}
-void AFrog::AnalyzeInBetweenJumps()
-{
-	//for (uint8 i = 0; i < MarkedJumpDirections.Num(); i++)
-	//{
-	//	switch (MarkedJumpDirections[i])
-	//	{
-	//	case EFrogJump::Right:
-	//			//check if next Jump is also to the right
-	//			if (MarkedJumpDirections[i+1] == EFrogJump::Right)
-	//			{
-	//				
-	//				if (MarkedJumpDirections[i + 2] == EFrogJump::Right)
-	//				{
-	//					//jumps right three times in a row
-	//					MarkedJumps.Add(EFrogJump::RightShortOut);
-	//					MarkedJumps.Add(EFrogJump::RightShortInOut);
-	//					MarkedJumps.Add(EFrogJump::RightShortIn);
-	//				}
-	//				else
-	//				{
-	//					//jumps right two times in a row
-	//					MarkedJumps.Add(EFrogJump::RightShortOut);
-	//					MarkedJumps.Add(EFrogJump::RightShortIn);
-	//				}
-	//				
-
-	//				MontageToPlay = JumpRightShortIn;
-	//			}
-	//			else if (CurrentJumpIndex < MarkedJumpDirections.Num() - 1 && MarkedJumpDirections[CurrentJumpIndex + 1] == EFrogJump::Right)
-	//			{
-	//				MontageToPlay = JumpRightShortOut;
-	//			}
-	//			else
-	//			{
-	//				MontageToPlay = JumpRightMontage;
-	//			}
-	//		break;
-	//	case EFrogJump::Left:
-	//		break;
-	//	case EFrogJump::UpRight:
-	//		break;
-	//	case EFrogJump::UpLeft:
-	//		break;
-	//	case EFrogJump::DownRight:
-	//		break;
-	//	case EFrogJump::DownLeft:
-	//		break;
-	//	default:
-	//		UE_LOG(LogTemp, Warning, TEXT("WARNING, we have a problem."));
-	//		break;
-	//	}
-	//}
-}
-//void AFrog::OnJumpMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-//{
-//	/*if (Montage != JumpMontage)
-//		return;*/
-//
-//	/*UAnimInstance* AnimInstance = FrogMesh->GetAnimInstance();
-//	if (AnimInstance)
-//	{
-//		AnimInstance->OnMontageEnded.RemoveDynamic(this, &AFrog::OnJumpMontageEnded);
-//	}*/
-//	if (CurrentJumpIndex < MarkedJumpDirections.Num())
-//	{
-//		CurrentJumpIndex++;
-//		SetActorLocation(MarkedSlots[CurrentJumpIndex + 1]);
-//		PerformJump();
-//	}
-//
-//	
-//	//if (!bInterrupted)
-//	//{
-//	//	OnJumpFinished(); // execute next jump
-//	//}
-//}
 // Called when the game starts or when spawned
 void AFrog::BeginPlay()
 {
