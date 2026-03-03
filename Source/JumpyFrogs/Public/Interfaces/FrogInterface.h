@@ -28,4 +28,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void Eliminate();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void PlayNextAnimation();
 };

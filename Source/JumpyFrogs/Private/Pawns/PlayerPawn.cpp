@@ -21,7 +21,7 @@ APlayerPawn::APlayerPawn()
 
 	//SpringArm->RelativeRotation = FRotator(-90.f, 0.f, 0.f);
 	SpringArm->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-	SpringArm->TargetArmLength = 1024.0f;
+	SpringArm->TargetArmLength = 1524.0f;
 	//SpringArm->bEnableCameraLag = false;
 	//SpringArm->bEnableCameraRotationLag = false;
 	SpringArm->bInheritPitch = true;

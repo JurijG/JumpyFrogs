@@ -31,7 +31,7 @@ public:
 	
 protected:
 
-	int32 CurrentLevel = 225;
+	int32 CurrentLevel = 100; //  100 -> TESTLEVEL;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

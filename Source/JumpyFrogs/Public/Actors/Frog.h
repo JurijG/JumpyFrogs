@@ -16,60 +16,67 @@ class UMaterialInstance;
 UENUM() //UENUM(BlueprintType)
 enum class EJumpMontage : uint8
 {
-	None			   UMETA(DisplayName = "None"),
-	Right              UMETA(DisplayName = "Right"),
-	Left               UMETA(DisplayName = "Left"),
-	UpRight            UMETA(DisplayName = "Up Right"),
-	UpLeft             UMETA(DisplayName = "Up Left"),
-	DownRight          UMETA(DisplayName = "Down Right"),
-	DownLeft           UMETA(DisplayName = "Down Left"),
+	None			   ,//UMETA(DisplayName = "None"),
+	Error			   ,//UMETA(DisplayName = "None"),
+	Right              ,//UMETA(DisplayName = "Right"),
+	Left               ,//UMETA(DisplayName = "Left"),
+	UpRight            ,//UMETA(DisplayName = "Up Right"),
+	UpLeft             ,//UMETA(DisplayName = "Up Left"),
+	DownRight          ,//UMETA(DisplayName = "Down Right"),
+	DownLeft           ,//UMETA(DisplayName = "Down Left"),
 
-	RightShortIn       UMETA(DisplayName = "Right - Short In"),
-	RightShortOut      UMETA(DisplayName = "Right - Short Out"),
-	RightShort    UMETA(DisplayName = "Right - Short "),
+	RightShortIn       ,//UMETA(DisplayName = "Right - Short In"),
+	RightShortOut      ,//UMETA(DisplayName = "Right - Short Out"),
+	RightShort    ,//UMETA(DisplayName = "Right - Short "),
 
-	LeftShortIn        UMETA(DisplayName = "Left - Short In"),
-	LeftShortOut       UMETA(DisplayName = "Left - Short Out"),
-	LeftShort     UMETA(DisplayName = "Left - Short "),
+	LeftShortIn        ,//UMETA(DisplayName = "Left - Short In"),
+	LeftShortOut       ,//UMETA(DisplayName = "Left - Short Out"),
+	LeftShort     ,//UMETA(DisplayName = "Left - Short "),
 
-	LeftToDownLeft     UMETA(DisplayName = "Left To DownLeft"),
-	RightToDownRight   UMETA(DisplayName = "Right To DownRight"),
+	LeftToDownLeft     ,//UMETA(DisplayName = "Left To DownLeft"),
+	RightToDownRight   ,//UMETA(DisplayName = "Right To DownRight"),
 
 
-	DownRightShortOut  UMETA(DisplayName = "Down Right - Short Out"),
-	DownRightShort		 UMETA(DisplayName = "Down Right - Short"),
-	DownRightShortIn   UMETA(DisplayName = "Down Right - Short In"),
+	DownRightShortOut  ,//UMETA(DisplayName = "Down Right - Short Out"),
+	DownRightShort		 ,//UMETA(DisplayName = "Down Right - Short"),
+	DownRightShortIn   ,//UMETA(DisplayName = "Down Right - Short In"),
 
-	DownLeftShortOut   UMETA(DisplayName = "Down Left - Short Out"),
-	DownLeftShort UMETA(DisplayName = "Down Left - Short "),
-	DownLeftShortIn    UMETA(DisplayName = "Down Left - Short In"),
+	DownLeftShortOut   ,//UMETA(DisplayName = "Down Left - Short Out"),
+	DownLeftShort ,//UMETA(DisplayName = "Down Left - Short "),
+	DownLeftShortIn    ,//UMETA(DisplayName = "Down Left - Short In"),
 
 	// New swap variants
-	DownRightToDownLeft UMETA(DisplayName = "Down Right to Down Left"),
-	DownLeftToDownRight UMETA(DisplayName = "Down Left to Down Right"),
+	DownRightToDownLeft ,//UMETA(DisplayName = "Down Right to Down Left"),
+	DownRightShortInToDownLeft ,//UMETA(DisplayName = "Down Right ShortIn to Down Left"),
+	DownLeftToDownRight ,//UMETA(DisplayName = "Down Left to Down Right"),
+	DownLeftShortInToDownRight ,//UMETA(DisplayName = "Down Left ShortIn to Down Right"),
 
 	/*These need animations:*/
-	DownRightToRight	UMETA(DisplayName = "Down Right to Right"), //done
-	DownRightToLeft		UMETA(DisplayName = "Down Right to Right"),
-	DownLeftToRight		UMETA(DisplayName = "Down Left to Right"),
-	DownLeftToLeft		UMETA(DisplayName = "Down Left to Left"),
+	DownRightToRight	,//UMETA(DisplayName = "Down Right to Right"), //done
+	DownRightToLeft		,//UMETA(DisplayName = "Down Right to Left"), //NotNeeded
+	DownRightShortInToLeft		,//UMETA(DisplayName = "Down Right Short In to Left"), //NotNeeded
+	DownLeftToRight		,//UMETA(DisplayName = "Down Left to Right"), //NotNeeded
+	DownLeftShortInToRight		,//UMETA(DisplayName = "Down Left Short In To Right"), //NotNeeded
+	DownLeftToLeft		,//UMETA(DisplayName = "Down Left to Left"), //done
 
-	LeftShortInToDownLeft UMETA(DisplayName = "Down Left to Left"),
-	LeftToDownRight	      UMETA(DisplayName = "Down Left to Left"),
-	LeftShortToDownRight  UMETA(DisplayName = "Down Left to Left"),
-	RightShortInToDownRight  UMETA(DisplayName = "Down Left to Left"),
-	RightToDownLeft  UMETA(DisplayName = "Down Left to Left"),
-	RightShortToDownLeft  UMETA(DisplayName = "Down Left to Left"),
+	LeftShortInToDownLeft ,//UMETA(DisplayName = "Down Left to Left"),
+	LeftShortInToDownRight ,//UMETA(DisplayName = "Down Left to Left"),
+	LeftToDownRight	      ,//UMETA(DisplayName = "Down Left to Left"),
+	//LeftShortInToDownRight  ,//UMETA(DisplayName = "Down Left to Left"),
+	RightShortInToDownRight  ,//UMETA(DisplayName = "Down Left to Left"),
+	RightShortInToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
+	RightToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
+//	RightShortInToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
 
-	DownLeftShortToLeft  UMETA(DisplayName = "Down Left to Left"),
-	DownLeftShortToDownRight  UMETA(DisplayName = "Down Left to Left"),
-	DownRightShortToRight  UMETA(DisplayName = "Down Left to Left"),
-	DownRightShortToDownLeft  UMETA(DisplayName = "Down Left to Left"),
+	DownLeftShortToLeft  ,//UMETA(DisplayName = "Down Left to Left"),
+	DownLeftShortToDownRight  ,//UMETA(DisplayName = "Down Left to Left"),
+	DownRightShortToRight  ,//UMETA(DisplayName = "Down Left to Left"),
+	DownRightShortToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
 
 
 	
-	RightShortToDownRight  UMETA(DisplayName = ""),
-	LeftShortToDownLeft  UMETA(DisplayName = ""),
+	/*RightShortInToDownRight  UMETA(DisplayName = ""),
+	LeftShortInToDownLeft  UMETA(DisplayName = ""),*/
 	
 	
 	/*UpRightShortOut    UMETA(DisplayName = "Up Right - Short Out"),
@@ -156,6 +163,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	
+	void PlayNextAnimation_Implementation();
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	//USkeletalMeshComponent* FrogMesh;
@@ -187,6 +195,7 @@ protected:
 	TMap<EJumpDirection, UAnimMontage*> JumpMontages;
 	
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animations)
+	UAnimMontage* Error;
 	UAnimMontage* JumpUpRight;
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animations)
 	UAnimMontage* JumpUpLeft;
@@ -206,6 +215,7 @@ protected:
 	UAnimMontage* JumpLeftShortIn;
 	UAnimMontage* JumpLeftShortOut;
 	UAnimMontage* JumpLeftShort;
+	UAnimMontage* None;
 	
 	/*UAnimMontage* JumpUpRightShortOut;
 	UAnimMontage* JumpUpRightShort;
@@ -228,29 +238,33 @@ protected:
 
 	UAnimMontage* JumpDownRightToRight;
 	UAnimMontage* JumpDownRightToLeft;
+	UAnimMontage* JumpDownRightShortInToLeft;
+
 	UAnimMontage* JumpDownLeftToRight;
+	UAnimMontage* JumpDownLeftShortInToRight;
+
 	UAnimMontage* JumpDownLeftToLeft;
 
 	UAnimMontage* JumpLeftToDownLeft;
 	UAnimMontage* JumpLeftShortInToDownLeft;
 
 	UAnimMontage* JumpLeftToDownRight;
-	UAnimMontage* JumpLeftShortToDownRight;
+	UAnimMontage* JumpLeftShortInToDownRight;
 
 	UAnimMontage* JumpRightToDownRight;
 	UAnimMontage* JumpRightShortInToDownRight;
 
 	UAnimMontage* JumpRightToDownLeft;
-	UAnimMontage* JumpRightShortToDownLeft;
+	UAnimMontage* JumpRightShortInToDownLeft;
 
-	UAnimMontage* JumpDownLeftShortToLeft;
-	UAnimMontage* JumpDownLeftShortToDownRight;
+	UAnimMontage* JumpDownLeftShortInToLeft;
+	UAnimMontage* JumpDownLeftShortInToDownRight;
 
-	UAnimMontage* JumpDownRightShortToRight;
-	UAnimMontage* JumpDownRightShortToDownLeft;
+	UAnimMontage* JumpDownRightShortInToRight;
+	UAnimMontage* JumpDownRightShortInToDownLeft;
 
-	UAnimMontage* JumpRightShortToDownRight;
-	UAnimMontage* JumpLeftShortToDownLeft;
+	/*UAnimMontage* JumpRightShortInToDownRight;
+	UAnimMontage* JumpLeftShortInToDownLeft;*/
 
 	UPROPERTY(EditDefaultsOnly, Category = "Jump Montages")
 	TMap<EJumpDirection, UAnimMontage*> JumpMontageMap;
