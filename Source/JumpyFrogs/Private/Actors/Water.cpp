@@ -42,7 +42,8 @@ AWater::AWater()
 	WaterMesh->SetupAttachment(Box);
 	//WaterMesh->SetMaterial(0, ConstructorStatics.WatMat.Get());
 	WaterMesh->bCastDynamicShadow = false;
-	
+	WaterMesh->bAffectDynamicIndirectLighting = true;
+	//WaterMesh->translucent = true;
 }
 
 // Called when the game starts or when spawned

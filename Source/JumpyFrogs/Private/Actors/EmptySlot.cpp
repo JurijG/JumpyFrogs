@@ -14,6 +14,8 @@ AEmptySlot::AEmptySlot()
 	Box->bHiddenInGame = false;
 	Box->SetBoxExtent(FVector(100.f, 100.f, 10.f));	
 	Box->SetCollisionProfileName(TEXT("EmptySlotProfile"));
+	Box->ShapeColor = FColor::Orange;
+	//Box->SetLineThickness(2.0f);
 	RootComponent = Box;
 
 }

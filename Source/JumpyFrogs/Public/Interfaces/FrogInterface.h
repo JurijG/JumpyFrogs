@@ -27,7 +27,10 @@ public:
 	void Jump(const TArray<FVector>& InMarkedSlots);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void Eliminate();
+	void DestroyFrog();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void JumpAway();
 
 	UFUNCTION(BlueprintNativeEvent)
 	void PlayNextAnimation();

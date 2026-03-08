@@ -68,10 +68,10 @@ enum class EJumpMontage : uint8
 	RightToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
 //	RightShortInToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
 
-	DownLeftShortToLeft  ,//UMETA(DisplayName = "Down Left to Left"),
-	DownLeftShortToDownRight  ,//UMETA(DisplayName = "Down Left to Left"),
-	DownRightShortToRight  ,//UMETA(DisplayName = "Down Left to Left"),
-	DownRightShortToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
+	DownLeftShortInToLeft  ,//UMETA(DisplayName = "Down Left to Left"),
+	//DownLeftShortInToDownRight  ,//UMETA(DisplayName = "Down Left to Left"),
+	DownRightShortInToRight  ,//UMETA(DisplayName = "Down Left to Left"),
+//	DownRightShortInToDownLeft  ,//UMETA(DisplayName = "Down Left to Left"),
 
 
 	
@@ -173,10 +173,17 @@ protected:
 
 	//void Jump(const TArray<FVector> InMarkedSlots)
 	void Jump_Implementation(const TArray<FVector>& InMarkedSlots);
-	void Eliminate_Implementation();
+
+	void DestroyFrog_Implementation();
+	void JumpAway_Implementation();
 	TArray<EJumpDirection> MarkedJumpDirections;
 
-	TArray<FFrogJump> MappedJumps;
+	TArray<FFrogJump> RightJumps;
+	TArray<FFrogJump> LeftJumps;
+	TArray<FFrogJump> DownLeftJumps;
+	TArray<FFrogJump> DownRightJumps;
+	
+
 	TArray<UAnimMontage*> MarkedJumpAnims;
 	TArray<EJumpMontage> MarkedJumps;
 
@@ -262,6 +269,9 @@ protected:
 
 	UAnimMontage* JumpDownRightShortInToRight;
 	UAnimMontage* JumpDownRightShortInToDownLeft;
+
+
+	UAnimMontage* LeaveBwdLeft;
 
 	/*UAnimMontage* JumpRightShortInToDownRight;
 	UAnimMontage* JumpLeftShortInToDownLeft;*/

@@ -31,13 +31,13 @@ public:
 	
 protected:
 
-	int32 CurrentLevel = 100; //  100 -> TESTLEVEL;
+	int32 CurrentLevel = 30; //  100 -> TESTLEVEL;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	int32 FrogsRemaining = 0;
-	TArray <AFrog*> FrogsArray;
-	TArray <AEmptySlot*> TheSlotsArray;
+	TArray <AActor*> FrogsArray;
+	TArray <AActor*> SlotsArray;
 	//TArray <AEmptySlot*> TheSlotsArray;
 
 #pragma region DataTableVars
@@ -53,9 +53,12 @@ protected:
 
 	void AddSlot(FVector2D Pos);
 
-	bool IsMoveValidCheck_Implementation(FVector Location);
+	bool IsMoveValidCheck_Implementation(const FVector Location);
+	void RemoveFrogAddSlot_Implementation(const FVector NewFrogLoc, const  FVector MiddleLoc);
+	void FrogJumpingEnded_Implementation();
+
 	void RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
-	void SpawnFrogsAndProps(int32 SelectedLevel);
+	void SpawnFrogsAndProps(const int32 SelectedLevel);
 
 
 #pragma endregion

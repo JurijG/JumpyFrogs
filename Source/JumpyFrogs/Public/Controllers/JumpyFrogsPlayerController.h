@@ -23,6 +23,8 @@ class JUMPYFROGS_API AJumpyFrogsPlayerController : public APlayerController
 	AJumpyFrogsPlayerController();
 	void SetupInputComponent() override;
 
+public:
+	bool bMoveInAction = false;
 
 protected:
 	void BeginPlay() override;

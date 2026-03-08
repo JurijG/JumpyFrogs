@@ -27,5 +27,11 @@ public:
 	bool IsMoveValidCheck(FVector Location);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void RemoveFrogAddSlot(const FVector StartFrogLoc, const  FVector EndFrogLoc);
+
+	UFUNCTION(BlueprintNativeEvent)
 	void RemoveFrogsAndAddSlots(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void FrogJumpingEnded();
 };
