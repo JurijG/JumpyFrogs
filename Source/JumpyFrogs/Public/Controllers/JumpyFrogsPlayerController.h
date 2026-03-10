@@ -44,6 +44,9 @@ protected:
 	UInputMappingContext* IMC_Default_MappingContext;
 
 	
+
+	bool CheckIfFrogAlreadyAdded(const FVector InFrogLoc);
+
 	void OnMouseClicked();
 	void OnMousePulse();
 	void OnMouseReleased();
@@ -55,6 +58,8 @@ protected:
 	TArray<FVector> JumpPathLocations;
 	//TArray<UObject*> MarkedSlots;
 	TArray<FVector> MarkedSlots;
+	TArray<FVector> FrogsToRemoveLocations;
+
 	UObject* SelectedFrog;
 	AJumpVisualizer* JumpVisualizer = nullptr;
 };

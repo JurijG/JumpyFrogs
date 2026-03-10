@@ -168,7 +168,6 @@ bool AJumpyFrogsGameMode::IsMoveValidCheck_Implementation(const FVector Location
 		if (!IsValid(Frog)) continue;
 		if (Frog->GetActorLocation() == Location)
 		{
-		
 			return true;
 		}
 	}

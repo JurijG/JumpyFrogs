@@ -6,12 +6,12 @@
 
 void UFrogsAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	/*UE_LOG(LogTemp, Warning, TEXT("Anim Notify: %s triggered, while playing animation: %s"), *GetName(), *Animation->GetName());
-	if (AActor* Owner = MeshComp->GetOwner())
-	{
-		if (Owner->Implements<UFrogInterface>())
-		{
-			IFrogInterface::Execute_PlayNextAnimation(Owner);
-		}
-	}*/
+	//UE_LOG(LogTemp, Warning, TEXT("Anim Notify: %s triggered, while playing animation: %s"), *GetName(), *Animation->GetName());
+	//if (AActor* Owner = MeshComp->GetOwner())
+	//{
+	//	if (Owner->Implements<UFrogInterface>())
+	//	{
+	//		IFrogInterface::Execute_PlayNextAnimation(Owner);
+	//	}
+	//}
 }

@@ -163,7 +163,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	
-	void PlayNextAnimation_Implementation();
+	//void PlayNextAnimation_Implementation();
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	//USkeletalMeshComponent* FrogMesh;
@@ -203,6 +203,7 @@ protected:
 	
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animations)
 	UAnimMontage* Error;
+	UAnimMontage* SwimAway;
 	UAnimMontage* JumpUpRight;
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Animations)
 	UAnimMontage* JumpUpLeft;

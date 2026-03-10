@@ -60,6 +60,7 @@ AFrog::AFrog()
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpFwdLeftShortObj;*/
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> ErrorObj;
+		
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortInObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpBwdRightShortOutObj;
@@ -106,7 +107,7 @@ AFrog::AFrog()
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortInToDownRightObj;
 
 		ConstructorHelpers::FObjectFinder<UAnimMontage> LeaveBwdLeftObj;
-
+		ConstructorHelpers::FObjectFinder<UAnimMontage> SwimAwayObj;
 		FConstructorStatics()
 			: FrogMeshObj(TEXT("/Game/Frog/SkelMesh/FrogSkelMesh"))
 			, FrogAnimBPObj(TEXT("/Game/Frog/Animations/FrogAnimBP"))
@@ -148,6 +149,7 @@ AFrog::AFrog()
 			, JumpFwdLeftShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShortOut_Montage"))
 			, JumpFwdLeftShortObj(TEXT("/Game/Frog/Animations/Montages/JumpFwdLeftShort_Montage"))*/
 			, ErrorObj(TEXT("/Game/Frog/Animations/Montages/New/Error_Montage"))
+			//, Error2Obj(TEXT("/Game/Frog/Animations/Montages/New/Error2_Montage"))
 
 			, JumpBwdRightShortInObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShortIn_Montage"))
 			, JumpBwdRightShortOutObj(TEXT("/Game/Frog/Animations/Montages/JumpBwdRightShortOut_Montage"))
@@ -191,6 +193,7 @@ AFrog::AFrog()
 			, JumpLeftShortInToDownRightObj(TEXT("/Game/Frog/Animations/Montages/New/JumpLeftShortInToDownRight_Montage"))
 
 			, LeaveBwdLeftObj(TEXT("/Game/Frog/Animations/Montages/Remove/LeaveBwdLeft_Montage"))
+			, SwimAwayObj(TEXT("/Game/Frog/Animations/Montages/New/SwimAway_Montage"))
 		
 			
 			/*/Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/JumpLeftShor_Montage.JumpLeftShor_Montage'
@@ -228,6 +231,7 @@ AFrog::AFrog()
 	}
 
 	Error = ConstructorStatics.ErrorObj.Object;
+	
 	JumpRight = ConstructorStatics.JumpRightObj.Object;
 	JumpLeft = ConstructorStatics.JumpLeftObj.Object;
 	JumpUpRight = ConstructorStatics.JumpFwdRightObj.Object;
@@ -292,7 +296,7 @@ AFrog::AFrog()
 
 	LeaveBwdLeft = ConstructorStatics.LeaveBwdLeftObj.Object;
 
-	
+	SwimAway = ConstructorStatics.SwimAwayObj.Object;
 
 
 	MatBlue = ConstructorStatics.BlueMaterial.Get();
@@ -596,7 +600,7 @@ AFrog::AFrog()
 	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownLeft, EJumpDirection::None, EJumpMontage::DownLeftShortIn, JumpDownLeftShortIn) });
 	
 	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownLeft, EJumpDirection::Right, EJumpMontage::DownLeftShortIn, JumpDownLeftShortInToRight) });
-	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpMontage::DownLeftToDownRight, JumpDownLeftToDownRight) });
+	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownLeft, EJumpDirection::DownRight, EJumpMontage::DownLeftShortInToDownRight, JumpDownLeftShortInToDownRight) });
 	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownLeft, EJumpDirection::DownLeft, EJumpMontage::DownLeftShort, JumpDownLeftShort) });
 	DownLeftJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownLeft, EJumpDirection::Left, EJumpMontage::DownLeftShortInToLeft, JumpDownLeftShortInToLeft) });
 	
@@ -630,7 +634,7 @@ AFrog::AFrog()
 	DownRightJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownRight, EJumpDirection::None, EJumpMontage::DownRightShortIn, JumpDownRightShortIn) });
 	DownRightJumps.Add({ FFrogJump(EJumpDirection::Right, EJumpDirection::DownRight, EJumpDirection::Left, EJumpMontage::DownRightShortIn, JumpDownRightShortInToLeft) });
 	
-	DownRightJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpMontage::DownRightToDownLeft, JumpDownRightToDownLeft) });
+	DownRightJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownRight, EJumpDirection::DownLeft, EJumpMontage::DownRightShortInToDownLeft, JumpDownRightShortInToDownLeft) });
 	DownRightJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownRight, EJumpDirection::DownRight, EJumpMontage::DownRightShort, JumpDownRightShort) });
 	DownRightJumps.Add({ FFrogJump(EJumpDirection::Left, EJumpDirection::DownRight, EJumpDirection::Right, EJumpMontage::DownRightShortInToRight, JumpDownRightShortInToRight) });
 
@@ -923,13 +927,18 @@ void AFrog::DestroyFrog_Implementation()
 void AFrog::JumpAway_Implementation()
 {
 	
+	/*FrogMesh->SetSimulatePhysics(true);
+	FrogMesh->SetEnableGravity(true);
+	FrogMesh->SetCollisionProfileName(TEXT("BlockAll"));*/
+
 	//TODO:: Add frog jumping into water animation
 	UAnimInstance* AnimInstance = FrogMesh->GetAnimInstance();
 	if (AnimInstance)
 	{
 		if (LeaveBwdLeft)
 		{
-			AnimInstance->Montage_Play(LeaveBwdLeft);
+			AnimInstance->Montage_Play(SwimAway);
+			//AnimInstance->Montage_Play(LeaveBwdLeft);
 			//BoxMesh->SetCollisionProfileName(TEXT("NoCollision"));
 			//BoxMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
@@ -951,64 +960,83 @@ void AFrog::BeginPlay()
 	UAnimInstance* Anim = Cast<UAnimInstance>(FrogMesh->GetAnimInstance());
 	Anim->OnMontageEnded.AddDynamic(this, &AFrog::OnAnyMontageEnded);
 
+
 	//AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AAICharacterBase::OnPerceptionUpdated);
 	//AIPerceptionComp->OnTargetPerceptionUpdated.AddDynamic(this, &AAICharacterBase::OnPerceptionUpdated);
 	//PawnPerceptionComp->OnSeePawn.AddDynamic(this, &AAICharacterBase::OnPawnSeen);
 }
-void AFrog::PlayNextAnimation_Implementation()
-{
-	
-	/*else 
-	{
-		SetActorLocation(MarkedSlots[CurrentJumpIndex + 1]);
-		CurrentJumpIndex++;
-		if (CurrentJumpIndex < MarkedJumpDirections.Num())
-		{
-			PerformJump();
-		}
-	}*/
-}
+//void AFrog::PlayNextAnimation_Implementation()
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("PlayNextAnimation_Implementation called."));
+//
+//	CurrentJumpIndex++;
+//	SetActorLocation(MarkedSlots[CurrentJumpIndex]);
+//
+//
+//	if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+//	{
+//		if (GM->Implements<UGameModeInterface>())
+//		{
+//			/*	FVector First = MarkedSlots[0];
+//				FVector Second = MarkedSlots[1];
+//
+//				FVector test = (First + Second) /2;*/
+//			IGameModeInterface::Execute_RemoveFrogAddSlot(GM, MarkedSlots[CurrentJumpIndex - 1], MarkedSlots[CurrentJumpIndex]);
+//			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
+//		}
+//	}
+//
+//	if (CurrentJumpIndex < MarkedJumpDirections.Num())
+//	{
+//		PerformJump();
+//	}
+//	else if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+//	{
+//		if (GM->Implements<UGameModeInterface>())
+//		{
+//			/*	FVector First = MarkedSlots[0];
+//				FVector Second = MarkedSlots[1];
+//
+//				FVector test = (First + Second) /2;*/
+//			IGameModeInterface::Execute_FrogJumpingEnded(GM);
+//			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
+//		}
+//
+//	}
+//	/*else 
+//	{
+//		SetActorLocation(MarkedSlots[CurrentJumpIndex + 1]);
+//		CurrentJumpIndex++;
+//		if (CurrentJumpIndex < MarkedJumpDirections.Num())
+//		{
+//			PerformJump();
+//		}
+//	}*/
+//}
 void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnAnyMontageEnded called for  %s, with bInterrupted = %s."), *Montage->GetName(), bInterrupted ? *FString(TEXT("True")) : *FString(TEXT("False")));
-	/*FString MontageName = Montage->GetName();
-	if (MontageName.Contains(TEXT("Attack")))
-	{
-	}
-	else if (MontageName.Contains(TEXT("StartFlying")))
-	{
-	}*/
-	//for debugging
-	//if (CurrentJumpIndex < MarkedSlots.Num())
-	//{
-	//	UE_LOG(LogTemp, Log, TEXT("Playing Jump %d/%d: %s"),
-	//		CurrentJumpIndex,
-	//		MarkedSlots.Num(),
-	//		*UEnum::GetValueAsString(MarkedSlots[CurrentJumpIndex]));
-	//	SetActorLocation(MarkedSlots[CurrentJumpIndex]);
-	//}
+
 	CurrentJumpIndex++;
-	SetActorLocation(MarkedSlots[CurrentJumpIndex]);
-	
-		
+
 	if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 	{
 		if (GM->Implements<UGameModeInterface>())
 		{
-		/*	FVector First = MarkedSlots[0];
-			FVector Second = MarkedSlots[1];
+			/*	FVector First = MarkedSlots[0];
+				FVector Second = MarkedSlots[1];
 
-			FVector test = (First + Second) /2;*/
+				FVector test = (First + Second) /2;*/
 			IGameModeInterface::Execute_RemoveFrogAddSlot(GM, MarkedSlots[CurrentJumpIndex - 1], MarkedSlots[CurrentJumpIndex]);
 			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
 		}
 	}
-
+	SetActorLocation(MarkedSlots[CurrentJumpIndex]);
 	if (CurrentJumpIndex < MarkedJumpDirections.Num())
 	{
 		PerformJump();
 	}
-	else if(UObject * GM = (UObject*)GetWorld()->GetAuthGameMode())
+	else if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 	{
 		if (GM->Implements<UGameModeInterface>())
 		{
@@ -1019,9 +1047,23 @@ void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 			IGameModeInterface::Execute_FrogJumpingEnded(GM);
 			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
 		}
-	
+
 	}
 }
+//void AMyCharacter::WarmupMontages() //TODO: Add preload to animations and effects
+//{
+//	UAnimInstance* Anim = GetMesh()->GetAnimInstance();
+//
+//	for (UAnimMontage* Montage : JumpMontages)
+//	{
+//		if (!Montage) continue;
+//
+//		Anim->Montage_Play(Montage, 0.001f);
+//		Anim->Montage_Stop(0.f, Montage);
+//	}
+//}
+// 
+// 
 //void AFrog::BeginPlay()
 //{
 //	Super::BeginPlay();

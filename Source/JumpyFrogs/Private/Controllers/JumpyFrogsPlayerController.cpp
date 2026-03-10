@@ -145,7 +145,7 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
 
                         /*JumpPathLocations[JumpPathLocations.Num() - 1] = Hit.Location;*/
                         JumpVisualizer->SetTraceNiagaraVectorArray(JumpPathLocations);
-                        if (HitActor->Implements<UEmptySlotInterface>())
+                        if (HitActor->Implements<UEmptySlotInterface>())// || HitActor == SelectedFrog  //did we hit empty slot or selected frog
                         {
                             FVector SlotLocation = HitActor->GetActorLocation();
                             if (!IsSlotAlreadyMarked(SlotLocation))
@@ -159,24 +159,31 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
                                         //check if move is valid, if frog is in the inbetween position
                                         //UE_LOG(LogTemp, Warning, TEXT("Distance : %s"), *FString::SanitizeFloat(FVector::Distance(StartLocation, SlotLocation))); 
                                         //UE_LOG(LogTemp, Warning, TEXT("Distance from frog to emptyslot: %s"), *FString::SanitizeFloat(FVector::Distance(StartLocation, SlotLocation)));
-                                        if (FVector::Distance(StartLocation, SlotLocation) < 503.f && IGameModeInterface::Execute_IsMoveValidCheck(GM, (StartLocation + SlotLocation) / 2))
+                                        FVector MidLoc = (StartLocation + SlotLocation) / 2;
+                                        if (FVector::Distance(StartLocation, SlotLocation) < 503.f && !CheckIfFrogAlreadyAdded(MidLoc))
                                         {
-                                            MarkedSlots.Add(SlotLocation);
-                                            JumpPathLocations[2] = SlotLocation;
-                                            JumpVisualizer->AddDestinationRing(SlotLocation, JumpPathLocations);
-                                            JumpPathLocations[0] = SlotLocation;
-                                            JumpPathLocations[1] = SlotLocation;
-                                            //JumpPathLocations[2] = SlotLocation;
-                                            /*JumpPathLocations[JumpPathLocations.Num() - 1] = SlotLocation;
-                                            JumpPathLocations.Add(SlotLocation);
-                                            JumpPathLocations.Add(SlotLocation);*/
+                                            if (IGameModeInterface::Execute_IsMoveValidCheck(GM, MidLoc))
+                                            {
+                                                MarkedSlots.Add(SlotLocation);
+                                                FrogsToRemoveLocations.Add(MidLoc);
+                                                JumpPathLocations[2] = SlotLocation;
+                                                JumpVisualizer->AddDestinationRing(SlotLocation, JumpPathLocations);
+                                                JumpPathLocations[0] = SlotLocation;
+                                                JumpPathLocations[1] = SlotLocation;
 
-                                            //JumpVisualizer->SetTraceNiagaraVectorArray(JumpPathLocations);
+                                                //JumpPathLocations[2] = SlotLocation;
+                                                /*JumpPathLocations[JumpPathLocations.Num() - 1] = SlotLocation;
+                                                JumpPathLocations.Add(SlotLocation);
+                                                JumpPathLocations.Add(SlotLocation);*/
+
+                                                //JumpVisualizer->SetTraceNiagaraVectorArray(JumpPathLocations);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                      
                         //else
                         //{
                         //    FVector StartOfCurve = JumpPathLocations[0];
@@ -248,6 +255,17 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
   
 }
 
+bool AJumpyFrogsPlayerController::CheckIfFrogAlreadyAdded(const FVector InFrogLoc)
+{
+    for (const FVector& FrogLoc : FrogsToRemoveLocations)
+    {
+        if (InFrogLoc == FrogLoc)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 void AJumpyFrogsPlayerController::OnMouseClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("OnMouseClicked"));
@@ -287,6 +305,7 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
     }
     SelectedFrog = nullptr;
     MarkedSlots.Empty();
+    FrogsToRemoveLocations.Empty();
 
     if (JumpVisualizer != nullptr)
     {
@@ -320,13 +339,18 @@ void AJumpyFrogsPlayerController::OnTouchEnd(const FInputActionValue& Value)
 
 bool AJumpyFrogsPlayerController::IsSlotAlreadyMarked(const FVector SlotLoc)
 {
-    for (FVector MarkedSlotLoc : MarkedSlots)
+    for (const FVector& MarkedSlotLoc : MarkedSlots)
     {
         if (MarkedSlotLoc == SlotLoc)
         {
+            if (SlotLoc != MarkedSlots[MarkedSlots.Num()-1] && SlotLoc != MarkedSlots[MarkedSlots.Num() - 2])
+            {
+                return false;
+            }
             return true;
         }
     }
+
     return false;
 }
 //
