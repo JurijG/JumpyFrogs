@@ -5,7 +5,6 @@
 UJumpyFrogsGameInstance::UJumpyFrogsGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	bIsSoundOnOff = true;
 	bTransitionCam = false;
 	LevelNumber = 1;
 	bIsCamHome = true;

@@ -23,6 +23,18 @@ class JUMPYFROGS_API IGameModeInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 
+	/*UFUNCTION(BlueprintNativeEvent)
+	void LoadNextLevel();*/
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadLevel(int32 LevelNumber);
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool SaveLanguage();
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool SaveGameDataToFile();
+
 	UFUNCTION(BlueprintNativeEvent)
 	bool IsMoveValidCheck(FVector Location);
 
@@ -34,4 +46,36 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void FrogJumpingEnded();
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetPlayTime() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetTimeBonus() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetScore() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	TArray<bool> GetUnlockedArray() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	TArray<int32> GetHighScoreArray() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetCurrentLevel() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool GetAchievementUnlocked() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool GetBlockClicks() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool GetNewLevUnlocked() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	int32 GetAchIndex() const;
+
+	
 };

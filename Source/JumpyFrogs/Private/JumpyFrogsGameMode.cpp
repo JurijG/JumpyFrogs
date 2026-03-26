@@ -4,11 +4,15 @@
 #include "Pawns/PlayerPawn.h"
 #include "Controllers/JumpyFrogsPlayerController.h"
 #include "UI/JumpyFrogsHUD.h"
+
 #include "Actors/Frog.h"
 #include "Actors/LilyPads.h"
 #include "Actors/EmptySlot.h"
 #include "Actors/Water.h"
+#include "GameInstances/JumpyFrogsGameInstance.h"
 
+#include "HAL/PlatformFilemanager.h"
+#include "Serialization/BufferArchive.h"
 
 //#include "Actors/EmptySlot.h"
 //#include "TimerManager.h"
@@ -24,7 +28,7 @@
 //#include "Components/StaticMeshComponent.h"
 //#include "Materials/MaterialInstance.h"
 #include "Components/AudioComponent.h"
-//#include "Kismet/GameplayStatics.h"
+#include "Kismet/GameplayStatics.h"
 //#include "Sound/SoundCue.h"
 //#include "Engine/World.h"
 //#include "Particles/ParticleSystemComponent.h"
@@ -56,7 +60,7 @@ AJumpyFrogsGameMode::AJumpyFrogsGameMode()
 
 		FConstructorStatics()
 			: TelAndBombsDTObj(TEXT("/Game/DataTables/FTelAndBombsDataList.FTelAndBombsDataList"))
-			, SpawnLevelsDTObj(TEXT("/Game/DataTables/FTelAndBombsDataList.FTelAndBombsDataList"))
+			, SpawnLevelsDTObj(TEXT("/Game/DataTables/SpawnLevelsDataTable.SpawnLevelsDataTable"))
 		{
 		}
 	};
@@ -126,7 +130,34 @@ AJumpyFrogsGameMode::AJumpyFrogsGameMode()
 }
 void AJumpyFrogsGameMode::BeginPlay()
 {
-	SpawnFrogsAndProps(5); //GameInstanceReference->LevelNumber
+	//SpawnFrogsAndProps(5); //GameInstanceReference->LevelNumber
+
+	FString Path = FPaths::ProjectDir();
+	Path.Append("\\Saved\\jumpyfrogs.save");
+
+	//FString Path("C:\\JumpyFrogsSaves\\SaveData\\jumpyfrogs.save");
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*Path))
+	{
+		UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+		LoadGameDataFromFile(Path, GameInstanceReference->bSoundOn, Language, AchievementsArray, UnlockedArray, HighScoreArray);
+		//GameInstanceReference->SelLang = NumGemsCollected;
+		
+		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Yellow, FString::FromInt(NumGemsCollected));
+		/*for (int32 i = 0; i < 10; ++i)
+		{
+		..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, UnlockedArray[i] ? "True" : "False");
+		}*/
+
+		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Load successful !!!!!"));
+		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::FromInt(NumGemsCollected));
+		//ToDelete:
+	}
+	else
+	{
+		
+		FTimerHandle GameCen32;
+		GetWorld()->GetTimerManager().SetTimer(GameCen32, this, &AJumpyFrogsGameMode::FirstSave, 0.3f, false);
+	}
 
 
 	Lifecycle->ApplicationWillEnterBackgroundDelegate.AddDynamic(this, &AJumpyFrogsGameMode::EnterBackground);
@@ -140,6 +171,24 @@ void AJumpyFrogsGameMode::BeginPlay()
 	//AddFlowers(FVector2D(300.0f, 1250.0f));
 
 	GetWorld()->SpawnActor<AWater>(FVector(0.0f, 0.0f, 181.0f), FRotator::ZeroRotator);
+
+}
+void AJumpyFrogsGameMode::FirstSave()
+{
+	
+	HighScoreArray.Init(0, 321); // 321 elements, all initialized to 0
+	UnlockedArray.Init(false, 321);
+	UnlockedArray[0] = false;
+	AchievementsArray.Init(false, 16); //TODO: Set to true/false?
+
+	SaveGameDataToFile();
+
+	//PlayClickSound(); TODO: PlaySound
+
+	AJumpyFrogsHUD* JFHudRef = Cast<AJumpyFrogsHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	//SpawnFlareBlocker();
+	JFHudRef->FirstSave();
+	
 
 }
 #pragma region SpawningLevels
@@ -159,6 +208,51 @@ void AJumpyFrogsGameMode::AddSlot(FVector2D Pos)
 	T.Y = Pos.Y;//T.Z = 278.0f-70.f;
 	T.Z = 202.0f;
 	SlotsArray.Add(GetWorld()->SpawnActor<AEmptySlot>(T, FRotator::ZeroRotator));	
+}
+
+int32 AJumpyFrogsGameMode::GetScore_Implementation() const
+{
+	return Score;
+}
+
+int32 AJumpyFrogsGameMode::GetPlayTime_Implementation() const
+{
+	return int32();
+}
+
+int32 AJumpyFrogsGameMode::GetTimeBonus_Implementation() const
+{
+	return TimeBonus;
+}
+
+TArray<bool> AJumpyFrogsGameMode::GetUnlockedArray_Implementation() const
+{
+	return UnlockedArray;
+}
+
+TArray<int32> AJumpyFrogsGameMode::GetHighScoreArray_Implementation() const
+{
+	return HighScoreArray;
+}
+
+bool AJumpyFrogsGameMode::GetBlockClicks_Implementation() const
+{
+	return bBlockClicks;
+}
+
+bool AJumpyFrogsGameMode::GetAchievementUnlocked_Implementation() const
+{
+	return bAchievementUnlocked;
+}
+
+bool AJumpyFrogsGameMode::GetNewLevUnlocked_Implementation() const
+{
+	return bNewLevUnlocked;
+}
+
+int32 AJumpyFrogsGameMode::GetAchIndex_Implementation() const
+{
+	return AchIndex;
 }
 
 bool AJumpyFrogsGameMode::IsMoveValidCheck_Implementation(const FVector Location)
@@ -224,6 +318,9 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation()
 		MyPlayer->bMoveInAction = false;
 	}
 }
+
+
+
 void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots)
 {
 	//remove slot from the new frog location 
@@ -451,3 +548,220 @@ void AJumpyFrogsGameMode::EnterForeground()
 	}
 }
 #pragma endregion
+
+
+void AJumpyFrogsGameMode::ResetGameData()
+{
+	for (int32 i = 0; i < 321; ++i)
+	{
+		HighScoreArray[i] = 0; //Set all levels highscore to 0, then we load in if savefile exists
+	}
+
+	UnlockedArray[0] = false;
+	for (int32 i = 1; i < 321; ++i)
+	{
+		UnlockedArray[i] = true; //change to true to make save system work properly
+	}
+	//NumGemsCollected = 43;
+	//PlayerLocation = FVector(448.0f, 672.0f, 278.0f);
+	//AchievementsArray.Add(FRotator(448.0f, 672.0f, 278.0f));
+	//FString Path = FPaths::GameDir();
+	SaveGameDataToFile(); //SaveGameDataToFile("C:\\JumpyFrogsSaves\\SaveData\\jumpyfrogs.save");
+	AchievementsArray = { false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false };
+	//TODO: here you should add the order to also delete achievements from the game center and or google play
+}
+
+
+void AJumpyFrogsGameMode::SaveGame()
+{
+	if (!(HighScoreArray[CurrentLevel - 1] > 0)) { IsNewAch = true; }
+	if (UnlockedArray[CurrentLevel] == true) { IsNewTip = true; }
+
+	if (SaveProgress)
+	{
+		if (UnlockedArray[CurrentLevel])
+		{
+			UnlockedArray[CurrentLevel] = false;
+			if (CurrentLevel == 12)
+			{
+				UnlockedArray[100] = false;
+				bNewModeUnlocked = true;
+			}
+			else if (CurrentLevel == 112)
+			{
+				UnlockedArray[200] = false;
+				bNewModeUnlocked = true;
+			}
+			else if (CurrentLevel == 212)
+			{
+				UnlockedArray[300] = false;
+				bNewModeUnlocked = true;
+			}
+		}
+		int32 TempScore = Score + TimeBonus;
+		if (HighScoreArray[CurrentLevel - 1] < TempScore)//check if score is bigger than last highscore
+		{
+			HighScoreArray[CurrentLevel - 1] = TempScore;
+			FString Path = FPaths::ProjectDir();
+			Path.Append("\\Saved\\jumpyfrogs.save");
+			class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+			Language = GameInstanceReference->SelLang;
+			SaveGameDataToFile(); //, ToBinary //SaveGameDataToFile("C:\\JumpyFrogsSaves\\SaveData\\jumpyfrogs.save"); //, ToBinary
+
+			//write new highscore to leaderboard TODO:HIghscore leaderboard shit
+			/*if (PlayerLocation.Z == 22.2f)
+			{
+				AJF_HUD* JFHudRef = Cast<AJF_HUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+				JFHudRef->WriteLeaderboard(GetTotalScore());
+			}*/
+		}
+
+		////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Black, FString::FromInt(JFHudRef->totalsc));
+		//}
+	}
+}
+
+void AJumpyFrogsGameMode::SaveGameQuick()
+{
+	SaveGameDataToFile();
+}
+void AJumpyFrogsGameMode::SaveLanguage()
+{
+	
+	SaveGameDataToFile();
+}
+//SAVE SYSTEM CODE:::::--------::::::::>>>>ooooooooooo
+void AJumpyFrogsGameMode::SaveLoadData(FArchive& Ar, bool& bSoundOn, uint8& SaveDataInt32, 
+	TArray<bool>& SaveDataAchievementsArray, TArray<bool>& SaveDataUnlockedArray, TArray<int32>& SaveDataHighScoreArray)
+{
+	Ar << bSoundOn;
+	Ar << SaveDataInt32;
+	Ar << SaveDataAchievementsArray;
+	Ar << SaveDataUnlockedArray;
+	Ar << SaveDataHighScoreArray;
+}
+bool AJumpyFrogsGameMode::SaveGameDataToFile()
+{
+	FString FullFilePath = FPaths::ProjectDir();
+	FullFilePath.Append("\\Saved\\jumpyfrogs.save");
+	
+	//UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+	//Language = GameInstanceReference->SelLang;
+
+	UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+	FBufferArchive ToBinary; //This var must never be global so that it keeps getting deleted once function is complete
+	SaveLoadData(ToBinary, GameInstanceReference->bSoundOn, Language, AchievementsArray, UnlockedArray, HighScoreArray);
+	//Step 2: Binary to Hard Disk
+	if (FFileHelper::SaveArrayToFile(ToBinary, *FullFilePath))
+	{
+		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Save Success!"));
+		return true;
+	}
+	//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("File Could Not Be Saved!"));
+	return false;
+}
+
+
+bool AJumpyFrogsGameMode::LoadGameDataFromFile(
+	const FString& FullFilePath,
+	bool& bSoundOn,
+	uint8& SaveDataInt32,//FVector& SaveDataVector,
+	TArray<bool>& SaveDataAchievementsArray,
+	TArray<bool>& SaveDataUnlockedArray,
+	TArray<int32>& SaveDataHighScoreArray
+)
+{
+	TArray<uint8> TheBinaryArray;
+	if (FPlatformFileManager::Get().GetPlatformFile().FileExists(*FullFilePath)) // if file exists
+	{
+		if (!FFileHelper::LoadFileToArray(TheBinaryArray, *FullFilePath))
+		{
+			//ClientMessage("FFILEHELPER:>> Invalid File");
+			//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("FFILEHELPER:>> Invalid File, Loading Failed, deleting the file now!"));
+			FPlatformFileManager::Get().GetPlatformFile().DeleteFile(*FullFilePath);
+			return false;
+		}
+		else
+		{
+			FMemoryReader FromBinary = FMemoryReader(TheBinaryArray, true); //true, free data after done
+			FromBinary.Seek(0);  // dunno what this does exeactly
+			UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+			SaveLoadData(FromBinary, GameInstanceReference->bSoundOn, Language, AchievementsArray, UnlockedArray, HighScoreArray);
+
+			//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Loaded File Size"));
+			//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::FromInt(TheBinaryArray.Num()));
+			return true;
+		}
+	}
+	else //file doesn't exist
+	{
+		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("There is no Save file in this location!"));
+		return false;
+	}
+}
+//void AJumpyFrogsGameMode::LoadNextLevel_Implementation()
+//{
+//	CurrentLevel++;
+//	LoadMap();
+//}
+void AJumpyFrogsGameMode::LoadLevel_Implementation(int32 LevelNumber)
+{
+	CurrentLevel = LevelNumber;
+	LoadMap(); 
+}
+void AJumpyFrogsGameMode::LoadMap()
+{
+	TArray<FLevelsDataList*> SpawnLevelsList;
+	//TArray<FTelAndBombsDataList*> TelAndBombsList;
+	SpawnLevelsDT->GetAllRows<FLevelsDataList>("Some Debug Message String if Fails", SpawnLevelsList);
+	//TelAndBombsDT->GetAllRows<FTelAndBombsDataList>("Some Debug Message String if Fails", TelAndBombsList);
+	if (CurrentLevel == 33) { CurrentLevel = 101; }
+	else if (CurrentLevel == 141) { CurrentLevel = 201; }
+	else if (CurrentLevel == 229) { CurrentLevel = 301; }
+	else if (CurrentLevel == 321) { CurrentLevel = 320; }
+
+	UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+	GameInstanceReference->LevelNumber = CurrentLevel;
+	UGameplayStatics::OpenLevel(this, FName(*(GetWorld()->GetName())), false);
+
+	//class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+	//GameInstanceReference->CamLocc = SpawnLevelsList[CurrentLevel]->CamLoc;
+	//GameInstanceReference->Distancee = SpawnLevelsList[CurrentLevel]->DistanceList;
+	//CamLoc = GameInstanceReference->CamLocc;
+	//Distance = GameInstanceReference->Distancee;
+	//bIsCameraHome = false;//dodano da se izognemo animaciji kamere itd
+	//if (bIsCameraHome)
+	//{
+	//	GameInstanceReference->AudioStartTime = 0.0f;
+	//	SpawnFrogsAndProps(CurrentLevel);
+	//	AdjustCamera();
+	//	//PondAudioComponent->FadeOut(2.4f, 0.0f);
+	//	PondAudioComponent->FadeOut(1.2f, 0.0f);
+	//	//GameInstanceReference->AudioPrevLength = 0.0f;
+	//	/*FTimerHandle chrysler;
+	//	GetWorld()->GetTimerManager().SetTimer(chrysler, this, &AJumpyFrogsGameModeBase::SaveVarsAndLoadMap, 2.5f, false);*/
+	//}
+	//else
+	//{
+	//int32 TrackLen = 53533;
+	//int32 RnTimeInt = (int32)((CamDirector->RunTime - 0.01f) * 1000);
+	//GameInstanceReference->AudioStartTime += ((float)(RnTimeInt % TrackLen)) / 1000.0f;
+	//GameInstanceReference->AudioPrevLength = ((float)(RnTimeInt % TrackLen)) / 1000.0f;
+	//SaveVarsAndLoadMap();
+	//}
+
+}
+//
+//void AJumpyFrogsGameMode::SaveVarsAndLoadMap()
+//{
+//	UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+//	//nt32 sada= 563 % 60;
+//	GameInstanceReference->LevelNumber = CurrentLevel;
+//	//GameInstanceReference->bIsCamHome = bIsCameraHome;
+//	//GameInstanceReference->IsAiActive = IsAiActive;
+//	//GameInstanceReference->bFadeIn = bIsCameraHome;
+//
+//	UGameplayStatics::OpenLevel(this, FName(*(GetWorld()->GetName())), false);
+//	//UGameplayStatics::OpenLevel(this, FName(*(GetWorld()->GetName() + "?listen?game=AJumpyFrogsGameMode ")), false);
+//}
+//

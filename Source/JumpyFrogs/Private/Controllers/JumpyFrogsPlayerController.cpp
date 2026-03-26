@@ -23,7 +23,7 @@
 AJumpyFrogsPlayerController::AJumpyFrogsPlayerController()
 {
     bShowMouseCursor = true;       // Show the cursor
-    //bEnableClickEvents = true;     // Enable OnClicked events
+    bEnableClickEvents = true;     // Enable OnClicked events
     //bEnableMouseOverEvents = true; // Enable hover events
 
     struct FConstructorStatics

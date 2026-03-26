@@ -18,7 +18,7 @@ public:
 
 	UJumpyFrogsGameInstance(const FObjectInitializer& ObjectInitializer);
 
-	bool bIsSoundOnOff;
+	bool bSoundOn = true;
 
 	int32 LevelNumber;
 	bool bIsCamHome;
@@ -46,6 +46,6 @@ public:
 	TArray<int32> FlowerColors;
 
 	//FString Language;
-	int32 SelLang;
+	int32 SelLang = 1;
 	FVector2D FlagUVPos;
 };
