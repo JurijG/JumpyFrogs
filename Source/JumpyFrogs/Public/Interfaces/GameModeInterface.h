@@ -48,12 +48,6 @@ public:
 	void FrogJumpingEnded();
 
 	UFUNCTION(BlueprintNativeEvent)
-	int32 GetPlayTime() const;
-
-	UFUNCTION(BlueprintNativeEvent)
-	int32 GetTimeBonus() const;
-
-	UFUNCTION(BlueprintNativeEvent)
 	int32 GetScore() const;
 
 	UFUNCTION(BlueprintNativeEvent)

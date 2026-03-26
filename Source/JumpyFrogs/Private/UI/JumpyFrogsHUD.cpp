@@ -240,46 +240,45 @@ void AJumpyFrogsHUD::DrawHUD()
 		FVector2D TimeTextSize;
 		//		FString LevComp = (TEXT("Level  ") + FString::FromInt(CurrentLevel) + ("  Completed"));
 		//	FString::SanitizeFloat(RunTime - 3.0f);
-		int32 ttt;
-		FString TimeCount;
-		if (bShowStartCountdown)
+		//int32 ttt;
+		//FString TimeCount;
+		//if (bShowStartCountdown)
+		//{
+		//	ttt = StartCountdown;
+		//	TimeCount = FString::FromInt(ttt);
+		//	FontScale -= 0.07f;
+		//	if (FontScale < 1.4f) { FontScale = 1.4f; }
+		//	AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
+		//}
+		/*else
+		{*/
+		/*ttt = PlayTime;
+		if (ttt > 59)
 		{
-			ttt = StartCountdown;
-			TimeCount = FString::FromInt(ttt);
-			FontScale -= 0.07f;
-			if (FontScale < 1.4f) { FontScale = 1.4f; }
-			AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
+			int32 mins = ttt / 60;
+			int32 secs = ttt % 60;
+
+			TimeCount = FString::FromInt(mins) + TEXT(":") + FString::FromInt(secs);
 		}
 		else
 		{
-			ttt = PlayTime;
-			if (ttt > 59)
-			{
-				int32 mins = ttt / 60;
-				int32 secs = ttt % 60;
+			TimeCount = FString::FromInt(ttt);
+		}*/
 
-				TimeCount = FString::FromInt(mins) + TEXT(":") + FString::FromInt(secs);
-			}
-			else
-			{
-				TimeCount = FString::FromInt(ttt);
-			}
-			DrawTexture(HUDbuttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(0.0f, 0.0f), IconHitBox, "Pause", false);
+		DrawTexture(HUDbuttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(0.0f, 0.0f), IconHitBox, "Pause", false);
 
-			//AI Solver button
-			/*DrawTexture(HUDbuttons2, IconSize, 0.0f, IconSize, IconSize, 0.75f, 0.0f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(IconSize, 0.0f), IconHitBox, "AISolver", false);*/
+		//AI Solver button
+		/*DrawTexture(HUDbuttons2, IconSize, 0.0f, IconSize, IconSize, 0.75f, 0.0f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(IconSize, 0.0f), IconHitBox, "AISolver", false);*/
 
-			//FString skor = FString::FromInt(IGameModeInterface::Execute_GetScore(GM));
-			FString skor = FString::FromInt(Score);
-			GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
-			DrawText(skor, MyColorDark, SD.X - TimeTextSize.X - SD.X / 100, 0.0f, JFont, FontScale);
+		//FString skor = FString::FromInt(IGameModeInterface::Execute_GetScore(GM));
+		FString skor = FString::FromInt(Score);
+		GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
+		DrawText(skor, MyColorDark, SD.X - TimeTextSize.X - SD.X / 100, 0.0f, JFont, FontScale);
 			
-		}
-		//int32 ttt = (int32)PlayTime;
-		GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
-		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontScale);
+		//GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
+		//DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontScale);
 	}
 	else if (bDrawLevelSelectMenu)
 	{
@@ -726,7 +725,7 @@ void AJumpyFrogsHUD::DrawHUD()
 		DrawTexture(HUDbuttons1b, float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.75f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "Continue", false);
 
-		FString TimeCount;
+		/*FString TimeCount;
 		int32 ttt = PlayTime;
 		if (ttt > 59)
 		{
@@ -741,7 +740,8 @@ void AJumpyFrogsHUD::DrawHUD()
 		}
 		FVector2D TimeTextSize;
 		GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
-		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontScale);
+		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontScale);*/
+		FVector2D TimeTextSize;
 		FString skor = FString::FromInt(Score);
 		GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
 		//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice1 : %s"), *FString::SanitizeFloat(TimeTextSize.X));
@@ -1694,33 +1694,33 @@ void AJumpyFrogsHUD::DrawHUD()
 		// draw bonus time score text
 		//int32 TempScore = (TimeLimitsArray[CurrentLevel] - PlayTime ) * 17;
 
-		LevComp = ScreenTexts[5];//(TEXT("Time Bonus:") );
-		GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
-		DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X), SD.X / 11 + GameWonTextSize.Y * 2 + SD.X / 60, HUDFont, FontSizze * 0.75f);
-		LevComp = FString::FromInt(TimeBonus);
-		GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
-		DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X + distnc), SD.X / 11 + GameWonTextSize.Y * 2 + SD.X / 60, HUDFont, FontSizze * 0.75f);
+		//LevComp = ScreenTexts[5];//(TEXT("Time Bonus:") );
+		//GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
+		//DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X), SD.X / 11 + GameWonTextSize.Y * 2 + SD.X / 60, HUDFont, FontSizze * 0.75f);
+		//LevComp = FString::FromInt(TimeBonus);
+		//GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
+		//DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X + distnc), SD.X / 11 + GameWonTextSize.Y * 2 + SD.X / 60, HUDFont, FontSizze * 0.75f);
 
-		// draw Total Score text
-		LevComp = ScreenTexts[6];//(TEXT("Total Score:"));
-		GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
-		DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X), SD.X / 11 + GameWonTextSize.Y * 3 + SD.X / 60, HUDFont, FontSizze * 0.75f);
-		int32 totalsc = (TimeBonus + Score);
-		LevComp = FString::FromInt(totalsc);
-		GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
-		DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X + distnc), SD.X / 11 + GameWonTextSize.Y * 3 + SD.X / 60, HUDFont, FontSizze * 0.75f);
+		//// draw Total Score text
+		//LevComp = ScreenTexts[6];//(TEXT("Total Score:"));
+		//GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
+		//DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X), SD.X / 11 + GameWonTextSize.Y * 3 + SD.X / 60, HUDFont, FontSizze * 0.75f);
+		//int32 totalsc = (TimeBonus + Score);
+		//LevComp = FString::FromInt(totalsc);
+		//GetTextSize(LevComp, (float&)GameWonTextSize.X, (float&)GameWonTextSize.Y, HUDFont, FontSizze * 0.75f);
+		//DrawText(LevComp, MyColor, (SD.X / 2.0f - GameWonTextSize.X + distnc), SD.X / 11 + GameWonTextSize.Y * 3 + SD.X / 60, HUDFont, FontSizze * 0.75f);
 
 		//float Widtt = OneStar->GetSizeX() *0.25;
 		//UTexture2D* stars;
 		FVector2D StarsUVPos;
-		if (totalsc > HS3StarsLimitArray[CurrentLevel]) //if total score is higher than the three stars limit
+		if (Score > HS3StarsLimitArray[CurrentLevel]) //if total score is higher than the three stars limit
 		{
 			//stars = ThreeStars;
 			StarsUVPos = FVector2D(0.0f, 0.0f);
 			///StarsUVPos = FVector2D(0.0f, 00 );
 			StarsNumb = 3;
 		}
-		else if (totalsc > HS2StarsLimitArray[CurrentLevel])//if total score is higher than the two stars limit
+		else if (Score > HS2StarsLimitArray[CurrentLevel])//if total score is higher than the two stars limit
 		{
 			//stars = TwoStars;
 			StarsUVPos = FVector2D(0.0f, 0.333333f); StarsNumb = 2;
@@ -1746,7 +1746,7 @@ void AJumpyFrogsHUD::DrawHUD()
 		//highscore stamp
 		//if(new highscore)
 		//DrawTexture(HUDbuttons2, PosX + 3 * Presledek - GameWonTextSize.Y/2, SD.X / 11 + GameWonTextSize.Y * 2 , (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.5f, 0.25f, 0.25f);
-		if (totalsc > HighScoreArray[CurrentLevel])
+		if (Score > HighScoreArray[CurrentLevel])
 		{
 			DrawTexture(HUDbuttons1b, SD.X / 8 + LayerSizeX - IconSize2.X * 1.75f, PosY - IconSize2.X * 1.6f, IconSize2.X, IconSize2.Y, 0.5f, 0.25f, 0.25f, 0.25f);
 		}
@@ -1784,7 +1784,7 @@ void AJumpyFrogsHUD::DrawHUD()
 
 
 		float FontForTime = 1.4f;
-		FString TimeCount;
+		/*FString TimeCount;
 		int32 ttt = PlayTime;
 		if (ttt > 59)
 		{
@@ -1799,7 +1799,7 @@ void AJumpyFrogsHUD::DrawHUD()
 		}
 		FVector2D TimeTextSize;
 		GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontForTime);
-		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontForTime);
+		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, JFont, FontForTime);*/
 
 		//Achievements stuff, if unlocked it shows otherwise it doesnt show
 		if (bAchievementUnlocked)
@@ -2038,111 +2038,6 @@ void AJumpyFrogsHUD::DrawHUD()
 			}
 		}
 	}
-	else if (bDrawAIActive) //when solution is being played
-	{
-		FVector2D TimeTextSize;
-		//		FString LevComp = (TEXT("Level  ") + FString::FromInt(CurrentLevel) + ("  Completed"));
-		//	FString::SanitizeFloat(RunTime - 3.0f);
-		int32 ttt;
-		FString TimeCount;
-		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
-		if (bShowStartCountdown)
-		{
-			ttt = StartCountdown;
-			TimeCount = FString::FromInt(ttt);
-			FontScale -= 0.07f;
-			if (FontScale < 1.4f) { FontScale = 1.4f; }
-		}
-		else
-		{
-			
-			//FontScale = 1.4f;
-			ttt = PlayTime;
-			if (ttt > 59)
-			{
-				int32 mins = ttt / 60;
-				int32 secs = ttt % 60;
-
-				TimeCount = FString::FromInt(mins) + TEXT(":") + FString::FromInt(secs);
-			}
-			else
-			{
-				TimeCount = FString::FromInt(ttt);
-			}
-			DrawTexture(HUDbuttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(0.0f, 0.0f), IconHitBox, "AiPause", false);
-
-			FString skor = FString::FromInt(Score);
-			GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, HUDFont, FontScale);
-			DrawText(skor, MyColorDark, SD.X - TimeTextSize.X - SD.X / 100, 0.0f, HUDFont, FontScale);
-		}
-		//int32 ttt = (int32)PlayTime;
-		GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, HUDFont, FontScale);
-		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, HUDFont, FontScale);
-	}
-	else if (bDrawAIMenu)
-	{
-		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
-		DrawTexture(GreenLayer, SD.X / 16 * 8 - SD.X / 16 * 10 / 2, SD.X / 16 * 8 / 2.9f, SD.X / 16 * 10, SD.X / 16 * 4, 0.0f, 0.25f, 1.0f, 0.75f);
-
-		FVector2D IconSizeR(FVector2D(SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6));
-		float IconYPos = SD.X / 16 * 8 / 2; //SD.X * 3 / 8
-
-		DrawTexture(HUDbuttons1b, (SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.75f, 0.5f, 0.25f, 0.25f);
-		AddHitBox(FVector2D((SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, IconYPos), IconSizeR, "Cancel", false);
-
-		if (IsSaveProgressOn)
-		{
-			DrawTexture(HUDbuttons1b, SD.X / 16 * 8 - SD.X / 18, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.5f, 0.25f, 0.25f);
-			//AddHitBox(FVector2D(SD.X / 16 * 8 - SD.X / 18, IconYPos), IconSizeR, "SaveSetting", false);
-		}
-		else
-		{
-			DrawTexture(HUDbuttons1b, SD.X / 16 * 8 - SD.X / 18, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.5f, 0.25f, 0.25f);
-			//AddHitBox(FVector2D(SD.X / 16 * 8 - SD.X / 18, IconYPos), IconSizeR, "SaveSetting", false);
-		}
-		AddHitBox(FVector2D(SD.X / 16 * 8 - SD.X / 18, IconYPos), IconSizeR, "SaveSetting", false);
-
-		DrawTexture(HUDbuttons1b, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
-		AddHitBox(FVector2D((SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, IconYPos), IconSizeR, "PlaySolution", false);
-		
-		FString TimeCount;
-		int32 ttt = PlayTime;
-		if (ttt > 59)
-		{
-			int32 mins = ttt / 60;
-			int32 secs = ttt % 60;
-
-			TimeCount = FString::FromInt(mins) + TEXT(":") + FString::FromInt(secs);
-		}
-		else
-		{
-			TimeCount = FString::FromInt(ttt);
-		}
-		FVector2D TimeTextSize;
-		GetTextSize(TimeCount, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, HUDFont, FontScale);
-		DrawText(TimeCount, MyColorDark, (SD.X - TimeTextSize.X) / 2.0f, 0.0f, HUDFont, FontScale);
-		FString skor = FString::FromInt(Score);
-		GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, HUDFont, FontScale);
-		DrawText(skor, MyColorDark, SD.X - TimeTextSize.X, 0.0f, HUDFont, FontScale);
-
-		/*
-		DrawTexture(HUDbuttons2, (SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D((SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, IconYPos), IconSizeR, "SaveP", false);
-
-		DrawTexture(HUDbuttons2, SD.X / 16 * 8 - SD.X / 18, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X / 16 * 8 - SD.X / 18, IconYPos), IconSizeR, "DontSaveP", false);
-
-		DrawTexture(HUDbuttons2, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D((SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, IconYPos), IconSizeR, "Cancel", false);
-		*/
-
-	}/*/
-	 else if (bDrawAiSolver)
-	 {
-	 DrawTexture(HUDbuttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
-	 AddHitBox(FVector2D(0.0f, 0.0f), IconHitBox, "PauseAi", false);
-	 }*/
 	else if (bDrawRestPurchase) //restore purchase menu
 	{
 		
@@ -2917,6 +2812,8 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDraw4LevelsType is true!?"));
 				if (BoxName == FName("Back"))
 				{
+					bDraw4LevelsType = false;
+					bStartMenu = true;
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Back clicked ..."));
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDraw4LevelsType-Back clicked");
 					//if (GameModeReference->bIsCameraHome)
@@ -4049,10 +3946,10 @@ void AJumpyFrogsHUD::LoadTextsAtStart()
 		{
 			UnlockedArray = IGameModeInterface::Execute_GetUnlockedArray(GM);
 			HighScoreArray = IGameModeInterface::Execute_GetHighScoreArray(GM);
-			PlayTime = IGameModeInterface::Execute_GetPlayTime(GM);
+			//PlayTime = IGameModeInterface::Execute_GetPlayTime(GM);
 			CurrentLevel = IGameModeInterface::Execute_GetCurrentLevel(GM);
 			Score = IGameModeInterface::Execute_GetScore(GM);
-			TimeBonus = IGameModeInterface::Execute_GetTimeBonus(GM);
+			//TimeBonus = IGameModeInterface::Execute_GetTimeBonus(GM);
 
 			bBlockClicks = IGameModeInterface::Execute_GetBlockClicks(GM);
 			bAchievementUnlocked = IGameModeInterface::Execute_GetAchievementUnlocked(GM);

@@ -147,7 +147,7 @@ void AJumpyFrogsGameMode::BeginPlay()
 		{
 		..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, UnlockedArray[i] ? "True" : "False");
 		}*/
-
+		bool bDeleteMe = false;
 		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Load successful !!!!!"));
 		//..[]..//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, FString::FromInt(NumGemsCollected));
 		//ToDelete:
@@ -213,16 +213,6 @@ void AJumpyFrogsGameMode::AddSlot(FVector2D Pos)
 int32 AJumpyFrogsGameMode::GetScore_Implementation() const
 {
 	return Score;
-}
-
-int32 AJumpyFrogsGameMode::GetPlayTime_Implementation() const
-{
-	return int32();
-}
-
-int32 AJumpyFrogsGameMode::GetTimeBonus_Implementation() const
-{
-	return TimeBonus;
 }
 
 TArray<bool> AJumpyFrogsGameMode::GetUnlockedArray_Implementation() const

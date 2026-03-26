@@ -77,8 +77,6 @@ protected:
 	void AddSlot(FVector2D Pos);
 
 	int32 GetScore_Implementation() const override;
-	int32 GetPlayTime_Implementation() const override;
-	int32 GetTimeBonus_Implementation() const override;
 	TArray<bool> GetUnlockedArray_Implementation() const override;
 	TArray<int32> GetHighScoreArray_Implementation() const override;
 

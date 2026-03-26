@@ -26,10 +26,10 @@ protected:
 
 	TArray <bool> UnlockedArray;
 	TArray <int32> HighScoreArray;
-	int32 PlayTime;
+	//int32 PlayTime;
 	//CurrentLevel
 	uint16 Score = 0;
-	int32 TimeBonus; //TODO:REmove time entirely
+	//int32 TimeBonus; //TODO:REmove time entirely
 
 	bool bBlockClicks = true;
 	bool bAchievementUnlocked = false;
@@ -277,10 +277,10 @@ private:
 	bool bAdjustText;
 	int32 StartCountdown = 3;
 	float FontScale = 1.4f;
-	bool bShowStartCountdown = false;
+	//bool bShowStartCountdown = false;
 
-	bool bDrawAIMenu = false;
-	bool bDrawAiSolver = false;
+	//bool bDrawAIMenu = false;
+	//bool bDrawAiSolver = false;
 
 	//bool bDrawBuyAiSolverMenu = false;
 	//bool bDrawConfBuy = false;
