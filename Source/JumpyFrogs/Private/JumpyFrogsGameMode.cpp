@@ -131,7 +131,7 @@ AJumpyFrogsGameMode::AJumpyFrogsGameMode()
 void AJumpyFrogsGameMode::BeginPlay()
 {
 	//SpawnFrogsAndProps(5); //GameInstanceReference->LevelNumber
-
+	
 	FString Path = FPaths::ProjectDir();
 	Path.Append("\\Saved\\jumpyfrogs.save");
 
@@ -159,7 +159,6 @@ void AJumpyFrogsGameMode::BeginPlay()
 		GetWorld()->GetTimerManager().SetTimer(GameCen32, this, &AJumpyFrogsGameMode::FirstSave, 0.3f, false);
 	}
 
-
 	Lifecycle->ApplicationWillEnterBackgroundDelegate.AddDynamic(this, &AJumpyFrogsGameMode::EnterBackground);
 	Lifecycle->ApplicationWillDeactivateDelegate.AddDynamic(this, &AJumpyFrogsGameMode::EnterBackground);
 	Lifecycle->ApplicationHasReactivatedDelegate.AddDynamic(this, &AJumpyFrogsGameMode::EnterForeground);
@@ -169,10 +168,32 @@ void AJumpyFrogsGameMode::BeginPlay()
 	//AddFlowers(FVector2D(0.0f, 0.0f));
 	//AddFlowers(FVector2D(1200.0f, -250.0f));
 	//AddFlowers(FVector2D(300.0f, 1250.0f));
-
-	GetWorld()->SpawnActor<AWater>(FVector(0.0f, 0.0f, 181.0f), FRotator::ZeroRotator);
-
+	UJumpyFrogsGameInstance* GI = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+	//GetWorld()->SpawnActor<AWater>(FVector(0.0f, 0.0f, 181.0f), FRotator::ZeroRotator);
+	if (GI && !GI->bFirstMapLoad)	{
+		
+		SpawnFrogsAndProps(GI->CurrentLevel);
+		/*FTimerHandle chr6;
+		GetWorld()->GetTimerManager().SetTimer(chr6, this, &AJumpyFrogsGameMode::SpawnFrogsShort, 0.01f, false);*/
+	}
+	/*else if (!GI)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed To Cast/Load GameInstance in BeginPlay"));
+	}*/
+	GI->bFirstMapLoad = false;
 }
+//void AJumpyFrogsGameMode::SpawnFrogsShort()
+//{
+//	class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
+//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Black, ":SpawnFrogsShort executed!!!");
+//	if (Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance()))
+//	{
+//		SpawnFrogsAndProps(GameInstanceReference->CurrentLevel);
+//		/*FTimerHandle audio6;
+//		GetWorld()->GetTimerManager().SetTimer(audio6, this, &AJumpyFrogsGameModeBase::HandleAudio, 0.01f, false);*/
+//	}
+//	
+//}
 void AJumpyFrogsGameMode::FirstSave()
 {
 	
@@ -351,6 +372,8 @@ void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector Selected
 }
 void AJumpyFrogsGameMode::SpawnFrogsAndProps(const int32 SelectedLevel)
 {
+	//UJumpyFrogsGameInstance* GI = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+	//GI->bFirstMapLoad = false;
 	//DestroyAllActors();
 
 	//SaveProgress = true;
@@ -594,8 +617,8 @@ void AJumpyFrogsGameMode::SaveGame()
 			HighScoreArray[CurrentLevel - 1] = TempScore;
 			FString Path = FPaths::ProjectDir();
 			Path.Append("\\Saved\\jumpyfrogs.save");
-			class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
-			Language = GameInstanceReference->SelLang;
+			UJumpyFrogsGameInstance* GI = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+			Language = GI->SelLang;
 			SaveGameDataToFile(); //, ToBinary //SaveGameDataToFile("C:\\JumpyFrogsSaves\\SaveData\\jumpyfrogs.save"); //, ToBinary
 
 			//write new highscore to leaderboard TODO:HIghscore leaderboard shit
@@ -710,8 +733,8 @@ void AJumpyFrogsGameMode::LoadMap()
 	else if (CurrentLevel == 229) { CurrentLevel = 301; }
 	else if (CurrentLevel == 321) { CurrentLevel = 320; }
 
-	UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
-	GameInstanceReference->LevelNumber = CurrentLevel;
+	UJumpyFrogsGameInstance* GameInstanceReference = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+	GameInstanceReference->CurrentLevel = CurrentLevel;
 	UGameplayStatics::OpenLevel(this, FName(*(GetWorld()->GetName())), false);
 
 	//class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();

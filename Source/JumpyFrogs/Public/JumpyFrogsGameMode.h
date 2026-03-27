@@ -57,6 +57,7 @@ protected:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	//void SpawnFrogsShort();
 	void FirstSave();
 	int32 FrogsRemaining = 0;
 	TArray <AActor*> FrogsArray;

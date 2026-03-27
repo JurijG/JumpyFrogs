@@ -18,34 +18,43 @@ public:
 
 	UJumpyFrogsGameInstance(const FObjectInitializer& ObjectInitializer);
 
-	bool bSoundOn = true;
+	//bTransitionCam = false;
+	//LevelNumber = 1;
+	//bIsCamHome = true;
+	//Distancee = 512.0f;
+	//FlowerColors = {};
+	//bDrawHudIcons = false;
+	//bStartMenu = true;
+	//bTransitionHitBox = false;
+	//FlagUVPos = FVector2D(0.0f, 0.0f);
+	//IsAiActive = false;
+	
+	//IsSaveProgressOn = true;
+	//bShouldSetFrogMats = true;
+	////FrogColors = {};
+	////bFadeIn = true;
 
-	int32 LevelNumber;
-	bool bIsCamHome;
-	FVector CamLocc;
-	float  Distancee;
-	bool bFirstMapLoad;
-	bool IsAiActive;
+	//AudioStartTime = 0.0f;
+
+	bool bSoundOn = true;
+	uint16 CurrentLevel = 1;
+	bool bFirstMapLoad = true;
+	uint8 SelLang = 0;
 
 	//Hud variables_:
-	bool IsSaveProgressOn;
-	bool bShowStartCountdown;
-	bool bDrawAIActive;
-	bool bDrawAIMenu;
-	bool bDrawAiSolver;
-	bool bDrawAiSolverMenu;
-	bool bDrawHudIcons;
-	bool bStartMenu;
-	bool bTransitionHitBox;
+	//bool IsSaveProgressOn;
+	//bool bDrawHudIcons = false;
+	//bool bStartMenu;
+	//bool bTransitionHitBox;
 
-	bool bFadeIn;
-	bool bTransitionCam;
-	float AudioStartTime;
-	bool bShouldSetFrogMats;
-	TArray<int32> FrogColors;
-	TArray<int32> FlowerColors;
+	//bool bFadeIn;
+	//bool bTransitionCam;
+	//float AudioStartTime;
+	//bool bShouldSetFrogMats;
+	//TArray<int32> FrogColors;
+	//TArray<int32> FlowerColors;
 
-	//FString Language;
-	int32 SelLang = 1;
-	FVector2D FlagUVPos;
+	////FString Language;
+	//int32 SelLang = 1;
+	//FVector2D FlagUVPos;
 };
