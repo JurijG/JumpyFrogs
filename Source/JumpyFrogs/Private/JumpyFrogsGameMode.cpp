@@ -6,6 +6,7 @@
 #include "UI/JumpyFrogsHUD.h"
 
 #include "Actors/Frog.h"
+#include "Actors/Teleporter.h"
 #include "Actors/LilyPads.h"
 #include "Actors/EmptySlot.h"
 #include "Actors/Water.h"
@@ -172,15 +173,22 @@ void AJumpyFrogsGameMode::BeginPlay()
 	//GetWorld()->SpawnActor<AWater>(FVector(0.0f, 0.0f, 181.0f), FRotator::ZeroRotator);
 	if (GI && !GI->bFirstMapLoad)	{
 		
-		SpawnFrogsAndProps(GI->CurrentLevel);
+		CurrentLevel = GI->CurrentLevel;
+		SpawnFrogsAndProps();
 		/*FTimerHandle chr6;
 		GetWorld()->GetTimerManager().SetTimer(chr6, this, &AJumpyFrogsGameMode::SpawnFrogsShort, 0.01f, false);*/
+	}
+	if (GI->bFirstMapLoad)
+	{
+		GI->bFirstMapLoad = false;
 	}
 	/*else if (!GI)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed To Cast/Load GameInstance in BeginPlay"));
 	}*/
-	GI->bFirstMapLoad = false;
+	
+	
+	
 }
 //void AJumpyFrogsGameMode::SpawnFrogsShort()
 //{
@@ -370,7 +378,7 @@ void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector Selected
 	//Spawn slot where the frog was before jumping:
 	AddSlot(FVector2d(SelectedFrogLoc.X, SelectedFrogLoc.Y));
 }
-void AJumpyFrogsGameMode::SpawnFrogsAndProps(const int32 SelectedLevel)
+void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 {
 	//UJumpyFrogsGameInstance* GI = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
 	//GI->bFirstMapLoad = false;
@@ -432,18 +440,26 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps(const int32 SelectedLevel)
 		AddSlot(SpawnLevelsList[CurrentLevel]->Level[i]);
 	}
 	//now we spawn the teleporters if there are any
-	//if (CurrentLevel > 100)
-	//{
-	//	//int32 TelNmb = TeleportersList[CurrentLevel - 100].Num() / 4;
-	//	int32 TelNmb = TelAndBombsList[CurrentLevel - 100]->TeleportersList.Num() / 4;
-	//	for (int32 i = 0; i < TelNmb; i++)
-	//	{
-	//		//TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TeleportersList[CurrentLevel - 100][i * 4], Rot));
-	//		//TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelDataList[CurrentLevel - 100][i * 3], TelDataList[CurrentLevel - 100][i * 3 + 1], TeleportersList[CurrentLevel - 100][i * 4 + 1], (int32)TelDataList[CurrentLevel - 100][i * 3 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 3]);
-	//		TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4], Rot));
-	//		TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3], TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 1], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 1], (int32)TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 3]);
-	//	}
-	//}
+	if (CurrentLevel > 100)
+	{
+		//int32 TelNmb = TeleportersList[CurrentLevel - 100].Num() / 4;
+		int32 TelNmb = TelAndBombsList[CurrentLevel - 100]->TeleportersList.Num() / 4;
+		for (int32 i = 0; i < TelNmb; i++)
+		{
+			//TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TeleportersList[CurrentLevel - 100][i * 4], Rot));
+			//TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelDataList[CurrentLevel - 100][i * 3], TelDataList[CurrentLevel - 100][i * 3 + 1], TeleportersList[CurrentLevel - 100][i * 4 + 1], (int32)TelDataList[CurrentLevel - 100][i * 3 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 3]);
+			TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4], FRotator::ZeroRotator));
+			//TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3], TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 1], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 1], (int32)TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 3]);
+			if (ATeleporter* Tel = Cast<ATeleporter>(TheTeleportersArray[i]))
+			{
+				Tel->RepositionTeleportersAndApplyMaterial(TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3], TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 1], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 1], (int32)TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 3]);
+			}
+		}
+	}
+
+	AJumpyFrogsHUD* JFHudRef = Cast<AJumpyFrogsHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	JFHudRef->StartGame();
+
 	//SetMaterials();
 
 	/*FTimerHandle stmt;
@@ -544,7 +560,7 @@ void AJumpyFrogsGameMode::EnterBackground()
 		MyPlayer->SetPause(true);
 		//SetGamePaused(bool gamePaused)
 	}
-	AJumpyFrogsHUD* JFHudRef = Cast<AJumpyFrogsHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	//AJumpyFrogsHUD* JFHudRef = Cast<AJumpyFrogsHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	/*if (JFHudRef->bDrawHudIcons)
 	{
 		CamDirector->bTimeCounting = false;

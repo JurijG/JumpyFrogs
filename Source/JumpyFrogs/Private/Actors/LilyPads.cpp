@@ -32,7 +32,7 @@ ALilyPads::ALilyPads()
 	LilyPadsMesh->SetRelativeLocation(FVector(8.0f, 8.0f, 200.0f));
 	LilyPadsMesh->SetMaterial(0, ConstructorStatics.LilyPadGreenMat.Get());
 	//LilyPadsMesh->SetupAttachment(DummyRoot);//AttachTo(DummyRoot);
-	LilyPadsMesh->bCastDynamicShadow = false;
+	//LilyPadsMesh->bCastDynamicShadow = false;
 }
 
 // Called when the game starts or when spawned

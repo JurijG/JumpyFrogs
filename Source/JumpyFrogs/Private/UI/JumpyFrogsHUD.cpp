@@ -226,11 +226,11 @@ void AJumpyFrogsHUD::DrawHUD()
 		GetTextSize(Loading, (float&)Velik.X, (float&)Velik.Y, JFont, FontScale);
 		DrawText(Loading, MyColor, (SD.X - Velik.X) / 2, (SD.Y - Velik.Y) / 2, JFont, FontScale);
 	}
-	else if (bTransitionHitBox)
-	{
-		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
-		////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bTransitionHitBox is true!?, skipping rest of checking hud"));
-	}
+	//else if (bTransitionHitBox)
+	//{
+	//	AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
+	//	////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bTransitionHitBox is true!?, skipping rest of checking hud"));
+	//}
 	else if (bDrawHudIcons)
 	{
 		//AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
@@ -587,16 +587,23 @@ void AJumpyFrogsHUD::DrawHUD()
 			}
 			AddHitBox(FVector2D(0.0f, (SD.Y - 3 * BoxTexSize.X)), BoxTexSize, "AskUser", false);
 
+			FVector2D FlagSize = BoxTexSize;
+			FlagSize.Y = FlagSize.X * 0.66666667f;
+			if (Flags)
+			{
+				DrawTexture(Flags, BoxTexSize.X * 2.f + FlagSize.X * 0.15f, SD.Y - BoxTexSize.Y*0.5f - FlagSize.Y*0.5f, FlagSize.X, FlagSize.Y, FlagUVPos.X, FlagUVPos.Y, 0.25f, 0.67f);
+			}
+			AddHitBox(FVector2D(BoxTexSize.X * 2.f + FlagSize.X * 0.15f, SD.Y - BoxTexSize.Y * 0.5f - FlagSize.Y * 0.5f), FlagSize, "Language", false);
+
 			if (bSoundOn)
 			{
 				DrawTexture(HUDbuttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.75f, 0.25f, 0.25f);
-				AddHitBox(FVector2D(BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SoundOnOff", false);
 			}
 			else
 			{
 				DrawTexture(HUDbuttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.75f, 0.25f, 0.25f);
-				AddHitBox(FVector2D(BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SoundOnOff", false);
 			}
+			AddHitBox(FVector2D(BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SoundOnOff", false);
 		}
 		else
 		{
@@ -669,13 +676,14 @@ void AJumpyFrogsHUD::DrawHUD()
 		//AddHitBox(FVector2D(float(SD.X / 4), 0.0f), BackbuttonAndTextureSize, "Back", false);
 
 		//AddHitBox(FVector2D(float(SD.X / 4), float(SD.X / 8)), BoxTexSize, "Classic", false);
-		BoxTexSize.Y = BoxTexSize.X * 0.66666667f;
-		
+
+
+		/*BoxTexSize.Y = BoxTexSize.X * 0.66666667f;
 		if (Flags)
 		{
 			DrawTexture(Flags, SD.X / 2 - BoxTexSize.X * 0.5f, 0.0f, BoxTexSize.X, BoxTexSize.Y, FlagUVPos.X, FlagUVPos.Y, 0.25f, 0.67f);
 		}
-		AddHitBox(FVector2D(SD.X / 2 - BoxTexSize.X / 2, 0.0f), BoxTexSize, "Language", false);
+		AddHitBox(FVector2D(SD.X / 2 - BoxTexSize.X / 2, 0.0f), BoxTexSize, "Language", false);*/
 	}
 	else if (bDrawPauseMenu)
 	{
@@ -1224,10 +1232,10 @@ void AJumpyFrogsHUD::DrawHUD()
 
 	}
 
-	else if (bTransitionHitBox)
-	{
-		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
-	}
+	//else if (bTransitionHitBox)
+	//{
+	//	AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
+	//}
 	else if (bDrawCredits)
 	{
 		if (bDrawCreditsNames)
@@ -2492,235 +2500,23 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 			FTimerHandle clkrst;
 			GetWorld()->GetTimerManager().SetTimer(clkrst, this, &AJumpyFrogsHUD::EnableClick, 0.11f, false);
 			//PlayClickSound(); //TODO: play sound
-
-			//if (bDrawHudIcons)
+			if (bDrawHudIcons)
 			{
 				//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawHudIcons is true , any buttons pressed or just an error?"));
-				//if (BoxName == FName("Pause"))
-				//{
-				//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Pause clicked ..."));
-				//	if (!GameModeReference->bIsFrogInAction)
-				//	{
-				//		bDrawPauseMenu = true;
-				//		bDrawHudIcons = false;
-				//		//GameModeReference->CamDirector->bTimeCounting = false;
-				//	}
-				//	//UndoFrGgAnlytcs::]RecordGoogleScreen("Pause");
-				//}
-				//else if (BoxName == FName("AISolver"))
-				//{
-				//	if (!GameModeReference->bIsFrogInAction)
-				//	{
-				//		bDrawHudIcons = false;
-				//		if (CheckInAppPurchase())  ////if (GameModeReference->PurchArray[GameModeReference->CurrentLevel])
-				//		{
-				//			//draw Play AI Solver and hit box!!
-				//			bDrawAIMenu = true;
-				//		}
-				//		else
-				//		{
-				//			//draw disabled Play AI Solver Button!!
-				//			bDrawBuyAiSolverMenu = true;
-				//		}
-				//		GameModeReference->CamDirector->bTimeCounting = false;
-				//		//UndoFrGgAnlytcs::]RecordGoogleScreen("AISolver Clicked");
-				//		//GameModeReference->SetGamePaused(true);
-				//		//Buy this lev
-
-				//		/*	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" AISolver clicked ..."));
-				//		//bDrawAIMenu = true;
-				//		bDrawAIActive = true;
-				//		bDrawHudIcons = false;
-				//		GameModeReference->IsAiActive = true;
-				//		GameModeReference->PlayAiSolver();*/
-				//	}
-				//}
-
+				if (BoxName == FName("Pause"))
+				{
+					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Pause clicked ..."));
+					//if (!GameModeReference->bIsFrogInAction)
+					{
+						bDrawHudIcons = false;
+						bDrawPauseMenu = true;
+						bStartMenu = false;
+						bDrawHudIcons = false;
+					}
+					//UndoFrGgAnlytcs::]RecordGoogleScreen("Pause");
+				}
 			}
-			//if (bDrawAIMenu)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawAIMenu is true!?"));
-			//	if (BoxName == FName("PlaySolution"))
-			//	{
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("PlaySolution");
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" SaveProgress and play AI clicked ..."));
-			//		bDrawAIMenu = false;
-			//		bDrawAIActive = true;
-			//		//	GameModeReference->SetGamePaused(false);
-			//		GameModeReference->IsAiActive = true;
-			//		SaveVarsBeforeMapLoad();
-			//		GameModeReference->LoadMap();
-			//		//GameModeReference->SpawnFrogsAndProps(GameModeReference->CurrentLevel);
-			//		//CheckIfCameraChanges();
-			//		//GameModeReference->PlayAiSolverStartDelay();
-
-			//	}
-			//	else if (BoxName == FName("SaveSetting"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Change SaveProgress On Off Clicked..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("SaveSetting On/Off");
-			//		//bDrawAIMenu = false;
-			//		//bDrawAIActive = true;
-			//		//	GameModeReference->SetGamePaused(false);
-			//		IsSaveProgressOn = !IsSaveProgressOn; //negate this
-			//		//	GameModeReference->SaveProgress = false;
-			//		//GameModeReference->IsAiActive = true;
-			//		//	GameModeReference->SpawnFrogsAndProps(GameModeReference->CurrentLevel);
-			//		//GameModeReference->PlayAiSolver();
-			//	}
-			//	else if (BoxName == FName("Cancel"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Cancel clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawAIMenu-Cancel clicked");
-			//		bDrawAIMenu = false;
-			//		bDrawHudIcons = true;
-			//		GameModeReference->CamDirector->bTimeCounting = true;
-			//		//	GameModeReference->SetGamePaused(false);
-			//	}
-			//}
-			//else if (bDrawBuyAiSolverMenu)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawBuyAiSolverMenu is true!?"));
-			//	if (BoxName == FName("Cancel"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Cancel Buy in bDrawBuyAiSolverMenu  clicked ..."));
-			//		bDrawBuyAiSolverMenu = false;
-			//		bDrawHudIcons = true;
-			//		GameModeReference->CamDirector->bTimeCounting = true;
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawBuyAiSolverMenu-Cancel clicked");
-
-			//	}
-			//	else if (BoxName == FName("RestorePurch")) //opens confirm Restore Purchase menu
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" RestorePurchase clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("RestorePurch clicked");
-			//		bDrawBuyAiSolverMenu = false;
-			//		//bDrawHudIcons = true; 
-			//		bDrawRestPurchase = true;
-			//	}
-			//	else if (BoxName == FName("BuyNow"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" BuyNow clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("BuyNow clicked");
-			//		ReadPurchaseInfo();
-			//		bDrawBuyAiSolverMenu = false;
-			//		//bDrawHudIcons = true;
-			//		bDrawConfBuy = true;
-			//		//GameModeReference->SetGamePaused(false);
-			//		//GameModeReference->PauseAiSolver(false);
-			//	}
-			//}
-			//else if (bDrawConfBuy)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawBuyAiSolverMenu is true!?"));
-			//	if (BoxName == FName("Cancel"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Cancel Buy in bDrawConfBuy  clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawConfBuy-Cancel clicked");
-			//		bDrawConfBuy = false;
-			//		//bDrawHudIcons = true;
-			//		bDrawBuyAiSolverMenu = true;
-
-
-			//	}
-			//	else if (BoxName == FName("ConfirmBuy"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" BuyNow confirmed and clicked, executing the store purchase now ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("ConfirmBuy clicked");
-			//		bDrawConfBuy = false;
-			//		bDrawPleaseWait = true;
-			//		//bDrawHudIcons = true;
-			//		//GameModeReference->SetGamePaused(false);
-			//		//GameModeReference->PauseAiSolver(false);
-			//		//to redirect to default HUD icons, may need to be changed when integrating in-app purchases
-			//		//send event to HUD where we attempt to exectute in app purchase
-			//		BuyNow();
-
-			//	}
-			//}
-			//else if (bDrawRestPurchase)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawBuyAiSolverMenu is true!?"));
-			//	if (BoxName == FName("Cancel"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Cancel Buy in bDrawBuyAiSolverMenu  clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawRestPurchase-Cancel clicked");
-			//		bDrawRestPurchase = false;
-			//		//bDrawHudIcons = true;
-			//		bDrawBuyAiSolverMenu = true;
-			//	}
-			//	else if (BoxName == FName("ConfRestPurch"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Confirm Restore Purchase clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("Confirm Restore Purchase clicked");
-			//		bDrawRestPurchase = false;
-			//		bDrawPleaseWait = true;
-			//		//bDrawHudIcons = true;
-			//		//send event to HUD where we attempt to restore purchase.
-			//		RestorePurchase();
-			//	}
-			//}
-			//else if (bDrawAiSolverMenu)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawAiSolverMenu is true!?"));
-			//	if (BoxName == FName("StopAndRestart"))
-			//	{
-			//		bDrawAiSolverMenu = false;
-			//		//GameModeReference->SetGamePaused(false);
-			//		class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
-			//		//? GameModeReference->PauseAiSolver(false);
-
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("Stop And Restart clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawAiSolverMenu-StopAndRestart clicked");
-			//		//bDrawHudIcons = true;
-			//		bShouldSetFrogMats = true;
-			//		SaveVarsBeforeMapLoad();
-			//		GameModeReference->LoadMap();
-			//		//GameModeReference->ClearTimers();
-			//		//GameModeReference->SpawnFrogsAndProps(GameModeReference->CurrentLevel);
-			//		//CheckIfCameraChanges();
-			//		//TODO: Restart level here 
-			//	}
-			//	else if (BoxName == FName("StopSolver"))
-			//	{
-			//		bDrawAiSolverMenu = false;
-			//		//GameModeReference->SetGamePaused(false);
-			//		GameModeReference->PauseAiSolver(false);
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Stop Solver clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawAiSolverMenu-StopSolver clicked");
-			//		GameModeReference->IsAiActive = false;//tega očitno ne rabmo ker smo dal clear timers
-			//		bDrawAIActive = false;
-			//		bDrawHudIcons = true;
-			//		GameModeReference->CamDirector->bTimeCounting = false;
-			//		StartCounting();
-			//		//GameModeReference->bTimeCounting = true;
-			//		//TODO: Restart level here 
-			//	}
-			//	else if (BoxName == FName("Continue"))
-			//	{
-			//		bDrawAiSolverMenu = false;
-			//		//GameModeReference->SetGamePaused(false);
-			//		GameModeReference->PauseAiSolver(false);
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Continue clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawAiSolverMenu-Continue clicked");
-			//		bDrawAIActive = true;
-			//	}
-			//}
-			//else if (bDrawAIActive)
-			//{
-			//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawAIActive is true!?"));
-			//	if (BoxName == FName("AiPause"))
-			//	{
-			//		//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" AiPause clicked ..."));
-			//		//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawAIActive-AiPause clicked");
-			//		bDrawAIActive = false;
-			//		bDrawAiSolverMenu = true;
-			//		//pause game
-			//		GameModeReference->PauseAiSolver(true);
-			//		//GameModeReference->SetGamePaused(true);
-			//	}
-			//}
-			if (bDrawPauseMenu)
+			else if (bDrawPauseMenu)
 			{
 				//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawPauseMenu is true!?"));
 				if (BoxName == FName("HomeMenu"))
@@ -2731,7 +2527,7 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					bDrawPauseMenu = false;
 					//GameModeReference->CameraHome();
 					//bTransitionHitBox = true;
-					bTransitionHitBox = false;
+					//bTransitionHitBox = false;
 
 					bStartMenu = true;
 					/*FTimerHandle HomeHandle;
@@ -2740,6 +2536,15 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				}
 				else if (BoxName == FName("Restart"))
 				{
+					if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+					{
+						if (GM->Implements<UGameModeInterface>())
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Load Restart Level"));
+							IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
+						}
+					}
+
 					//class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Restart clicked ..."));
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-Restart clicked");
@@ -2910,7 +2715,7 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				else if (BoxName == FName("Credits"))
 				{
 					bStartMenu = false;
-					bTransitionHitBox = false;
+					//bTransitionHitBox = false;
 					bDrawCredits = true;
 					bDrawCreditsNames = true;
 
@@ -2945,7 +2750,19 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					}
 					//load next level
 				}
+				else if (BoxName == FName("Language"))
+				{
+					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Language select clicked ..."));
+					//UndoFrGgAnlytcs::]RecordGoogleScreen("bStartMenu-Language clicked");
+					bStartMenu = false;
+					//GameModeReference->GoToTheSky();
+					//FTimerHandle Shwlng;
+					//GetWorld()->GetTimerManager().SetTimer(Shwlng, this, &AJF_HUD::ShowLangSel, 2.6f, false);
+					//AJF_HUD::ShowLangSel();
+					//bTransitionHitBox = false;
+					bShowLangSel = true;
 
+				}
 				else if (BoxName == FName("Library"))
 				{
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Library clicked ..."));
@@ -2995,19 +2812,19 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					bSocialMedia = !bSocialMedia;
 
 				}
-				else if (BoxName == FName("Language"))
-				{
-					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Language select clicked ..."));
-					//UndoFrGgAnlytcs::]RecordGoogleScreen("bStartMenu-Language clicked");
-					bStartMenu = false;
-					//GameModeReference->GoToTheSky();
-					//FTimerHandle Shwlng;
-					//GetWorld()->GetTimerManager().SetTimer(Shwlng, this, &AJF_HUD::ShowLangSel, 2.6f, false);
-					//AJF_HUD::ShowLangSel();
-					bTransitionHitBox = false;
-					bShowLangSel = true;
+				//else if (BoxName == FName("Language"))
+				//{
+				//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Language select clicked ..."));
+				//	//UndoFrGgAnlytcs::]RecordGoogleScreen("bStartMenu-Language clicked");
+				//	bStartMenu = false;
+				//	//GameModeReference->GoToTheSky();
+				//	//FTimerHandle Shwlng;
+				//	//GetWorld()->GetTimerManager().SetTimer(Shwlng, this, &AJF_HUD::ShowLangSel, 2.6f, false);
+				//	//AJF_HUD::ShowLangSel();
+				//	bTransitionHitBox = false;
+				//	bShowLangSel = true;
 
-				}
+				//}
 				else if (BoxName == FName("AskUser"))
 				{
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" AskUser clicked ..."));
@@ -3158,13 +2975,14 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				}
 				//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" bShowLangSel code continues to execute fully, this is ok if chinese isn't selected"));
 				bShowLangSel = false;
-				bTransitionHitBox = true;
+				//bTransitionHitBox = true;
 				//GameModeReference->ExitSky();
 				//FTimerHandle HomeHandle;
 				//GetWorld()->GetTimerManager().SetTimer(HomeHandle, this, &AJF_HUD::GoToHome, 2.6f, false); // sets //bDrawCredits = true;
 				//AJF_HUD::GoToHome();
-				bTransitionHitBox = false;
+				//bTransitionHitBox = false;
 				bStartMenu = true;
+				bSwissKnife = false;
 				LoadScreenTexts();
 				SaveLanguage();
 				
@@ -3195,16 +3013,10 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					FlagUVPos.X = 0.75f;
 					FlagUVPos.Y = 0.0f;
 					SelLang = 3;
-					//AllGood = true;
 				}
-				//	if (AllGood)
-				//	{
+				bSwissKnife = false;
+				bStartMenu = true;
 				bShowChineseSel = false;
-				bTransitionHitBox = true;
-				//GameModeReference->ExitSky();
-				//FTimerHandle HomeHandle;
-				//GetWorld()->GetTimerManager().SetTimer(HomeHandle, this, &AJF_HUD::GoToHome, 2.6f, false); // sets //bDrawCredits = true;
-				//AJF_HUD::GoToHome();
 				LoadScreenTexts();
 				SaveLanguage();
 			}
@@ -3440,7 +3252,7 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 						//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawCreditsNames clicked first");
 						bDrawCreditsNames = false;
 						bDrawCredits = false;
-						bTransitionHitBox = true;
+						//bTransitionHitBox = true;
 						//GameModeReference->CameraHome();
 						//FTimerHandle HandlerLw;
 						//GetWorld()->GetTimerManager().SetTimer(HandlerLw, this, &AJumpyFrogsGameModeBase::LevelWonSound, 3.0f, false);
@@ -3930,6 +3742,12 @@ void AJumpyFrogsHUD::FirstSave()
 	bStartMenu = false;
 	bDrawAskUser = true;
 	bBlockClicks = false;
+}
+
+void AJumpyFrogsHUD::StartGame()
+{
+	bStartMenu = false;
+	bDrawHudIcons = true;
 }
 
 void AJumpyFrogsHUD::LoadTextsAtStart()

@@ -21,6 +21,7 @@ class JUMPYFROGS_API AJumpyFrogsHUD : public AHUD
 
 public:
 	void FirstSave();
+	void StartGame();
 
 protected:
 
@@ -206,7 +207,7 @@ UFUNCTION(BlueprintImplementableEvent, category = JumpyFrogsHUD_BP)
 	void SaveVarsBeforeMapLoad();
 	//void DisplayTime();
 	//void HandleGlobalAch(int32 NumbOfStars);
-	bool bTransitionHitBox;
+	//bool bTransitionHitBox;
 	void HandleAchievements();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = JumpyFrogs)//used for sharing image to facebook temporary image variable

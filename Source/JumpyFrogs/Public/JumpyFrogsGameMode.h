@@ -53,7 +53,7 @@ protected:
 
 #pragma endregion
 
-	int32 CurrentLevel = 30; //  100 -> TESTLEVEL;
+	int32 CurrentLevel = 10; //  100 -> TESTLEVEL;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -62,6 +62,7 @@ protected:
 	int32 FrogsRemaining = 0;
 	TArray <AActor*> FrogsArray;
 	TArray <AActor*> SlotsArray;
+	TArray <AActor*> TheTeleportersArray;
 	//TArray <AEmptySlot*> TheSlotsArray;
 
 #pragma region DataTableVars
@@ -95,7 +96,7 @@ protected:
 	//void LoadNextLevel_Implementation();
 
 	void RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
-	void SpawnFrogsAndProps(const int32 SelectedLevel);
+	void SpawnFrogsAndProps();
 
 
 #pragma endregion
@@ -104,6 +105,7 @@ protected:
 
 	TArray<bool> AchievementsArray;
 	TArray <bool> UnlockedArray;
+	
 
 	uint8 Language; //TODO: rename 	int32 NumGemsCollected to something meaningfull..renamed to Language
 
