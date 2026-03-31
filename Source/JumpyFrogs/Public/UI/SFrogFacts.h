@@ -21,6 +21,11 @@ public:
 protected:
 	void UpdateTextBlock();
 
+	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
+	float CurrentOpacity = 0.f;
+	float TargetOpacity = 0.8f;
+	float DeltaTime = 0.0045f;
+
 	TSharedPtr<STextBlock> FactTextBlock;
 	TSharedPtr<STextBlock> PageNumberTextBlock;
 

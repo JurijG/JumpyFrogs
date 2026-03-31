@@ -15,10 +15,15 @@ void SFrogFacts::Construct(const FArguments& InArgs)
 	//	//FPaths::ProjectContentDir() / TEXT("../Fonts/JFont.ttf"),
 	//	90
 	//);
+	SetCanTick(true);
 
 	CurrentFont = FSlateFontInfo(FPaths::ProjectDir() / TEXT("Fonts/JFont.ttf"), 80);
-	ChineseFont = FSlateFontInfo(FPaths::ProjectDir() / TEXT("Fonts/DroidSansFallback.ttf"), 80);
+	CurrentFont.OutlineSettings.OutlineSize = 4;
+	CurrentFont.OutlineSettings.OutlineColor = FLinearColor::Black;
 
+	ChineseFont = FSlateFontInfo(FPaths::ProjectDir() / TEXT("Fonts/DroidSansFallback.ttf"), 80);
+	ChineseFont.OutlineSettings.OutlineSize = 2;
+	ChineseFont.OutlineSettings.OutlineColor = FLinearColor::Black;
 	const FMargin ContentPadding = FMargin(500.f, 300.f);
 
 	DisplayText = LOCTEXT("Library", "The Ornate Horned Frog lives in the rainforests of South America. It is the most aggressive and will attack an animal way larger that itself. They are not poisonous but they are fearless. When they feel threatened they will jump toward the enemy and bite them! When hunting, they prefer to wait for their prey to come to them and will eat other frogs, lizards, mice, and large insects.");
@@ -55,7 +60,11 @@ void SFrogFacts::Construct(const FArguments& InArgs)
 										.Text(DisplayText)               // initial text
 										.Font(FittedFont)                // initial font
 										.AutoWrapText(true)              // multi-line
-										.ColorAndOpacity(FLinearColor(0.701f, 0.68f, 0.672f, 0.9f)) // initial color
+										.ColorAndOpacity(FLinearColor(0.701f, 0.68f, 0.672f, 0.8f)) // initial color
+										.ShadowOffset(FVector2D(-3.f, 3.f))
+										.ShadowColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 0.8f))
+										//.RenderTransformPivot(FVector2D(3.f, 3.5f))
+										//.RenderTransform(FSlateRenderTransform(FVector2D(0.f, 10.f)))
 								/*	SNew(STextBlock)
 										.Text(DisplayText)
 										.Font(FittedFont)
@@ -72,7 +81,9 @@ void SFrogFacts::Construct(const FArguments& InArgs)
 					SAssignNew(PageNumberTextBlock, STextBlock)
 						.Text(FText::FromString("Test"))
 						.Font(CurrentFont) // you can use smaller font if desired
-						.ColorAndOpacity(FLinearColor(0.101f, 0.18f, 0.12f, 0.9f))
+						.ShadowColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 0.8f))
+						.ShadowOffset(FVector2D(-3.f, 3.f))
+						.ShadowColorAndOpacity(FLinearColor(0.f, 0.f, 0.f, 0.8f))
 				]
 				/*+ SOverlay::Slot()
 				.HAlign(HAlign_Fill)
@@ -115,7 +126,15 @@ void SFrogFacts::UpdateTextBlock()
 	FSlateFontInfo FittedFont = FitTextToBox(DisplayText, bChineseFont ? ChineseFont : CurrentFont, ScreenSize.X, ScreenSize.Y);
 	//  Apply the font to the text block
 	FactTextBlock->SetText(DisplayText);
-	FactTextBlock->SetFont(FittedFont);
+	FactTextBlock->SetFont(FittedFont); 
+	CurrentOpacity = 0.f;
+}
+void SFrogFacts::Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
+{
+	CurrentOpacity = FMath::FInterpTo(CurrentOpacity, TargetOpacity, DeltaTime, 5.f);
+	FactTextBlock->SetColorAndOpacity(FLinearColor(1, 1, 1, CurrentOpacity));
+	CurrentFont.OutlineSettings.OutlineColor.A = CurrentOpacity;
+	ChineseFont.OutlineSettings.OutlineColor.A = CurrentOpacity;
 }
 FVector2D SFrogFacts::GetScreenSize()
 {
@@ -141,7 +160,7 @@ FSlateFontInfo SFrogFacts::FitTextToBox(const FText& Text, const FSlateFontInfo&
 
 		// Simple heuristic: if single-line width is larger than MaxWidth, assume it will wrap
 		float EstimatedLines = FMath::CeilToFloat(TextSize.X / MaxWidth);
-		float EstimatedHeight = EstimatedLines * TextSize.Y * 1.2f;
+		float EstimatedHeight = EstimatedLines * TextSize.Y * 1.3f;
 
 		if (TextSize.X <= MaxWidth || EstimatedHeight <= MaxHeight)
 			break;
@@ -150,5 +169,6 @@ FSlateFontInfo SFrogFacts::FitTextToBox(const FText& Text, const FSlateFontInfo&
 	}
 	return FontInfo;
 }
+
 #undef LOCTEXT_NAMESPACE
 

@@ -847,13 +847,13 @@ void AJumpyFrogsHUD::DrawHUD()
 		//draw library background
 		DrawTexture(GreenLayer, 0.0f, SD.Y * 0.005f, SD.X, SD.Y, 0.005f, 0.25f, 0.99f, 0.75f);
 		///////////
-		FVector2D Velikost;
-		if (bLockedTip)
-		{
-			FVector2D PicSize = FVector2D(SD.X / 4, SD.X / 4 / 4 * 3);
-			//DrawTexture(LockTexture_256, SD.X / 2, SD.Y / 2 - PicSize.Y*1.2f, PicSize.Y, PicSize.Y, 0.0f, 0.0f, 1.0f, 1.0f);
-			DrawTexture(LockTexture_256, SD.X / 2 - PicSize.Y * 0.75f, SD.Y / 2 - PicSize.Y * 1.2f, PicSize.Y * 1.5f, PicSize.Y * 1.5f, 0.0f, 0.0f, 1.0f, 1.0f);
-		}
+		//FVector2D Velikost;
+		//if (bLockedTip)
+		//{
+		//	FVector2D PicSize = FVector2D(SD.X / 4, SD.X / 4 / 4 * 3);
+		//	//DrawTexture(LockTexture_256, SD.X / 2, SD.Y / 2 - PicSize.Y*1.2f, PicSize.Y, PicSize.Y, 0.0f, 0.0f, 1.0f, 1.0f);
+		//	DrawTexture(LockTexture_256, SD.X / 2 - PicSize.Y * 0.75f, SD.Y / 2 - PicSize.Y * 1.2f, PicSize.Y * 1.5f, PicSize.Y * 1.5f, 0.0f, 0.0f, 1.0f, 1.0f);
+		//}
 		//else if (bCutStrNextDraw)
 		//{
 		//	//UE_LOG(LogTemp, Warning, TEXT("bDrawLibrary running,if (bCutStrNextDraw=true, working so far "));
@@ -1252,7 +1252,8 @@ void AJumpyFrogsHUD::DrawHUD()
 		//}
 		//draw green layer background for order display numbers 2/124
 		//DrawTexture(GreenLayer, SD.X / 2 - SD.X / 8, SD.Y*0.79f, SD.X / 4, SD.Y*0.15f, 0.0f, 0.0f, 1.0f, 0.23f);
-		DrawTexture(WideButton, SD.X / 2 - SD.X / 8, SD.Y * 0.8f, SD.X / 4, IconSize, 0.0f, 0.0f, 1.0f, 1.0f);
+		
+
 
 		
 		//if (UserWidgetTestClass) // make sure you assigned the widget class in editor
@@ -1265,6 +1266,10 @@ void AJumpyFrogsHUD::DrawHUD()
 		//		//UserWidgetInstance->SetToolTipText(FText(TEXT("bfdonsaodfdf")));
 		//	}
 		//}
+		// 
+		// 
+		//Kazalo
+		//DrawTexture(WideButton, SD.X / 2 - SD.X / 8, SD.Y * 0.8f, SD.X / 4, IconSize, 0.0f, 0.0f, 1.0f, 1.0f);
 
 		float ButtonSize = IconSize * 0.8f;
 		//float ButtonSizeY = SD.X / 16 - SD.Y * 0.075f
