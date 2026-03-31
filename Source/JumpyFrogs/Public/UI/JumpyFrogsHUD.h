@@ -9,6 +9,8 @@
 #include "JumpyFrogsHUD.generated.h"
 
 
+class UFactsWidget;
+
 /**
  * 
  */
@@ -39,6 +41,8 @@ protected:
 
 
 	virtual void BeginPlay() override;
+
+	
 
 	virtual void DrawHUD() override;
 
@@ -235,7 +239,23 @@ UFUNCTION(BlueprintImplementableEvent, category = JumpyFrogsHUD_BP)
 	bool bLevelFailed = false;
 	bool bDrawPauseMenu = false;
 
+
 private:
+
+	/*UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UFactsWidget> FactsUserWidgetReference;
+	UPROPERTY(EditAnywhere, Category = "UI")
+	UFactsWidget* FactsUserWidget;*/
+
+	TSharedPtr<class SFrogFacts>  FrogFactsWidget;
+	TSharedPtr<class SWidget>  FrogFactsContainer;
+
+
+	/*UPROPERTY(EditAnywhere, Category = "UI")
+	UUserWidget* CreatedWidget;
+
+	UUserWidget* UserWidgetInstance;*/
+
 	//USoundCue* CountdownSound;
 
 	FString Price = TEXT("");
@@ -292,6 +312,7 @@ private:
 	bool bDrawLevelSelectMenu3 = false;
 	bool bDrawLevelSelectMenu4 = false;
 	bool bDraw4LevelsType = false;
+	bool bLevelsFromPause = false;
 
 
 	bool bDrawLibrary = false;
@@ -348,8 +369,19 @@ private:
 	//  UTexture2D* TwoStars;
 	//class UTexture2D* ThreeStars;
 
-	UTexture2D* HUDbuttons1;	UTexture2D* HUDbuttons1b;
-	UTexture2D* HUDbuttons2;	UTexture2D* HUDbuttonsBuy;
+	UTexture2D* ButtonColors;
+	//TArray<FVector2D> ButtonCoordinates;
+	TArray<FVector2D> Buttons;
+	void RandomizeButtonColors();
+	FVector2D GetRandomColor();
+
+	void UpdateFrogFact();
+	
+	UTexture2D* Buttons1;
+	UTexture2D* Buttons2;
+
+	UTexture2D* HUDbuttons1b; //TODO :Remove
+	UTexture2D* HUDbuttonsBuy; //TODO :Remove
 	//UTexture2D* HUDbuttons2b;
 	//UTexture2D* HUDbuttons3;
 	//class UTexture2D* GoBackArrow;

@@ -9,6 +9,15 @@
 
 #include "SharedData.h"
 
+#include "Blueprint/UserWidget.h"
+
+//#include "UI/FactsWidget.h"
+#include "UI/SFrogFacts.h"
+#include "Engine/Engine.h"
+
+//#include "../../../../../../../Epic Games/UE_5.3/Engine/Plugins/Editor/ObjectMixer/ObjectMixer/Source/ObjectMixer/Public/Views/List/ObjectMixerEditorList.h"
+//#include "Algo/RandomShuffle.h"
+
 //#include "TimerManager.h"
 //#include "Sound/SoundCue.h"
 //#include "IImageWrapper.h"
@@ -28,6 +37,26 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 {
 	HS2StarsLimitArray = { 200 };
 	HS3StarsLimitArray = { 600 };
+
+	Buttons = {
+		FVector2D(0.f, 0.f),
+		FVector2D(0.f, 0.25f),
+		FVector2D(0.f, 0.5f),
+		FVector2D(0.f, 0.75f),
+		FVector2D(0.25f, 0.f),
+		FVector2D(0.25f, 0.25f),
+		FVector2D(0.25f, 0.5f),
+		FVector2D(0.25f, 0.75f),
+		FVector2D(0.5f, 0.f),
+		FVector2D(0.5f, 0.25f),
+		FVector2D(0.5f, 0.5f),
+		FVector2D(0.5f, 0.75f),
+		FVector2D(0.75f, 0.f),
+		FVector2D(0.75f, 0.25f),
+		FVector2D(0.75f, 0.5f),
+		FVector2D(0.75f, 0.75f),
+	};
+	RandomizeButtonColors();
 
 	// --- Achievements ---
 	AchievementsList = {
@@ -67,6 +96,7 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 		TEXT("Strategist"),
 		TEXT("Mastermind")
 	};
+	//Buttons.Init(FVector2D::ZeroVector, 16);
 
 	struct FConstructorStatics
 	{
@@ -103,6 +133,8 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 		ConstructorHelpers::FObjectFinder<UTexture2D> PlayLevelMenu_3_Obj;
 		ConstructorHelpers::FObjectFinder<UTexture2D> PlayLevelMenu_4_Obj;
 		ConstructorHelpers::FObjectFinder<UTexture2D> Flags_Obj;
+		ConstructorHelpers::FObjectFinder<UTexture2D> ButtonColors_Obj;
+		//ConstructorHelpers::FObjectFinder<UUserWidget> UserWidgetInstance_Obj;
 
 		// --- Sound ---
 		//ConstructorHelpers::FObjectFinder<USoundCue> CountdownSound;
@@ -125,6 +157,7 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 			, ChinaLangSel_Obj(TEXT("/Game/UI/Textures/ChineseLangSel.ChineseLangSel"))
 			, CreditsText_Obj(TEXT("/Game/UI/Textures/CreditsText.CreditsText"))
 			, HUDbuttons1_Obj(TEXT("/Game/UI/Textures/Buttons1.Buttons1"))
+			
 			, HUDbuttons1b_Obj(TEXT("/Game/UI/Textures/Buttons1b.Buttons1b"))
 			, HUDbuttons2_Obj(TEXT("/Game/UI/Textures/Buttons2.Buttons2"))
 			, HUDbuttonsBuy_Obj(TEXT("/Game/UI/Textures/ButtonsBuy.ButtonsBuy"))
@@ -138,7 +171,9 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 			, PlayLevelMenu_3_Obj(TEXT("/Game/UI/Textures/PlayLevelMenu_3.PlayLevelMenu_3"))
 			, PlayLevelMenu_4_Obj(TEXT("/Game/UI/Textures/PlayLevelMenu_4.PlayLevelMenu_4"))
 			, Flags_Obj(TEXT("/Game/UI/Textures/Flags"))
-			
+			, ButtonColors_Obj(TEXT("/Game/UI/Textures/ButtonColors.ButtonColors"))
+			//, UserWidgetInstance_Obj(TEXT("/Game/UserWidgetTest.UserWidgetTest"))
+			/// Script / UMGEditor.WidgetBlueprint'/Game/UserWidgetTest.UserWidgetTest'
 			//, CountdownSound(TEXT("/Game/Audio/UI/Countdown_Cue.Countdown_Cue"))
 		{
 		}
@@ -163,9 +198,9 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 	ScreenShot = ConstructorStatics.ScreenShot_Obj.Object;
 	ChinaLangSel = ConstructorStatics.ChinaLangSel_Obj.Object;
 	CreditsText = ConstructorStatics.CreditsText_Obj.Object;
-	HUDbuttons1 = ConstructorStatics.HUDbuttons1_Obj.Object;
+	Buttons1 = ConstructorStatics.HUDbuttons1_Obj.Object;
 	HUDbuttons1b = ConstructorStatics.HUDbuttons1b_Obj.Object;
-	HUDbuttons2 = ConstructorStatics.HUDbuttons2_Obj.Object;
+	Buttons2 = ConstructorStatics.HUDbuttons2_Obj.Object;
 	HUDbuttonsBuy = ConstructorStatics.HUDbuttonsBuy_Obj.Object;
 	Arrows = ConstructorStatics.Arrows_Obj.Object;
 	GreenLayer = ConstructorStatics.GreenLayer_Obj.Object;
@@ -177,7 +212,16 @@ AJumpyFrogsHUD::AJumpyFrogsHUD()
 	PlayLevelMenu_3 = ConstructorStatics.PlayLevelMenu_3_Obj.Object;
 	PlayLevelMenu_4 = ConstructorStatics.PlayLevelMenu_4_Obj.Object;
 	Flags = ConstructorStatics.Flags_Obj.Object;
+	ButtonColors = ConstructorStatics.ButtonColors_Obj.Object;
 
+	/// Script / UMGEditor.WidgetBlueprint'/Game/UI/FactsWidget.FactsWidget'
+	/*static ConstructorHelpers::FClassFinder<UFactsWidget> WidgetClass(TEXT("/Game/UI/FactsWidget.FactsWidget_C"));
+	if (WidgetClass.Succeeded())
+	{
+		FactsUserWidgetReference = WidgetClass.Class;
+	}*/
+
+	//UserWidgetInstance = ConstructorStatics.UserWidgetInstance_Obj.Object;
 }
 
 
@@ -265,11 +309,12 @@ void AJumpyFrogsHUD::DrawHUD()
 			TimeCount = FString::FromInt(ttt);
 		}*/
 
-		DrawTexture(HUDbuttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(ButtonColors, 0.0f, 0.0f, IconSize, IconSize, Buttons[15].X, Buttons[15].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, 0.0f, 0.0f, IconSize, IconSize, 0.0f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(0.0f, 0.0f), IconHitBox, "Pause", false);
 
 		//AI Solver button
-		/*DrawTexture(HUDbuttons2, IconSize, 0.0f, IconSize, IconSize, 0.75f, 0.0f, 0.25f, 0.25f);
+		/*DrawTexture(Buttons2, IconSize, 0.0f, IconSize, IconSize, 0.75f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(IconSize, 0.0f), IconHitBox, "AISolver", false);*/
 
 		//FString skor = FString::FromInt(IGameModeInterface::Execute_GetScore(GM));
@@ -563,27 +608,31 @@ void AJumpyFrogsHUD::DrawHUD()
 		FVector2D BoxTexSize = FVector2D(SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6);
 
 		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
-
+		
+		DrawTexture(ButtonColors, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[0].X, Buttons[0].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(0.0f, (SD.Y - BoxTexSize.X)), BoxTexSize, "SwissKnife", false);
 		if (bSwissKnife)
-		{
-			DrawTexture(HUDbuttons1, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(0.0f, (SD.Y - BoxTexSize.X)), BoxTexSize, "SwissKnife", false);
-
-			DrawTexture(HUDbuttons1, 0.0f, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.5f, 0.25f, 0.25f);
+		{			
+			DrawTexture(ButtonColors, 0.0f, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[1].X, Buttons[2].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, 0.0f, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.5f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(0.0f, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "Credits", false);
 
-			DrawTexture(HUDbuttons1, BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.5f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[3].X, Buttons[3].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.5f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "ResetGame", false);
 
 			if (PLATFORM_ANDROID)
 			{
 				//DrawTexture(HUDbuttonsBuy, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.5f, 0.5f, 0.5f);
-				DrawTexture(HUDbuttons1, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.75f, 0.25f, 0.25f);
+				DrawTexture(ButtonColors, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[4].X, Buttons[4].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons1, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.75f, 0.25f, 0.25f);
 			}
 			else
 			{
 				//DrawTexture(HUDbuttonsBuy, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.5f, 0.5f);
-				DrawTexture(HUDbuttons1, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.75f, 0.25f, 0.25f);
+				DrawTexture(ButtonColors, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[5].X, Buttons[5].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons1, 0.0f, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.75f, 0.25f, 0.25f);
 			}
 			AddHitBox(FVector2D(0.0f, (SD.Y - 3 * BoxTexSize.X)), BoxTexSize, "AskUser", false);
 
@@ -595,76 +644,88 @@ void AJumpyFrogsHUD::DrawHUD()
 			}
 			AddHitBox(FVector2D(BoxTexSize.X * 2.f + FlagSize.X * 0.15f, SD.Y - BoxTexSize.Y * 0.5f - FlagSize.Y * 0.5f), FlagSize, "Language", false);
 
-			if (bSoundOn)
+			DrawTexture(ButtonColors, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[6].X, Buttons[6].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.75f, 0.25f, 0.25f);
+			if (!bSoundOn)
 			{
-				DrawTexture(HUDbuttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.75f, 0.25f, 0.25f);
-			}
-			else
-			{
-				DrawTexture(HUDbuttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.75f, 0.25f, 0.25f);
+				DrawTexture(Buttons1, BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.75f, 0.25f, 0.25f);
 			}
 			AddHitBox(FVector2D(BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SoundOnOff", false);
 		}
-		else
+		/*else
 		{
-			DrawTexture(HUDbuttons1, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y,Buttons[0].X, Buttons[0].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(0.0f, (SD.Y - BoxTexSize.X)), BoxTexSize, "SwissKnife", false);
-		}
+		}*/
 
 		//social media buttons.............
 		if (bSocialMedia)
 		{
-			DrawTexture(HUDbuttons1, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.5f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[8].X, Buttons[8].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.75f, 0.25f, -0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SocialMedia", false);
 
-			if (bDrawFbLike)
+			/*if (bDrawFbLike)
 			{
-				DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
+				DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[9].X, Buttons[9].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
 				AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "Facebook", false);
-				DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X * 2, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.5f, 0.25f, 0.25f);
+				DrawTexture(ButtonColors, SD.X - BoxTexSize.X * 2, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[10].X, Buttons[10].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons2, SD.X - BoxTexSize.X * 2, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.5f, 0.25f, 0.25f);
 				AddHitBox(FVector2D(SD.X - BoxTexSize.X * 2, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "Friends", false);
-				DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X * 3, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.5f, 0.25f, 0.25f);
+				DrawTexture(ButtonColors, SD.X - BoxTexSize.X * 3, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[11].X, Buttons[11].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons2, SD.X - BoxTexSize.X * 3, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.5f, 0.25f, 0.25f);
 				AddHitBox(FVector2D(SD.X - BoxTexSize.X * 3, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "FbPage", false);
 
 			}
-			else
-			{
-				DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
+			else*/
+			//{
+				DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[9].X, Buttons[9].Y, 0.25f, 0.25f);
+				DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
 				AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 2 * BoxTexSize.X)), BoxTexSize, "Facebook", false);
-			}
+			//}
 
 
-			DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.25f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[10].X, Buttons[10].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 3 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.75f, 0.25f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 3 * BoxTexSize.X)), BoxTexSize, "Tweeter", false);
 
-			DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 4 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.5f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - 4 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[11].X, Buttons[11].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 4 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.5f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 4 * BoxTexSize.X)), BoxTexSize, "Instagram", false);
 
-			DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 5 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.0f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - 5 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[12].X, Buttons[12].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 5 * BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.0f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 5 * BoxTexSize.X)), BoxTexSize, "Youtube", false);
 
-			/*	DrawTexture(HUDbuttons2, SD.X - BoxTexSize.X, (SD.Y - 5*BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
+			/*	DrawTexture(Buttons2, SD.X - BoxTexSize.X, (SD.Y - 5*BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - 5*BoxTexSize.X)), BoxTexSize, "Origami", false);*/
 
 		}
 		else
 		{
-			DrawTexture(HUDbuttons1, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
+			DrawTexture(ButtonColors, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[8].X, Buttons[8].Y, 0.25f, 0.25f);
+			DrawTexture(Buttons1, SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.5f, 0.25f, 0.25f);
 			AddHitBox(FVector2D(SD.X - BoxTexSize.X, (SD.Y - BoxTexSize.X)), BoxTexSize, "SocialMedia", false);
 		}
 
 		//play button
-		DrawTexture(HUDbuttons1, SD.X / 2 - SD.X * 0.0625f, SD.X * 0.25f, SD.X * 0.125f, SD.X * 0.125f, 0.5f, 0.0f, 0.5f, 0.5f);
-		AddHitBox(FVector2D(SD.X / 2 - SD.X * 0.0625f, SD.X * 0.25f), FVector2D(SD.X * 0.125f, SD.X * 0.125f), "Play", false);
+		//DrawTexture(Buttons1, SD.X / 2 - SD.X * 0.0625f, SD.X * 0.25f, SD.X * 0.125f, SD.X * 0.125f, 0.5f, 0.0f, 0.5f, 0.5f);
+		DrawTexture(Buttons1, SD.X / 2 - BoxTexSize.X*0.8f, SD.Y/2 - BoxTexSize.Y * 0.8f, BoxTexSize.X*1.6f, BoxTexSize.X * 1.6f, 0.5f, 0.0f, 0.5f, 0.5f);
+		AddHitBox(FVector2D(SD.X / 2 - BoxTexSize.X * 0.8f, SD.Y / 2 - BoxTexSize.Y * 0.8f), FVector2D(BoxTexSize.X * 1.6f, BoxTexSize.X * 1.6f), "Play", false);
 
 		//Achievemnts
-		DrawTexture(HUDbuttons2, SD.X / 2 - BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
+		DrawTexture(ButtonColors, SD.X / 2 - BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[12].X, Buttons[12].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X / 2 - BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 2 - BoxTexSize.X / 2, (SD.Y - BoxTexSize.X)), BoxTexSize, "Library", false);
 		//library
-		DrawTexture(HUDbuttons2, SD.X / 2 - BoxTexSize.X * 1.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.25f, 0.25f, 0.25f);
+		DrawTexture(ButtonColors, SD.X / 2 - BoxTexSize.X * 1.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[14].X, Buttons[14].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X / 2 - BoxTexSize.X * 1.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.0f, 0.25f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 2 - BoxTexSize.X * 1.5f, (SD.Y - BoxTexSize.X)), BoxTexSize, "LeaderBoard", false);
 		//leaderboard
-		DrawTexture(HUDbuttons2, SD.X / 2 + BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.25f, 0.25f, 0.25f);
+		DrawTexture(ButtonColors, SD.X / 2 + BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[15].X, Buttons[15].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X / 2 + BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.5f, 0.25f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 2 + BoxTexSize.X * 0.5f, (SD.Y - BoxTexSize.X)), BoxTexSize, "Achievements", false);
 
 
@@ -687,51 +748,73 @@ void AJumpyFrogsHUD::DrawHUD()
 	}
 	else if (bDrawPauseMenu)
 	{
-		
-		//float IconSize = SD.X / 12;
-		FVector2D BackgroundPos = FVector2D(float(SD.X / 2) - (SD.X / 16 * 3.5), float((SD.X / 2 / 2.7f) - (SD.X / 16 * 10 / 6 / 6)));
+	/*	DrawTexture(ButtonColors, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, Buttons[0].X, Buttons[0].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, 0.0f, (SD.Y - BoxTexSize.X), BoxTexSize.X, BoxTexSize.Y, 0.25f, 0.25f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(0.0f, (SD.Y - BoxTexSize.X)), BoxTexSize, "HomeMenu", false);*/
 
-		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
+
+
+
+
+		//float IconSize = SD.X / 12;
+		//FVector2D BackgroundPos = FVector2D(float(SD.X / 2) - (SD.X / 16 * 3.5), float((SD.X / 2 / 2.7f) - (SD.X / 16 * 10 / 6 / 6)));
+
+		//AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
 
 		//FVector2D IconHitBox = FVector2D(IconSize, IconSize);
-		DrawTexture(GreenLayer, BackgroundPos.X, BackgroundPos.Y, float(SD.X / 16 * 7), float(SD.X / 16 * 10 / 6 * 2.5833f), 0.0f, 0.25f, 1.0f, 0.75f);
+		//DrawTexture(GreenLayer, BackgroundPos.X, BackgroundPos.Y, float(SD.X / 16 * 7), float(SD.X / 16 * 10 / 6 * 2.5833f), 0.0f, 0.25f, 1.0f, 0.75f);
 		float IconSizeXY = SD.X / 16 * 10 / 6;
-		//Home menu button
-		DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f), IconSizeXY, IconSizeXY, 0.25f, 0.0f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f)), FVector2D(IconSizeXY, IconSizeXY), "HomeMenu", false);
-		//level select button
-		DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 / 2), float(SD.X / 2 / 2.7f), IconSizeXY, IconSizeXY, 0.25f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 / 2), float(SD.X / 2 / 2.7f)), FVector2D(IconSizeXY, IconSizeXY), "LevelSelect", false);
+		
+		//float IconSizeXY = SD.X / 16 * 10 / 6;
+
+		//float IconSizeXY = SD.X / 16 * 10 / 6;// FVector2D(SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6);
 
 		//restart button
-		DrawTexture(HUDbuttons1b, float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f), IconSizeXY, IconSizeXY, 0.0f, 0.25f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f)), FVector2D(IconSizeXY, IconSizeXY), "Restart", false);
-
-		//SoundOnOFf button
-		if (bSoundOn)
-		{
-			DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.5f, 0.75f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "SoundOnOff", false);
-		}
-		else
-		{
-			DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.75f, 0.75f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), FName("SoundOnOff"), false);
-		}
+		DrawTexture(ButtonColors, 0, 0, IconSizeXY, IconSizeXY, Buttons[3].X, Buttons[3].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, 0, 0, IconSizeXY, IconSizeXY, 0.0f, 0.25f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(0, 0), FVector2D(IconSizeXY, IconSizeXY), "Restart", false);
 		
 		//Next Level button
+		DrawTexture(ButtonColors, IconSizeXY, 0, IconSizeXY, IconSizeXY, Buttons[5].X, Buttons[5].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, IconSizeXY, 0, IconSizeXY, IconSizeXY, 0.5f, 0.75f, 0.25f, 0.25f);
 		if (!UnlockedArray[CurrentLevel] && !(CurrentLevel == 320)) //get unlocked level array for next level
 		{
-			DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 / 2), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.0f, 0.75f, 0.25f, 0.25f);
-			AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 / 2), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "NextLevel", false);
+			AddHitBox(FVector2D(IconSizeXY, 0), FVector2D(IconSizeXY, IconSizeXY), "NextLevel", false);
 		}
 		else
 		{
-			DrawTexture(HUDbuttons1b, float(SD.X / 2 - SD.X / 16 * 10 / 6 / 2), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.5f, 0.5f, 0.25f, 0.25f);
+			DrawTexture(Buttons1, IconSizeXY, 0, IconSizeXY, IconSizeXY, 0.75f, 0.75f, 0.25f, 0.25f);
 		}
-		//Continue button
-		DrawTexture(HUDbuttons1b, float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.75f, 0.0f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "Continue", false);
+
+		////level select button
+		DrawTexture(ButtonColors, 0, IconSizeXY, IconSizeXY, IconSizeXY, Buttons[2].X, Buttons[2].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, 0, IconSizeXY,  IconSizeXY, IconSizeXY, 0.25f, 0.5f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(0, IconSizeXY), FVector2D(IconSizeXY, IconSizeXY), "LevelSelect", false);
+
+		//Home menu button
+		DrawTexture(ButtonColors, IconSizeXY, IconSizeXY, IconSizeXY, IconSizeXY, Buttons[1].X, Buttons[1].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, IconSizeXY, IconSizeXY,  IconSizeXY, IconSizeXY, 0.25f, 0.0f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(IconSizeXY, IconSizeXY), FVector2D(IconSizeXY, IconSizeXY), "HomeMenu", false);
+		
+
+	
+		//play button continue
+		DrawTexture(Buttons1, SD.X / 2 - IconSizeXY * 0.8f, SD.Y / 2 - IconSizeXY * 0.8f, IconSizeXY * 1.6f, IconSizeXY * 1.6f, 0.5f, 0.0f, 0.5f, 0.5f);
+		AddHitBox(FVector2D(SD.X / 2 - IconSizeXY * 0.8f, SD.Y / 2 - IconSizeXY * 0.8f), FVector2D(IconSizeXY * 1.6f, IconSizeXY * 1.6f), "Continue", false);
+
+		////SoundOnOFf button
+		//DrawTexture(ButtonColors, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, Buttons[10].X, Buttons[10].Y, 0.25f, 0.25f);
+		//DrawTexture(Buttons1, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.5f, 0.75f, 0.25f, 0.25f);
+		//AddHitBox(FVector2D(float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "SoundOnOff", false);
+		//if (!bSoundOn)
+		//{
+		//	DrawTexture(Buttons1, float(SD.X / 2 - SD.X / 16 * 10 / 6 * 1.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.75f, 0.75f, 0.25f, 0.25f);
+		//}
+		
+		
+		////Continue button
+		//DrawTexture(HUDbuttons1b, float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f), IconSizeXY, IconSizeXY, 0.75f, 0.0f, 0.25f, 0.25f);
+		//AddHitBox(FVector2D(float(SD.X / 2 + SD.X / 16 * 10 / 6 * 0.75f), float(SD.X / 2 / 2.7f + SD.X / 16 * 10 / 6 * 1.25f)), FVector2D(IconSizeXY, IconSizeXY), "Continue", false);
 
 		/*FString TimeCount;
 		int32 ttt = PlayTime;
@@ -753,7 +836,8 @@ void AJumpyFrogsHUD::DrawHUD()
 		FString skor = FString::FromInt(Score);
 		GetTextSize(skor, (float&)TimeTextSize.X, (float&)TimeTextSize.Y, JFont, FontScale);
 		//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice1 : %s"), *FString::SanitizeFloat(TimeTextSize.X));
-		DrawText(skor, MyColorDark, SD.X - TimeTextSize.X - SD.X / 100, 0.0f, JFont, FontScale);
+		DrawText(skor, MyColorDark, SD.X - TimeTextSize.X * 2.f, 0.0f, JFont, FontScale);
+
 	}
 	else if (bDrawLibrary)
 	{
@@ -761,7 +845,7 @@ void AJumpyFrogsHUD::DrawHUD()
 		//draw library
 		AddHitBox(FVector2D(0.0f, 0.0f), SD, "EmptyHitBox", false); //empty hit box so we dont click anything in the level
 		//draw library background
-		DrawTexture(GreenLayer, 0.0f, SD.Y * 0.005f, SD.X, SD.Y * 0.75f, 0.022f, 0.25f, 0.956f, 0.75f);
+		DrawTexture(GreenLayer, 0.0f, SD.Y * 0.005f, SD.X, SD.Y, 0.005f, 0.25f, 0.99f, 0.75f);
 		///////////
 		FVector2D Velikost;
 		if (bLockedTip)
@@ -770,379 +854,379 @@ void AJumpyFrogsHUD::DrawHUD()
 			//DrawTexture(LockTexture_256, SD.X / 2, SD.Y / 2 - PicSize.Y*1.2f, PicSize.Y, PicSize.Y, 0.0f, 0.0f, 1.0f, 1.0f);
 			DrawTexture(LockTexture_256, SD.X / 2 - PicSize.Y * 0.75f, SD.Y / 2 - PicSize.Y * 1.2f, PicSize.Y * 1.5f, PicSize.Y * 1.5f, 0.0f, 0.0f, 1.0f, 1.0f);
 		}
-		else if (bCutStrNextDraw)
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("bDrawLibrary running,if (bCutStrNextDraw=true, working so far "));
-			bCutStrNextDraw = false;
-			//determine how many letters fits into width of the display/canvas
-			int32 runs = 0;
-			while (runs < 200)
-			{
-				runs++;
-				////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, MyColor, TEXT("fitting text into width "));
-				FString TestSt;
-				if (SelLang == 3 || SelLang == 4)
-				{
-					TestSt = TEXT("在在"); //TheTipsArray[TipsIndex].GetCharArray;
-				}
-				else
-				{
-					TestSt = "13";
-				}
+		//else if (bCutStrNextDraw)
+		//{
+		//	//UE_LOG(LogTemp, Warning, TEXT("bDrawLibrary running,if (bCutStrNextDraw=true, working so far "));
+		//	bCutStrNextDraw = false;
+		//	//determine how many letters fits into width of the display/canvas
+		//	int32 runs = 0;
+		//	while (runs < 200)
+		//	{
+		//		runs++;
+		//		////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, MyColor, TEXT("fitting text into width "));
+		//		FString TestSt;
+		//		if (SelLang == 3 || SelLang == 4)
+		//		{
+		//			TestSt = TEXT("在在"); //TheTipsArray[TipsIndex].GetCharArray;
+		//		}
+		//		else
+		//		{
+		//			TestSt = "13";
+		//		}
 
-				for (int32 i = 0; i < 200; i++)
-				{
-					GetTextSize(TestSt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-					//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice2 : %s"), *FString::SanitizeFloat(Velikost.X));
-					//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(TestSt));
-					if (Velikost.X > SD.X)
-					{
-						break;
-					}
-					if (SelLang == 3 || SelLang == 4)
-					{
-						TestSt.Append(TEXT("在"));
-					}
-					else { TestSt.Append("3"); }
-				}
-				int32 length = TestSt.Len(); //calculated max length of a line
-				FString zanimivost = TheTipsArray[TipsIndex];
-				int32 StrLen = zanimivost.Len();
-				//UE_LOG(LogTemp, Warning, TEXT("zanimivost1: %s"), *(zanimivost));
-				int32 StVrstic = (StrLen / length) + 1;
-				//UE_LOG(LogTemp, Warning, TEXT("StVrstic:%s"), *(FString::FromInt(StVrstic)));
-				for (int32 i = 0; i < 100; i++)
-				{
-					GetTextSize(zanimivost, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-					//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice3 : %s"), *FString::SanitizeFloat(Velikost.X));
-					//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(zanimivost));
-					//if (((Velikost.X / 6) < SD.X) && (Velikost.Y*5.5 < SD.Y / 2.0f))
-					if (Velikost.Y * StVrstic < SD.Y * 0.70f)
-					{
-						//if (i == 0) { FontScale = 1.4f; }
-						break;
-					}
-					FontScale -= 0.01f;
-				}
-				//UE_LOG(LogTemp, Warning, TEXT("zanimivost2: %s"), *(zanimivost));
-				for (int32 i = 0; i < 200; i++)
-				{
-					GetTextSize(TestSt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-					//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice4 : %s"), *FString::SanitizeFloat(Velikost.X));
-					//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(TestSt));
-					if (Velikost.X > SD.X)
-					{
-						break;
-					}
-					if (SelLang == 3 || SelLang == 4)
-					{
-						TestSt.Append(TEXT("在"));
-					}
-					else { TestSt.Append("3"); }
-				}
-				//UE_LOG(LogTemp, Warning, TEXT("zanimivost3: %s"), *(zanimivost));
-				length = TestSt.Len() - 1;//calculated max length of a line
-				StVrstic = (StrLen / length) + 1;
-				Vrstice.Reset();
-				//UE_LOG(LogTemp, Warning, TEXT("Tuki tud še dela očitno! "));
-				//UE_LOG(LogTemp, Warning, TEXT("StVrstic: %s"), *(FString::FromInt(StVrstic)));
-				//UE_LOG(LogTemp, Warning, TEXT("calculated max length of a line: %s"), *(FString::FromInt(length)));
-				//CutString(zanimivost, length);
-				//bool TooManySpaces = false;
-				//UE_LOG(LogTemp, Warning, TEXT("zanimivost4: %s"), *(zanimivost));
-				//UE_LOG(LogTemp, Warning, TEXT("zanimivost4 zanimivost.Len(): %s"), *(FString::FromInt(zanimivost.Len())));
-				for (int32 i = 0; zanimivost.Len() > 0; i++)
-				{
-					//UE_LOG(LogTemp, Warning, TEXT("logging iz  for (int32 i = 0; zanimivost.Len() > 0; i++)"));
-					//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice5 : %s"), *FString::SanitizeFloat(Velikost.X));
-					runs++;
-					FString tt;
-					if (zanimivost.Len() > length)
-					{
-						//FString tt2 = zanimivost.Left(length + 1);
+		//		for (int32 i = 0; i < 200; i++)
+		//		{
+		//			GetTextSize(TestSt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//			//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice2 : %s"), *FString::SanitizeFloat(Velikost.X));
+		//			//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(TestSt));
+		//			if (Velikost.X > SD.X)
+		//			{
+		//				break;
+		//			}
+		//			if (SelLang == 3 || SelLang == 4)
+		//			{
+		//				TestSt.Append(TEXT("在"));
+		//			}
+		//			else { TestSt.Append("3"); }
+		//		}
+		//		int32 length = TestSt.Len(); //calculated max length of a line
+		//		FString zanimivost = TheTipsArray[TipsIndex];
+		//		int32 StrLen = zanimivost.Len();
+		//		//UE_LOG(LogTemp, Warning, TEXT("zanimivost1: %s"), *(zanimivost));
+		//		int32 StVrstic = (StrLen / length) + 1;
+		//		//UE_LOG(LogTemp, Warning, TEXT("StVrstic:%s"), *(FString::FromInt(StVrstic)));
+		//		for (int32 i = 0; i < 100; i++)
+		//		{
+		//			GetTextSize(zanimivost, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//			//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice3 : %s"), *FString::SanitizeFloat(Velikost.X));
+		//			//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(zanimivost));
+		//			//if (((Velikost.X / 6) < SD.X) && (Velikost.Y*5.5 < SD.Y / 2.0f))
+		//			if (Velikost.Y * StVrstic < SD.Y * 0.70f)
+		//			{
+		//				//if (i == 0) { FontScale = 1.4f; }
+		//				break;
+		//			}
+		//			FontScale -= 0.01f;
+		//		}
+		//		//UE_LOG(LogTemp, Warning, TEXT("zanimivost2: %s"), *(zanimivost));
+		//		for (int32 i = 0; i < 200; i++)
+		//		{
+		//			GetTextSize(TestSt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//			//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice4 : %s"), *FString::SanitizeFloat(Velikost.X));
+		//			//UE_LOG(LogTemp, Warning, TEXT("Vrstica: %s"), *(TestSt));
+		//			if (Velikost.X > SD.X)
+		//			{
+		//				break;
+		//			}
+		//			if (SelLang == 3 || SelLang == 4)
+		//			{
+		//				TestSt.Append(TEXT("在"));
+		//			}
+		//			else { TestSt.Append("3"); }
+		//		}
+		//		//UE_LOG(LogTemp, Warning, TEXT("zanimivost3: %s"), *(zanimivost));
+		//		length = TestSt.Len() - 1;//calculated max length of a line
+		//		StVrstic = (StrLen / length) + 1;
+		//		Vrstice.Reset();
+		//		//UE_LOG(LogTemp, Warning, TEXT("Tuki tud še dela očitno! "));
+		//		//UE_LOG(LogTemp, Warning, TEXT("StVrstic: %s"), *(FString::FromInt(StVrstic)));
+		//		//UE_LOG(LogTemp, Warning, TEXT("calculated max length of a line: %s"), *(FString::FromInt(length)));
+		//		//CutString(zanimivost, length);
+		//		//bool TooManySpaces = false;
+		//		//UE_LOG(LogTemp, Warning, TEXT("zanimivost4: %s"), *(zanimivost));
+		//		//UE_LOG(LogTemp, Warning, TEXT("zanimivost4 zanimivost.Len(): %s"), *(FString::FromInt(zanimivost.Len())));
+		//		for (int32 i = 0; zanimivost.Len() > 0; i++)
+		//		{
+		//			//UE_LOG(LogTemp, Warning, TEXT("logging iz  for (int32 i = 0; zanimivost.Len() > 0; i++)"));
+		//			//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice5 : %s"), *FString::SanitizeFloat(Velikost.X));
+		//			runs++;
+		//			FString tt;
+		//			if (zanimivost.Len() > length)
+		//			{
+		//				//FString tt2 = zanimivost.Left(length + 1);
 
-						if (SelLang == 3 || SelLang == 4)
-						{
-							for (int32 s = 0; zanimivost.Len() > length; s++)
-							{
-								tt = zanimivost.Left(length); // vzamemo ven levo število znakov kolikor jih gre v širino
-								//int32 endIndex = ttr3.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);//najdemo zadnji presledek če obstaja
+		//				if (SelLang == 3 || SelLang == 4)
+		//				{
+		//					for (int32 s = 0; zanimivost.Len() > length; s++)
+		//					{
+		//						tt = zanimivost.Left(length); // vzamemo ven levo število znakov kolikor jih gre v širino
+		//						//int32 endIndex = ttr3.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);//najdemo zadnji presledek če obstaja
 
-								tt.RemoveFromEnd("(");
-								tt.RemoveFromEnd(TEXT("（"));
-								tt.RemoveFromEnd(TEXT("“"));
-								tt.RemoveFromEnd(TEXT("一"));
-								bool KejStevilk = true; //to tle ni res  ampk na začetku je blo zarad številk zdej je pa kr skoz pač 
-								FString NextLine = zanimivost;
-								NextLine.RemoveFromStart(tt); //kopiramo ostale znake v novo spremenljivo 
-								for (int32 m = 0; m < 50; m++)
-								{
-									tt.Reset();
-									tt = zanimivost.Left(length + m);
-									NextLine.Reset();
-									NextLine = zanimivost;
-									NextLine.RemoveFromStart(tt);
+		//						tt.RemoveFromEnd("(");
+		//						tt.RemoveFromEnd(TEXT("（"));
+		//						tt.RemoveFromEnd(TEXT("“"));
+		//						tt.RemoveFromEnd(TEXT("一"));
+		//						bool KejStevilk = true; //to tle ni res  ampk na začetku je blo zarad številk zdej je pa kr skoz pač 
+		//						FString NextLine = zanimivost;
+		//						NextLine.RemoveFromStart(tt); //kopiramo ostale znake v novo spremenljivo 
+		//						for (int32 m = 0; m < 50; m++)
+		//						{
+		//							tt.Reset();
+		//							tt = zanimivost.Left(length + m);
+		//							NextLine.Reset();
+		//							NextLine = zanimivost;
+		//							NextLine.RemoveFromStart(tt);
 
-									GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-									if (Velikost.X > SD.X)
-									{
-										tt.Reset();
-										tt = zanimivost.Left(length + m - 1);
-										tt.RemoveFromEnd("(");
-										tt.RemoveFromEnd(TEXT("（"));
-										tt.RemoveFromEnd(TEXT("“"));
-										tt.RemoveFromEnd(TEXT("一"));
-										NextLine.Reset();
-										NextLine = zanimivost;
-										NextLine.RemoveFromStart(tt);
+		//							GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//							if (Velikost.X > SD.X)
+		//							{
+		//								tt.Reset();
+		//								tt = zanimivost.Left(length + m - 1);
+		//								tt.RemoveFromEnd("(");
+		//								tt.RemoveFromEnd(TEXT("（"));
+		//								tt.RemoveFromEnd(TEXT("“"));
+		//								tt.RemoveFromEnd(TEXT("一"));
+		//								NextLine.Reset();
+		//								NextLine = zanimivost;
+		//								NextLine.RemoveFromStart(tt);
 
-										break;
-									}
-								}
+		//								break;
+		//							}
+		//						}
 
-								// preverimo če je drugi znak nove vrstice slučajno " ", če je je treba odvzet eno črko prvi vrstici in jo dat v drugo
-								TArray <FString> CharsToCheck = { TEXT("。"), TEXT("，"), TEXT("一"),TEXT("！"),TEXT("）"),TEXT(")"),",","!","." };
+		//						// preverimo če je drugi znak nove vrstice slučajno " ", če je je treba odvzet eno črko prvi vrstici in jo dat v drugo
+		//						TArray <FString> CharsToCheck = { TEXT("。"), TEXT("，"), TEXT("一"),TEXT("！"),TEXT("）"),TEXT(")"),",","!","." };
 
-								for (int32 c = 0; c < 9; c++)
-								{
-									if (NextLine.StartsWith(CharsToCheck[c]))
-									{
-										//IsFirstCharBad = true;
-										int32 saf = tt.Len();
-										tt.Reset();
-										tt = zanimivost.Left(saf - 1);
-										NextLine.Reset();
-										NextLine = zanimivost;
-										NextLine.RemoveFromStart(tt);
-										break;
-									}
-								}
-								int32 MyShinyNewInt = FCString::Atoi(*tt.Right(1));
-								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, tt.Right(1));
-								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, FString::FromInt(MyShinyNewInt));
-								if ((MyShinyNewInt < 10 && MyShinyNewInt>0) || tt.EndsWith(TEXT("0")) || tt.EndsWith(TEXT("."))) //if it is a number 
-								{
-									////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, TEXT("It Is TRUE!!"));
-									//check if there is a number also the first char in next line
-									int32 TestInt = FCString::Atoi(*NextLine.Left(1));
-									if ((TestInt < 10 && TestInt>0) || NextLine.StartsWith(TEXT("0")) || NextLine.StartsWith(TEXT("."))) //if it is a number 
-									{
-										////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, TEXT("It Is TRUE also again!!"));
-										//obviously the number is split into new line, so find the first number in the number sequence from the end of first line, and then search for first char that is not a number
-										for (int32 u = 2; u < 10; u++)
-										{
-											FString hh = tt.Right(u);
-											FString gg = hh.Left(1);
-											int32 TestInttt = FCString::Atoi(*gg);
-											if (((TestInttt < 10 && TestInttt>0) || gg.StartsWith(TEXT("0"))))
-											{
-												int dasg = tt.Len();
-												tt.Reset();
-												tt = zanimivost.Left(dasg - u - 1);
-												NextLine.Reset();
-												NextLine = zanimivost;
-												NextLine.RemoveFromStart(tt);
-												break;
-											}
-										}
-									}
-								}
-								TArray <FString> LettersToCheck = { "a","b","t","r","o","c","h","l","i","g","s","m","p","h","n","e",TEXT("”") };
-								for (int32 c = 0; c < 16; c++)
-								{
-									if (tt.EndsWith(LettersToCheck[c]))
-									{
-										//so the last char is obviously a letter and probably a broken word, so to make sure, we check next line first char
-										for (int32 t = 0; t < 17; t++)
-										{
-											if (NextLine.StartsWith(LettersToCheck[t]))
-											{
-												//obviously the word is broken at end of line so search the first line from-end untill you find TEXT("“")
-												int32 WhereToCut = tt.Find(TEXT("“"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		//						for (int32 c = 0; c < 9; c++)
+		//						{
+		//							if (NextLine.StartsWith(CharsToCheck[c]))
+		//							{
+		//								//IsFirstCharBad = true;
+		//								int32 saf = tt.Len();
+		//								tt.Reset();
+		//								tt = zanimivost.Left(saf - 1);
+		//								NextLine.Reset();
+		//								NextLine = zanimivost;
+		//								NextLine.RemoveFromStart(tt);
+		//								break;
+		//							}
+		//						}
+		//						int32 MyShinyNewInt = FCString::Atoi(*tt.Right(1));
+		//						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, tt.Right(1));
+		//						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, FString::FromInt(MyShinyNewInt));
+		//						if ((MyShinyNewInt < 10 && MyShinyNewInt>0) || tt.EndsWith(TEXT("0")) || tt.EndsWith(TEXT("."))) //if it is a number 
+		//						{
+		//							////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, TEXT("It Is TRUE!!"));
+		//							//check if there is a number also the first char in next line
+		//							int32 TestInt = FCString::Atoi(*NextLine.Left(1));
+		//							if ((TestInt < 10 && TestInt>0) || NextLine.StartsWith(TEXT("0")) || NextLine.StartsWith(TEXT("."))) //if it is a number 
+		//							{
+		//								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 5.f, MyColor, TEXT("It Is TRUE also again!!"));
+		//								//obviously the number is split into new line, so find the first number in the number sequence from the end of first line, and then search for first char that is not a number
+		//								for (int32 u = 2; u < 10; u++)
+		//								{
+		//									FString hh = tt.Right(u);
+		//									FString gg = hh.Left(1);
+		//									int32 TestInttt = FCString::Atoi(*gg);
+		//									if (((TestInttt < 10 && TestInttt>0) || gg.StartsWith(TEXT("0"))))
+		//									{
+		//										int dasg = tt.Len();
+		//										tt.Reset();
+		//										tt = zanimivost.Left(dasg - u - 1);
+		//										NextLine.Reset();
+		//										NextLine = zanimivost;
+		//										NextLine.RemoveFromStart(tt);
+		//										break;
+		//									}
+		//								}
+		//							}
+		//						}
+		//						TArray <FString> LettersToCheck = { "a","b","t","r","o","c","h","l","i","g","s","m","p","h","n","e",TEXT("”") };
+		//						for (int32 c = 0; c < 16; c++)
+		//						{
+		//							if (tt.EndsWith(LettersToCheck[c]))
+		//							{
+		//								//so the last char is obviously a letter and probably a broken word, so to make sure, we check next line first char
+		//								for (int32 t = 0; t < 17; t++)
+		//								{
+		//									if (NextLine.StartsWith(LettersToCheck[t]))
+		//									{
+		//										//obviously the word is broken at end of line so search the first line from-end untill you find TEXT("“")
+		//										int32 WhereToCut = tt.Find(TEXT("“"), ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 
-												//int32 saf = tt.Len();
-												tt.Reset();
-												tt = zanimivost.Left(WhereToCut);
-												NextLine.Reset();
-												NextLine = zanimivost;
-												NextLine.RemoveFromStart(tt);
-												//
-												break;
-											}
-										}
-										break;
-										//IsFirstCharBad = true;
-									}
-								}
-								Vrstice.Add(tt);
-								zanimivost.RemoveFromStart(tt);
-							}
-						}
-						else
-						{
-							tt = zanimivost.Left(length);
-							int32 endIndex = tt.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		//										//int32 saf = tt.Len();
+		//										tt.Reset();
+		//										tt = zanimivost.Left(WhereToCut);
+		//										NextLine.Reset();
+		//										NextLine = zanimivost;
+		//										NextLine.RemoveFromStart(tt);
+		//										//
+		//										break;
+		//									}
+		//								}
+		//								break;
+		//								//IsFirstCharBad = true;
+		//							}
+		//						}
+		//						Vrstice.Add(tt);
+		//						zanimivost.RemoveFromStart(tt);
+		//					}
+		//				}
+		//				else
+		//				{
+		//					tt = zanimivost.Left(length);
+		//					int32 endIndex = tt.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);
 
-							//we get next line
-							FString Temp = tt.Right(length - endIndex);
-							tt.RemoveFromEnd(Temp);
+		//					//we get next line
+		//					FString Temp = tt.Right(length - endIndex);
+		//					tt.RemoveFromEnd(Temp);
 
-							FString NextLine = zanimivost;
-							NextLine.RemoveFromStart(tt);
-
-
-							FString tricrke;
-							tricrke = TEXT("xxx");
-
-							float LetterSizeX, LetterSizeY;
-							GetTextSize(tricrke, LetterSizeX, LetterSizeY, HUDFont, FontScale);
-
-							//look in next line and copy first word to the end of previous line and test its length
-							//GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-							for (int32 m = 0; m < 10; m++)
-							{
-								//if we'll copy the word we'll need the empty space before the word 
-								//find first word in next line
-								FString NextLineTemp = NextLine;
-								FString FirstWord;
-								if (NextLineTemp.RemoveFromStart(TEXT(" "))) //removes the empy " "space if there is one at start
-								{
-									FirstWord.Append(TEXT(" "));
-								}
-								//UE_LOG(LogTemp, Warning, TEXT("NextLineTemp:%s"), *NextLineTemp);
-								int32 WordEndIndex = NextLineTemp.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromStart);//find next " ", this will index the where the word ends 
-								//UE_LOG(LogTemp, Warning, TEXT("WordEndIndex: %s"), *FString::FromInt(WordEndIndex));
-								//copy from the string the first word and paste it to the first line 
-								//we set the first char to be empty space (we could later add if its start of a sentence to not need empty space)
-								FirstWord.Append(NextLineTemp.Left(WordEndIndex));// create the string FirstWord of second line 
-								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FirstWord);
-								//UE_LOG(LogTemp, Warning, TEXT("FirstWord:%s"), *FirstWord);
-								FString appendix = tt;// copy to new string to test if it will work this way or is the line too long now
-								appendix.Append(FirstWord); // if too long, we skip adding more words and rather continue with inserting empty spaces to match the width
-								//UE_LOG(LogTemp, Warning, TEXT("appendix.Append(FirstWord);: %s"), *appendix);
-								GetTextSize(appendix, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-								//UE_LOG(LogTemp, Warning, TEXT("Tuki Je problem -appendix- Velikost vrstice 2: %s"), *FString::SanitizeFloat(Velikost.X));
-								if (Velikost.X < (SD.X - LetterSizeX))
-								{
-									tt.Append(FirstWord);
-									NextLine.RemoveFromStart(FirstWord);
-								}
-								else { break; } //stop the loop and continue with inserting empty spaces to fit the desired width
-								//GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-							}
+		//					FString NextLine = zanimivost;
+		//					NextLine.RemoveFromStart(tt);
 
 
-							//FVector2D Vel2;
-							//find all positions of " " in the whole string!
-							FString chkstr = tt;
-							TArray <int32> Presledki;
-							chkstr.RemoveFromEnd(" "); //removes empty space at the end if it is there
-							chkstr.RemoveFromStart(" "); //removes empty space at start if it is there
-							for (int32 m = 0; m < 100 && chkstr.Contains(TEXT(" "), ESearchCase::CaseSensitive, ESearchDir::FromStart); m++)
-							{
-								int32 indx = chkstr.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);
-								FString TempS = chkstr.Right(chkstr.Len() - indx + 1);
-								chkstr.RemoveFromEnd(TempS);
-								Presledki.Add(indx);
-								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, MyColor, FString::FromInt(indx));
-							}
-							FString tttemp = tt;
-							FVector2D Vel;
-							//GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
-							tttemp.RemoveFromEnd(" "); //removes empty space at the end if it is there
-							tttemp.RemoveFromStart(" "); //removes empty space at start if it is there
-							GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
-							int32 h = 0; int32 f = 0; int32 ajaa = 0;
-							//	TooManySpaces = false;
-							////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("Velikost vrstice:") + FString::SanitizeFloat(Vel.X));
-							////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::SanitizeFloat(Vel.X));
-							//	UE_LOG(LogTemp, Warning, *(FString::SanitizeFloat(Vel.X)));
-							//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice 6 : %s"), *FString::SanitizeFloat(Vel.X));
-							//UE_LOG(LogTemp, Warning, TEXT("tttemp String je tukaj, it tega je zračunana velikost: %s"), *tttemp);
-							for (int32 j = 0; Vel.X < (SD.X - LetterSizeX); j++)
-							{
-								//UE_LOG(LogTemp, Warning, TEXT("LetterSizeX:%s"), *FString::SanitizeFloat(LetterSizeX));
-								////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("vstavljanje presledkov for loop executed"));
-								if (j == Presledki.Num())
-								{
-									f++;
-									j = 0;
-									h += (Presledki.Num()) * f;
-								}
-								//ajaa++;
-								//if ( 8 < ajaa) { TooManySpaces = true;}
-								tttemp.InsertAt(Presledki[j] + h, TEXT(" "));
-								h -= 1 * f;
-								GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
-							}
-							////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("vstavljanje presledkov for loop executed"));
-							//UE_LOG(LogTemp, Warning, TEXT("A dela tle pred	Vrstice.Add"));
-							Vrstice.Add(tttemp);
-							zanimivost.RemoveFromStart(tt);
-						}
-					}
-					else
-					{
-						Vrstice.Add(zanimivost);
-						break;
-					}
-				}
-				//check if there are more than 3 spaces one after another , if so reduce the fontsize
-				//check if there are more than 3 spaces one after another , if so reduce the fontsize
-				if (!(SelLang == 3) || !(SelLang == 4))
-				{
-					bool TooManySpaces = false;
-					for (int32 i = 0; i < Vrstice.Num(); i++)
-					{
-						FString FinalTest = Vrstice[i];
-						int32 indx = FinalTest.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromStart);
-						int32 xCounter = 0;
-						while (FinalTest.Len() > 0)
-						{
-							//FString Letter = FinalTest.Left(1);
-							if (FinalTest.RemoveFromStart(" "))
-							{
-								xCounter++;
-								if (xCounter > 2) { TooManySpaces = true; break; }
-							}
-							else
-							{
-								FinalTest.RemoveFromStart(FinalTest.Left(1));
-								xCounter = 0;
-							}
-						}
+		//					FString tricrke;
+		//					tricrke = TEXT("xxx");
 
-					}
+		//					float LetterSizeX, LetterSizeY;
+		//					GetTextSize(tricrke, LetterSizeX, LetterSizeY, HUDFont, FontScale);
 
-					GetTextSize(Vrstice[0], (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
-					FString tricrke;
-					tricrke = TEXT("xxx");
+		//					//look in next line and copy first word to the end of previous line and test its length
+		//					//GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//					for (int32 m = 0; m < 10; m++)
+		//					{
+		//						//if we'll copy the word we'll need the empty space before the word 
+		//						//find first word in next line
+		//						FString NextLineTemp = NextLine;
+		//						FString FirstWord;
+		//						if (NextLineTemp.RemoveFromStart(TEXT(" "))) //removes the empy " "space if there is one at start
+		//						{
+		//							FirstWord.Append(TEXT(" "));
+		//						}
+		//						//UE_LOG(LogTemp, Warning, TEXT("NextLineTemp:%s"), *NextLineTemp);
+		//						int32 WordEndIndex = NextLineTemp.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromStart);//find next " ", this will index the where the word ends 
+		//						//UE_LOG(LogTemp, Warning, TEXT("WordEndIndex: %s"), *FString::FromInt(WordEndIndex));
+		//						//copy from the string the first word and paste it to the first line 
+		//						//we set the first char to be empty space (we could later add if its start of a sentence to not need empty space)
+		//						FirstWord.Append(NextLineTemp.Left(WordEndIndex));// create the string FirstWord of second line 
+		//						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Blue, FirstWord);
+		//						//UE_LOG(LogTemp, Warning, TEXT("FirstWord:%s"), *FirstWord);
+		//						FString appendix = tt;// copy to new string to test if it will work this way or is the line too long now
+		//						appendix.Append(FirstWord); // if too long, we skip adding more words and rather continue with inserting empty spaces to match the width
+		//						//UE_LOG(LogTemp, Warning, TEXT("appendix.Append(FirstWord);: %s"), *appendix);
+		//						GetTextSize(appendix, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//						//UE_LOG(LogTemp, Warning, TEXT("Tuki Je problem -appendix- Velikost vrstice 2: %s"), *FString::SanitizeFloat(Velikost.X));
+		//						if (Velikost.X < (SD.X - LetterSizeX))
+		//						{
+		//							tt.Append(FirstWord);
+		//							NextLine.RemoveFromStart(FirstWord);
+		//						}
+		//						else { break; } //stop the loop and continue with inserting empty spaces to fit the desired width
+		//						//GetTextSize(tt, (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//					}
 
-					float LetterSizeX, LetterSizeY;
-					GetTextSize(tricrke, LetterSizeX, LetterSizeY, HUDFont, FontScale);
 
-					/*
-					float LetterSizeX, LetterSizeY;
-					GetTextSize("xxx", LetterSizeX, LetterSizeY, HUDFont, FontScale);
-					*/
-					////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 70.f, MyColor, FString::FromInt(TooManySpaces));
-					if (SD.Y * 0.70f < (Vrstice.Num() * Velikost.Y) || TooManySpaces)  //if ((StVrstic < Vrstice.Num()) && )
-					{
-						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("First option if executed") + FString::SanitizeFloat((Vrstice.Num()*Velikost.Y)));
-						if (FontScale == 0.1f)
-						{
-							break;
-						}
-						FontScale -= 0.01f;
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-			////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, FString::FromInt(Vrstice.Num()));
-		}
+		//					//FVector2D Vel2;
+		//					//find all positions of " " in the whole string!
+		//					FString chkstr = tt;
+		//					TArray <int32> Presledki;
+		//					chkstr.RemoveFromEnd(" "); //removes empty space at the end if it is there
+		//					chkstr.RemoveFromStart(" "); //removes empty space at start if it is there
+		//					for (int32 m = 0; m < 100 && chkstr.Contains(TEXT(" "), ESearchCase::CaseSensitive, ESearchDir::FromStart); m++)
+		//					{
+		//						int32 indx = chkstr.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromEnd);
+		//						FString TempS = chkstr.Right(chkstr.Len() - indx + 1);
+		//						chkstr.RemoveFromEnd(TempS);
+		//						Presledki.Add(indx);
+		//						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, MyColor, FString::FromInt(indx));
+		//					}
+		//					FString tttemp = tt;
+		//					FVector2D Vel;
+		//					//GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
+		//					tttemp.RemoveFromEnd(" "); //removes empty space at the end if it is there
+		//					tttemp.RemoveFromStart(" "); //removes empty space at start if it is there
+		//					GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
+		//					int32 h = 0; int32 f = 0; int32 ajaa = 0;
+		//					//	TooManySpaces = false;
+		//					////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, TEXT("Velikost vrstice:") + FString::SanitizeFloat(Vel.X));
+		//					////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Green, FString::SanitizeFloat(Vel.X));
+		//					//	UE_LOG(LogTemp, Warning, *(FString::SanitizeFloat(Vel.X)));
+		//					//UE_LOG(LogTemp, Warning, TEXT("Velikost vrstice 6 : %s"), *FString::SanitizeFloat(Vel.X));
+		//					//UE_LOG(LogTemp, Warning, TEXT("tttemp String je tukaj, it tega je zračunana velikost: %s"), *tttemp);
+		//					for (int32 j = 0; Vel.X < (SD.X - LetterSizeX); j++)
+		//					{
+		//						//UE_LOG(LogTemp, Warning, TEXT("LetterSizeX:%s"), *FString::SanitizeFloat(LetterSizeX));
+		//						////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("vstavljanje presledkov for loop executed"));
+		//						if (j == Presledki.Num())
+		//						{
+		//							f++;
+		//							j = 0;
+		//							h += (Presledki.Num()) * f;
+		//						}
+		//						//ajaa++;
+		//						//if ( 8 < ajaa) { TooManySpaces = true;}
+		//						tttemp.InsertAt(Presledki[j] + h, TEXT(" "));
+		//						h -= 1 * f;
+		//						GetTextSize(tttemp, (float&)Vel.X, (float&)Vel.Y, HUDFont, FontScale);
+		//					}
+		//					////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("vstavljanje presledkov for loop executed"));
+		//					//UE_LOG(LogTemp, Warning, TEXT("A dela tle pred	Vrstice.Add"));
+		//					Vrstice.Add(tttemp);
+		//					zanimivost.RemoveFromStart(tt);
+		//				}
+		//			}
+		//			else
+		//			{
+		//				Vrstice.Add(zanimivost);
+		//				break;
+		//			}
+		//		}
+		//		//check if there are more than 3 spaces one after another , if so reduce the fontsize
+		//		//check if there are more than 3 spaces one after another , if so reduce the fontsize
+		//		if (!(SelLang == 3) || !(SelLang == 4))
+		//		{
+		//			bool TooManySpaces = false;
+		//			for (int32 i = 0; i < Vrstice.Num(); i++)
+		//			{
+		//				FString FinalTest = Vrstice[i];
+		//				int32 indx = FinalTest.Find(" ", ESearchCase::CaseSensitive, ESearchDir::FromStart);
+		//				int32 xCounter = 0;
+		//				while (FinalTest.Len() > 0)
+		//				{
+		//					//FString Letter = FinalTest.Left(1);
+		//					if (FinalTest.RemoveFromStart(" "))
+		//					{
+		//						xCounter++;
+		//						if (xCounter > 2) { TooManySpaces = true; break; }
+		//					}
+		//					else
+		//					{
+		//						FinalTest.RemoveFromStart(FinalTest.Left(1));
+		//						xCounter = 0;
+		//					}
+		//				}
+
+		//			}
+
+		//			GetTextSize(Vrstice[0], (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale);
+		//			FString tricrke;
+		//			tricrke = TEXT("xxx");
+
+		//			float LetterSizeX, LetterSizeY;
+		//			GetTextSize(tricrke, LetterSizeX, LetterSizeY, HUDFont, FontScale);
+
+		//			/*
+		//			float LetterSizeX, LetterSizeY;
+		//			GetTextSize("xxx", LetterSizeX, LetterSizeY, HUDFont, FontScale);
+		//			*/
+		//			////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 70.f, MyColor, FString::FromInt(TooManySpaces));
+		//			if (SD.Y * 0.70f < (Vrstice.Num() * Velikost.Y) || TooManySpaces)  //if ((StVrstic < Vrstice.Num()) && )
+		//			{
+		//				////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("First option if executed") + FString::SanitizeFloat((Vrstice.Num()*Velikost.Y)));
+		//				if (FontScale == 0.1f)
+		//				{
+		//					break;
+		//				}
+		//				FontScale -= 0.01f;
+		//			}
+		//			else
+		//			{
+		//				break;
+		//			}
+		//		}
+		//	}
+		//	////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, FString::FromInt(Vrstice.Num()));
+		//}
 
 		////uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 70.f, MyColor, FString::SanitizeFloat(FontScale));
 
@@ -1150,85 +1234,107 @@ void AJumpyFrogsHUD::DrawHUD()
 		//FLinearColor TheFontColor = FLinearColor(0.287f, 0.25f, 0.25f);
 		//DrawText(Vrstica1, TheFontColor, (SD.X - Velikost.X) / 2 , SD.Y/36.0f, HUDFont, FontScale);// (SD.X-Velikost.X)/2
 		//calc Y position to centre the text
-		if (!bLockedTip)
-		{
 
-			float YSize, XSize;
-			GetTextSize(Vrstice[0], XSize, YSize, HUDFont, FontScale);
-			YSize = (SD.Y * 0.35f + SD.Y / 36.0f) - (YSize * Vrstice.Num() / 2);
-			for (int32 i = 0; i < Vrstice.Num(); i++)
-			{
-				GetTextSize(Vrstice[i], (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale); //SD.Y/36.0f + Velikost.Y*i
-				DrawText(Vrstice[i], MyColor, (SD.X - Velikost.X) / 2, YSize + Velikost.Y * i, HUDFont, FontScale);
-			}
-		}
+
+		
+
+		//if (!bLockedTip)
+		//{
+
+		//	float YSize, XSize;
+		//	GetTextSize(Vrstice[0], XSize, YSize, HUDFont, FontScale);
+		//	YSize = (SD.Y * 0.35f + SD.Y / 36.0f) - (YSize * Vrstice.Num() / 2);
+		//	for (int32 i = 0; i < Vrstice.Num(); i++)
+		//	{
+		//		GetTextSize(Vrstice[i], (float&)Velikost.X, (float&)Velikost.Y, HUDFont, FontScale); //SD.Y/36.0f + Velikost.Y*i
+		//		DrawText(Vrstice[i], MyColor, (SD.X - Velikost.X) / 2, YSize + Velikost.Y * i, HUDFont, FontScale);
+		//	}
+		//}
 		//draw green layer background for order display numbers 2/124
 		//DrawTexture(GreenLayer, SD.X / 2 - SD.X / 8, SD.Y*0.79f, SD.X / 4, SD.Y*0.15f, 0.0f, 0.0f, 1.0f, 0.23f);
-		DrawTexture(WideButton, SD.X / 2 - SD.X / 8, SD.Y * 0.8f, SD.X / 4, SD.Y * 0.15f, 0.0f, 0.0f, 1.0f, 1.0f);
+		DrawTexture(WideButton, SD.X / 2 - SD.X / 8, SD.Y * 0.8f, SD.X / 4, IconSize, 0.0f, 0.0f, 1.0f, 1.0f);
 
+		
+		//if (UserWidgetTestClass) // make sure you assigned the widget class in editor
+		//{
+		//	UserWidgetInstance = CreateWidget<UUserWidget>(GetWorld(), UserWidgetTestClass);
+		//	if (UserWidgetInstance)
+		//	{
+		//		UserWidgetInstance->AddToViewport();
+		//		//UserWidgetInstance->SetText(NewText);
+		//		//UserWidgetInstance->SetToolTipText(FText(TEXT("bfdonsaodfdf")));
+		//	}
+		//}
+
+		float ButtonSize = IconSize * 0.8f;
+		//float ButtonSizeY = SD.X / 16 - SD.Y * 0.075f
 		//draw Home button
-		DrawTexture(HUDbuttons1, SD.X / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.25f, 0.0f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "Close", false);
-		//sound On Off
-		if (bSoundOn)
+		//TODO: tuki ce das Buttons[0] za koordinate povzroci napako, nobene logike... ampk ostali gumbi spodi nizje je pa ok?
+		DrawTexture(ButtonColors, IconSize * 0.25f, SD.Y * 0.8f, IconSize, IconSize, Buttons[2].X, Buttons[2].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, IconSize * 0.25f, SD.Y * 0.8f, IconSize, IconSize, 0.25f, 0.0f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(IconSize * 0.25f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "Close", false);
+	
+		DrawTexture(ButtonColors, IconSize * 1.75f, SD.Y * 0.8f, IconSize, IconSize, Buttons[3].X, Buttons[3].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons1, IconSize * 1.75f, SD.Y * 0.8f, IconSize, IconSize, 0.5f, 0.75f, 0.25f, 0.25f);
+		if (!bSoundOn)
 		{
-			DrawTexture(HUDbuttons1, SD.X * 3 / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.5f, 0.75f, 0.25f, 0.25f);
+			DrawTexture(Buttons1, IconSize * 1.75f, SD.Y * 0.8f, IconSize, IconSize, 0.75f, 0.75f, 0.25f, 0.25f);
 		}
-		else
-		{
-			DrawTexture(HUDbuttons1, SD.X * 3 / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.75f, 0.75f, 0.25f, 0.25f);
-
-		}
-		AddHitBox(FVector2D(SD.X * 3 / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "sound", false);
+		AddHitBox(FVector2D(IconSize * 1.75f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "sound", false);
+		
 		//-10 
-		DrawTexture(HUDbuttons2, SD.X * 5 / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.0f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X * 5 / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "minusten", false);
+		DrawTexture(ButtonColors, IconSize * 3.25f, SD.Y * 0.8f, IconSize, IconSize, Buttons[4].X, Buttons[4].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, IconSize * 3.25f, SD.Y * 0.8f, IconSize, IconSize, 0.0f, 0.75f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(IconSize * 3.25f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "minusten", false);
 
 		//+10
-		DrawTexture(HUDbuttons2, SD.X - SD.X * 5 / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.25f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X - SD.X * 5 / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "plusten", false);
+		DrawTexture(ButtonColors, SD.X - IconSize * 4.25f, SD.Y * 0.8f, IconSize, IconSize, Buttons[1].X, Buttons[1].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X - IconSize * 4.25f, SD.Y * 0.8f, IconSize, IconSize, 0.25f, 0.75f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(SD.X - IconSize * 4.25f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "plusten", false);
 		//Previous Tip
-		DrawTexture(HUDbuttons2, SD.X - SD.X * 3 / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.75f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X - SD.X * 3 / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "PrevTip", false);
+		DrawTexture(ButtonColors, SD.X - IconSize * 2.75f, SD.Y * 0.8f, IconSize, IconSize, Buttons[5].X, Buttons[5].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X - IconSize * 2.75f, SD.Y * 0.8f, IconSize, IconSize, 0.75f, 0.75f, 0.25f, 0.25f);
+		AddHitBox(FVector2D(SD.X - IconSize * 2.75f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "PrevTip", false);
 		//load next tip
-		DrawTexture(HUDbuttons2, SD.X - SD.X / 16 - SD.Y * 0.075f, SD.Y * 0.8f, SD.Y * 0.15f, SD.Y * 0.15f, 0.5f, 0.75f, 0.25f, 0.25f);
-		AddHitBox(FVector2D(SD.X - SD.X / 16 - SD.Y * 0.075f, SD.Y * 0.8f), FVector2D(SD.Y * 0.15f, SD.Y * 0.15f), "NextTip", false);
+		DrawTexture(ButtonColors, SD.X - IconSize * 1.25f, SD.Y * 0.8f, IconSize, IconSize, Buttons[6].X, Buttons[6].Y, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X - IconSize * 1.25f, SD.Y * 0.8f, IconSize, IconSize, 1.f, 0.75f, -0.25f, 0.25f);
+		AddHitBox(FVector2D(SD.X - IconSize * 1.25f, SD.Y * 0.8f), FVector2D(IconSize, IconSize), "NextTip", false);
 		//draw library Close button
 		//DrawTexture(NextClose, SD.X/8, SD.Y / 8 * 5.9f , SD.X/4, SD.Y/5, 0.5f, 0.75f, 0.5f, 0.25f);
 		//AddHitBox(FVector2D(SD.X/8, SD.Y / 8 * 5.9f), FVector2D(SD.X / 4, SD.Y / 5), "Close", false); 
 		//draw library NextTip button
 		//DrawTexture(NextClose, SD.X / 8*5, SD.Y / 8 * 5.9f, SD.X / 4, SD.Y / 5, 0.0f, 0.75f, 0.5f, 0.25f);
 		//AddHitBox(FVector2D(SD.X / 8*5, SD.Y / 8 * 5.9f), FVector2D(SD.X / 4, SD.Y / 5), "NextTip", false);
-		FString kazalo = FString::FromInt(TipsIndex + 1) + "/121";
-		float Fss = 1.0f;
-		//SD.Y/36.0f + Velikost.Y*i
-		for (int32 i = 0; i < 100; i++)
-		{
-			GetTextSize(kazalo, (float&)Velikost.X, (float&)Velikost.Y, JFont, Fss);
-			if (Velikost.Y > SD.Y * 0.09f)
-			{
-				break;
-			}
-			else
-			{
-				Fss += 0.01f;
-			}
-		}
-		for (int32 i = 0; i < 100; i++)
-		{
-			GetTextSize(kazalo, (float&)Velikost.X, (float&)Velikost.Y, JFont, Fss);
-			if (Velikost.X < SD.X / 4)
-			{
-				break;
-			}
-			else
-			{
-				Fss -= 0.01f;
-			}
-		}
-		DrawText(kazalo, FLinearColor(0.03f, 0.03f, 0.03f), (SD.X - Velikost.X) / 2, SD.Y * 0.88f - Velikost.Y / 2, JFont, Fss);
-		//SD.Y*0.875f + SD.Y*0.075f
-		//DrawTexture(GreenLayer, SD.X / 2 - SD.X / 8, SD.Y*0.825f, SD.X / 4, SD.Y*0.10f, 0.0f, 0.0f, 1.0f, 1.0f);
+		//FString kazalo = FString::FromInt(TipsIndex + 1) + "/121";
+		//float Fss = 1.0f;
+		////SD.Y/36.0f + Velikost.Y*i
+		//for (int32 i = 0; i < 100; i++)
+		//{
+		//	GetTextSize(kazalo, (float&)Velikost.X, (float&)Velikost.Y, JFont, Fss);
+		//	if (Velikost.Y > SD.Y * 0.09f)
+		//	{
+		//		break;
+		//	}
+		//	else
+		//	{
+		//		Fss += 0.01f;
+		//	}
+		//}
+		//for (int32 i = 0; i < 100; i++)
+		//{
+		//	GetTextSize(kazalo, (float&)Velikost.X, (float&)Velikost.Y, JFont, Fss);
+		//	if (Velikost.X < SD.X / 4)
+		//	{
+		//		break;
+		//	}
+		//	else
+		//	{
+		//		Fss -= 0.01f;
+		//	}
+		//}
+		//DrawText(kazalo, FLinearColor(0.03f, 0.03f, 0.03f), (SD.X - Velikost.X) / 2, SD.Y * 0.88f - Velikost.Y / 2, JFont, Fss);
+		////SD.Y*0.875f + SD.Y*0.075f
+		////DrawTexture(GreenLayer, SD.X / 2 - SD.X / 8, SD.Y*0.825f, SD.X / 4, SD.Y*0.10f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	}
 
@@ -1327,21 +1433,21 @@ void AJumpyFrogsHUD::DrawHUD()
 		//DrawText(beseda,MyColor, (SD.X - QuestionTextSize.X) / 2.0f,	(SD.Y - QuestionTextSize.Y) / 2.0f, HUDFont, tempfontsiz);
 		DrawText(beseda, MyColor, (SD.X - QuestionTextSize.X) / 2.0f, SD.X * 0.125f + QuestionTextSize.Y * 0.75f, HUDFont, tempfontsiz);
 		//buttons yes and no , copied from library
-		//DrawTexture(HUDbuttons2, SD.X / 8, SD.Y / 8 * 5.9f, SD.X / 4, SD.Y / 5, 0.25f, 0.0f, 0.25f, 0.25f);
+		//DrawTexture(Buttons2, SD.X / 8, SD.Y / 8 * 5.9f, SD.X / 4, SD.Y / 5, 0.25f, 0.0f, 0.25f, 0.25f);
 		/*
-		DrawTexture(HUDbuttons2, SD.X / 4, SD.Y / 2 + SD.X / 12 , SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X / 4, SD.Y / 2 + SD.X / 12 , SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 4, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "No", false);
 		//draw library NextTip button
-		DrawTexture(HUDbuttons2, SD.X - SD.X/4 - SD.X/8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X - SD.X/4 - SD.X/8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X - SD.X / 4 - SD.X / 8, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "Yes", false);
 		*/
 
 		FVector2D IconSizeR(FVector2D(SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6));
 		float IconYPos = SD.X * 0.1f + (SD.Y - SD.X * 0.2f) * 0.75f - IconSizeR.X / 2;
-		DrawTexture(HUDbuttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "No", false);
 
-		DrawTexture(HUDbuttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "Yes", false);
 
 	}
@@ -1384,11 +1490,11 @@ void AJumpyFrogsHUD::DrawHUD()
 	}
 	DrawText(beseda,MyColor, (SD.X - QuestionTextSize.X) / 2.0f,	(SD.Y - QuestionTextSize.Y) / 2.0f, HUDFont, tempfontsiz);
 	//buttons yes and no , copied from library
-	//DrawTexture(HUDbuttons2, SD.X / 8, SD.Y / 8 * 5.9f, SD.X / 4, SD.Y / 5, 0.25f, 0.0f, 0.25f, 0.25f);
-	DrawTexture(HUDbuttons2, SD.X / 4, SD.Y / 2 + SD.X / 12 , SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
+	//DrawTexture(Buttons2, SD.X / 8, SD.Y / 8 * 5.9f, SD.X / 4, SD.Y / 5, 0.25f, 0.0f, 0.25f, 0.25f);
+	DrawTexture(Buttons2, SD.X / 4, SD.Y / 2 + SD.X / 12 , SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
 	AddHitBox(FVector2D(SD.X / 4, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "No", false);
 	//draw library NextTip button
-	DrawTexture(HUDbuttons2, SD.X - SD.X/4 - SD.X/8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
+	DrawTexture(Buttons2, SD.X - SD.X/4 - SD.X/8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
 	AddHitBox(FVector2D(SD.X - SD.X / 4 - SD.X / 8, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "Yes", false);
 
 	}
@@ -1430,18 +1536,18 @@ void AJumpyFrogsHUD::DrawHUD()
 		//DrawText(beseda, MyColor, (SD.X - QuestionTextSize.X) / 2.0f, (SD.Y - QuestionTextSize.Y) / 2.0f, HUDFont, tempfontsiz);
 		//buttons yes and no
 		/*
-		DrawTexture(HUDbuttons2, SD.X / 4, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X / 4, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.25f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 4, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "No", false);
 
-		DrawTexture(HUDbuttons2, SD.X - SD.X / 4 - SD.X / 8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X - SD.X / 4 - SD.X / 8, SD.Y / 2 + SD.X / 12, SD.X / 8, SD.X / 8, 0.5f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X - SD.X / 4 - SD.X / 8, SD.Y / 2 + SD.X / 12), FVector2D(SD.X / 8, SD.X / 8), "Yes", false);
 		*/
 		FVector2D IconSizeR(FVector2D(SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6));
 		float IconYPos = SD.X * 0.1f + (SD.Y - SD.X * 0.2f) * 0.75f - IconSizeR.X / 2;
-		DrawTexture(HUDbuttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "No", false);
 
-		DrawTexture(HUDbuttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "Yes", false);
 
 	}
@@ -1492,8 +1598,8 @@ void AJumpyFrogsHUD::DrawHUD()
 		GetTextSize(Teststr, (float&)Velik.X, (float&)Velik.Y, HUDFont, FontScale);
 		DrawText(FacebookShareText, MyColor, (SD.X - Velik.X) / 2, SD.Y / 2 - Velik.Y * 0.7f, HUDFont, FontScale);
 
-		//DrawTexture(HUDbuttons2, (SD.X + Velik.X) / 2, (SD.Y - Velik.Y) / 2, SD.X/12, SD.X / 12, 0.0f, 0.0f, 0.25f, 0.25f);
-		//DrawTexture(HUDbuttons1, (SD.X - Velik.X) / 2 - SD.X / 12, (SD.Y - Velik.Y) / 2, SD.X/12, SD.X / 12, 0.5f, 0.25f, 0.25f, 0.25f);
+		//DrawTexture(Buttons2, (SD.X + Velik.X) / 2, (SD.Y - Velik.Y) / 2, SD.X/12, SD.X / 12, 0.0f, 0.0f, 0.25f, 0.25f);
+		//DrawTexture(Buttons1, (SD.X - Velik.X) / 2 - SD.X / 12, (SD.Y - Velik.Y) / 2, SD.X/12, SD.X / 12, 0.5f, 0.25f, 0.25f, 0.25f);
 		if (ImagePosted)
 		{
 			bDrawShareImage = false;
@@ -1554,22 +1660,22 @@ void AJumpyFrogsHUD::DrawHUD()
 
 		FVector2D IconSizeR(FVector2D (SD.X / 16 * 10 / 6, SD.X / 16 * 10 / 6));
 		//restart button
-		DrawTexture(HUDbuttons1, SD.X / 16 * 8 - SD.X/18 , SD.X / 16 * 8 / 2 + SD.X / 8 , (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.25f, 0.25f, 0.25f);
+		DrawTexture(Buttons1, SD.X / 16 * 8 - SD.X/18 , SD.X / 16 * 8 / 2 + SD.X / 8 , (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.25f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X / 16 * 8 - SD.X / 18, SD.X *3 /8 ), IconSizeR, "Restart", false);
 
 		//Next Level button
 		if (!UnlockedArray[CurrentLevel])
 		{
-		DrawTexture(HUDbuttons1, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.75f, 0.25f, 0.25f);
+		DrawTexture(Buttons1, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.75f, 0.25f, 0.25f);
 		AddHitBox(FVector2D((SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, SD.X * 3 / 8), IconSizeR, "NextLevel", false);
 		}
 		else
 		{
-		DrawTexture(HUDbuttons1, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.5f, 0.25f, 0.25f);
+		DrawTexture(Buttons1, (SD.X / 16 * 8 + SD.X / 16 * 10 / 2) - SD.X / 16 * 10 / 6 * 2, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.5f, 0.25f, 0.25f);
 		}
 
 		//Level Select button
-		DrawTexture(HUDbuttons1, (SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.75f, 0.25f, 0.25f);
+		DrawTexture(Buttons1, (SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, SD.X / 16 * 8 / 2 + SD.X / 8, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.75f, 0.25f, 0.25f);
 		AddHitBox(FVector2D((SD.X / 16 * 8 - SD.X / 16 * 10 / 2) + SD.X / 16 * 10 / 6, SD.X * 3 / 8), IconSizeR, "LevelSelect", false);*/
 	}
 	/*
@@ -1753,7 +1859,7 @@ void AJumpyFrogsHUD::DrawHUD()
 		float PosY = SD.X / 12 + (SD.X / 2 - SD.X / 8) - IconSize2.X * 1.25f;
 		//highscore stamp
 		//if(new highscore)
-		//DrawTexture(HUDbuttons2, PosX + 3 * Presledek - GameWonTextSize.Y/2, SD.X / 11 + GameWonTextSize.Y * 2 , (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.5f, 0.25f, 0.25f);
+		//DrawTexture(Buttons2, PosX + 3 * Presledek - GameWonTextSize.Y/2, SD.X / 11 + GameWonTextSize.Y * 2 , (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.0f, 0.5f, 0.25f, 0.25f);
 		if (Score > HighScoreArray[CurrentLevel])
 		{
 			DrawTexture(HUDbuttons1b, SD.X / 8 + LayerSizeX - IconSize2.X * 1.75f, PosY - IconSize2.X * 1.6f, IconSize2.X, IconSize2.Y, 0.5f, 0.25f, 0.25f, 0.25f);
@@ -2358,13 +2464,13 @@ void AJumpyFrogsHUD::DrawHUD()
 		float IconYPos = SD.X * 0.1f + (SD.Y - SD.X * 0.2f) * 0.75f - IconSizeR.X / 2;
 
 		//DrawTexture(HUDbuttons1b, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.75f, 0.5f, 0.25f, 0.25f);
-		DrawTexture(HUDbuttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.25f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.25f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "Disable", false);
 
 		/*DrawTexture(HUDbuttonsBuy, SD.X * 0.5f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.5f, 1.0f);
 		AddHitBox(FVector2D(SD.X * 0.5f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "RestorePurch", false);*/
 
-		DrawTexture(HUDbuttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
+		DrawTexture(Buttons2, SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos, (float&)IconSizeR.X, (float&)IconSizeR.Y, 0.5f, 0.0f, 0.25f, 0.25f);
 		AddHitBox(FVector2D(SD.X * 0.75f - IconSizeR.X / 2.0f, IconYPos), IconSizeR, "Enable", false);
 
 		float tempfontsiz = 1.0;
@@ -2575,6 +2681,7 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-LevelSelect clicked");
 					bDraw4LevelsType = true;
 					bDrawPauseMenu = false;
+					bLevelsFromPause = true;
 				}
 				else if (BoxName == FName("NextLevel"))
 				{
@@ -2601,15 +2708,15 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//CheckIfCameraChanges();
 					//load next level
 				}
-				else if (BoxName == FName("SoundOnOff"))
-				{
-					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" SoundOnOff clicked ..."));
-					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-SoundOnOff clicked");
-					//bDrawHudIcons = true;
-					//bDrawPauseMenu = false;bDraw4LevelsType
-					TurnSoundOnOff();
-					//bSoundOn = !bSoundOn;
-				}
+				//else if (BoxName == FName("SoundOnOff"))
+				//{
+				//	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" SoundOnOff clicked ..."));
+				//	//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-SoundOnOff clicked");
+				//	//bDrawHudIcons = true;
+				//	//bDrawPauseMenu = false;bDraw4LevelsType
+				//	TurnSoundOnOff();
+				//	//bSoundOn = !bSoundOn;
+				//}
 
 			}
 			else if (bDraw4LevelsType)
@@ -2618,7 +2725,15 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				if (BoxName == FName("Back"))
 				{
 					bDraw4LevelsType = false;
-					bStartMenu = true;
+					if (bLevelsFromPause)
+					{
+						bDrawPauseMenu = true;
+					}
+					else
+					{
+						bStartMenu = true;
+					}
+					bLevelsFromPause = false;
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Back clicked ..."));
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDraw4LevelsType-Back clicked");
 					//if (GameModeReference->bIsCameraHome)
@@ -2775,6 +2890,47 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					bCutStrNextDraw = true;
 					//GameModeReference->SpawnFlareBlocker();
 					UnlockedTips = 0;
+
+					/*FactsUserWidget = CreateWidget<UFactsWidget>(GetWorld(), FactsUserWidgetReference);
+					FactsUserWidget->AddToViewport();*/
+
+				/*	if (FactsUserWidgetReference)
+					{
+						FactsUserWidget = CreateWidget<UFactsWidget>(GetWorld(), FactsUserWidgetReference);
+						if (FactsUserWidget)
+						{
+							FactsUserWidget->AddToViewport();
+							FactsUserWidget->SetFactText(FText::FromString(TEXT("The Ornate Horned Frog lives in the rainforests of South America. It is the most aggressive and will attack an animal way larger that itself. They are not poisonous but they are fearless. When they feel threatened they will jump toward the enemy and bite them! When hunting, they prefer to wait for their prey to come to them and will eat other frogs, lizards, mice, and large insects.")));
+						}
+					}*/
+
+					if (GEngine && GEngine->GameViewport)
+					{
+						FrogFactsWidget = SNew(SFrogFacts).OwningHUD(this);
+						GEngine->GameViewport->AddViewportWidgetContent(SAssignNew(FrogFactsContainer, SWeakWidget).PossiblyNullContent(FrogFactsWidget.ToSharedRef()));
+						UpdateFrogFact();
+					}
+
+					//(English="The Ornate Horned Frog lives in the rainforests of South America. It is the most aggressive and will attack an animal way larger that itself. They are not poisonous but they are fearless. When they feel threatened they will jump toward the enemy and bite them! When hunting, they prefer to wait for their prey to come to them and will eat other frogs, lizards, mice, and large insects.")
+					//FactsUserWidget->SetFactText(FText::FromString(TEXT("Frogs can breathe through their skin!")));
+
+					// Create the widget entirely in C++
+					//CreatedWidget = CreateWidget<UUserWidget>(GetWorld(), UFactsWidget::StaticClass());
+					//CreatedWidget->Add
+
+					//UFactsWidget* Widget = CreateWidget<UFactsWidget>(GetWorld(), UFactsWidget::StaticClass());
+					//if (Widget)
+					//{
+					//	Widget->AddToViewport();
+					//	UE_LOG(LogTemp, Warning, TEXT("Widget added"));
+					//	// Example: set a frog fact
+					//	Widget->SetFactText(FText::FromString(TEXT("Frogs can breathe through their skin and jump 20x their body length!")));
+					//}
+					//else
+					//{
+					//	UE_LOG(LogTemp, Warning, TEXT("Adding widget failed"));
+					//}
+
 				/*	for (int32 g = 0; g < 320; g++)
 					{
 						if (g == 32) { g = 100; }
@@ -3029,20 +3185,19 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawLibrary-NextTip clicked");
 					//TipsIndex = FMath::RandRange(0, 116);
 
-					TipsIndex++;
-					if (TipsIndex > 120) { TipsIndex = 120; }
-
-					if (TipsIndex > UnlockedTips)
-					{
-						bLockedTip = true;
-					}
-					else
-					{
-						bLockedTip = false;
-					}
-					//Vrstice.Reset();
-					FontScale = 1.0f;
-					bCutStrNextDraw = true;
+					TipsIndex++;					
+					UpdateFrogFact();
+					//if (TipsIndex > UnlockedTips)
+					//{
+					//	bLockedTip = true;
+					//}
+					//else
+					//{
+					//	bLockedTip = false;
+					//}
+					////Vrstice.Reset();
+					//FontScale = 1.0f;
+					//bCutStrNextDraw = true;
 					//CutTheStringIntoPiesces(TheTipsArray[TipsIndex], SD);
 
 				}
@@ -3052,19 +3207,20 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawLibrary-PrevTip clicked");
 					//TipsIndex = FMath::RandRange(0, 116);
 
-					TipsIndex--;
-					if (TipsIndex < 1) { TipsIndex = 0; }
-					//Vrstice.Reset();
-					if (TipsIndex > UnlockedTips)
-					{
-						bLockedTip = true;
-					}
-					else
-					{
-						bLockedTip = false;
-					}
-					FontScale = 1.0f;
-					bCutStrNextDraw = true;
+					TipsIndex--;					
+					UpdateFrogFact();
+
+					////Vrstice.Reset();
+					//if (TipsIndex > UnlockedTips)
+					//{
+					//	bLockedTip = true;
+					//}
+					//else
+					//{
+					//	bLockedTip = false;
+					//}
+					//FontScale = 1.0f;
+					//bCutStrNextDraw = true;
 					//CutTheStringIntoPiesces(TheTipsArray[TipsIndex], SD);
 				}
 				else if (BoxName == FName("plusten"))
@@ -3074,9 +3230,10 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//TipsIndex = FMath::RandRange(0, 116);
 
 					TipsIndex += 10;
-					if (TipsIndex > 120) { TipsIndex = 120; }
+					UpdateFrogFact();
+
 					//Vrstice.Reset();
-					if (TipsIndex > UnlockedTips)
+					/*if (TipsIndex > UnlockedTips)
 					{
 						bLockedTip = true;
 					}
@@ -3085,7 +3242,7 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 						bLockedTip = false;
 					}
 					FontScale = 1.0f;
-					bCutStrNextDraw = true;
+					bCutStrNextDraw = true;*/
 					//CutTheStringIntoPiesces(TheTipsArray[TipsIndex], SD);
 				}
 				else if (BoxName == FName("minusten"))
@@ -3095,18 +3252,19 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//TipsIndex = FMath::RandRange(0, 116);
 
 					TipsIndex -= 10;
-					if (TipsIndex < 1) { TipsIndex = 0; }
-					//Vrstice.Reset();
-					if (TipsIndex > UnlockedTips)
-					{
-						bLockedTip = true;
-					}
-					else
-					{
-						bLockedTip = false;
-					}
-					FontScale = 1.0f;
-					bCutStrNextDraw = true;
+					UpdateFrogFact();
+
+					////Vrstice.Reset();
+					//if (TipsIndex > UnlockedTips)
+					//{
+					//	bLockedTip = true;
+					//}
+					//else
+					//{
+					//	bLockedTip = false;
+					//}
+					//FontScale = 1.0f;
+					//bCutStrNextDraw = true;
 					//CutTheStringIntoPiesces(TheTipsArray[TipsIndex], SD);
 				}
 				else if (BoxName == FName("sound"))
@@ -3122,6 +3280,14 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawLibrary-Close clicked");
 					bDrawLibrary = false;
 					bStartMenu = true;
+
+					if (GEngine && GEngine->GameViewport && FrogFactsContainer.IsValid())
+					{
+						GEngine->GameViewport->RemoveViewportWidgetContent(FrogFactsContainer.ToSharedRef());
+						FrogFactsContainer.Reset();
+						FrogFactsWidget.Reset(); // optional, also release the SFrogFacts shared pointer
+					}
+					
 					//GameModeReference->DestroyFlareBlocker();
 				}
 
@@ -3807,6 +3973,11 @@ void AJumpyFrogsHUD::LoadScrOff()
 void AJumpyFrogsHUD::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//RandomizeButtonColors();
+
+	
+
 	//class AJumpyFrogsGameModeBase* GameModeReference = (AJumpyFrogsGameModeBase*)GetWorld()->GetAuthGameMode();
 	//class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
 	//GameModeReference = (AJumpyFrogsGameModeBase*)GetWorld()->GetAuthGameMode();
@@ -3834,4 +4005,62 @@ void AJumpyFrogsHUD::BeginPlay()
 	FTimerHandle LoadTextsAtStartTimer;
 	GetWorld()->GetTimerManager().SetTimer(LoadTextsAtStartTimer, this, &AJumpyFrogsHUD::LoadTextsAtStart, 0.4f, false);
 	
+}
+void AJumpyFrogsHUD::RandomizeButtonColors()
+{
+	// Shuffle
+	for (int32 i = Buttons.Num() - 1; i > 0; --i)
+	{
+		int32 j = FMath::RandRange(0, i);
+		Buttons.Swap(i, j);
+	}
+	//Buttons.Empty();
+	//for (int32 i = 0; i < 16; i++)
+	//{
+	//	uint8 RandNumber = FMath::RandRange(0, 15);
+	//	if (RandNumber  != PreviousNumber)
+	//	{
+	//		RandomizedArray.Add(RandNumber);
+	//	}
+	//	FVector2D NewColor;
+	//	while (FVector2D NewColor GetRandomColor() != Buttons[Buttons.Num() - 1])
+	//	{
+
+	//	}
+	//	Buttons.Add(GetRandomColor());
+	//}
+}
+FVector2D AJumpyFrogsHUD::GetRandomColor()
+{
+	FVector2D TextCoord = FVector2D::ZeroVector;
+	uint8 RandNumber = FMath::RandRange(0, 15);
+	uint8 Sector = RandNumber+1 % 4;
+	switch (Sector)
+	{
+		case 1: TextCoord.X = 0.f; break;
+		case 2: TextCoord.X = 0.25f; break;
+		case 3: TextCoord.X = 0.5f; break;
+		case 0: TextCoord.X = 0.75f; break;
+
+	}
+	Sector = RandNumber  / 4;
+	switch (Sector)
+	{
+		case 0: TextCoord.Y = 0.f; break;
+		case 1: TextCoord.Y = 0.25f; break;
+		case 2: TextCoord.Y = 0.5f; break;
+		case 3: TextCoord.Y = 0.75f; break;
+	}
+	return TextCoord;
+}
+void AJumpyFrogsHUD::UpdateFrogFact()
+{
+	if (TipsIndex > 121) { TipsIndex = 121; }
+	else if (TipsIndex < 1) { TipsIndex = 0; }
+
+	if (FrogFactsWidget.IsValid())
+	{
+		FrogFactsWidget->SetFactText(FText::FromString(TheTipsArray[TipsIndex]), FText::FromString(FString::FromInt(TipsIndex + 1) + "/" + FString::FromInt(TheTipsArray.Num())), SelLang == 3 || SelLang == 4);
+		//FrogFactsWidget->SetFactText(LOCTEXT("NewFact", "Here is a new frog fact!"));
+	}
 }

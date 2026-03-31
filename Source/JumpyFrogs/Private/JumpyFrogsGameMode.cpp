@@ -736,6 +736,8 @@ bool AJumpyFrogsGameMode::LoadGameDataFromFile(
 void AJumpyFrogsGameMode::LoadLevel_Implementation(int32 LevelNumber)
 {
 	CurrentLevel = LevelNumber;
+	/*UJumpyFrogsGameInstance* GameInstanceReference = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+	GameInstanceReference->CurrentLevel = LevelNumber;*/
 	LoadMap(); 
 }
 void AJumpyFrogsGameMode::LoadMap()
