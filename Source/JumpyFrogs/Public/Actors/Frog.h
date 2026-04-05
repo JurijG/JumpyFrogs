@@ -153,11 +153,11 @@ UCLASS()
 class JUMPYFROGS_API AFrog : public AActor, public IFrogInterface
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AFrog();
-
+	FORCEINLINE USkeletalMeshComponent* GetFrogMesh() { return FrogMesh; }
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -308,7 +308,10 @@ protected:
 	UMaterialInstance* MatStrawberry;
 	UMaterialInstance* MatBombFrog;
 
+
+	
 public:	
+	bool bWizardFrog = false;
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
 

@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "Teleporter.generated.h"
 
+
+class UNiagaraComponent;
 UCLASS()
 class JUMPYFROGS_API ATeleporter : public AActor
 {
@@ -18,6 +20,12 @@ public:
 	void RepositionTeleportersAndApplyMaterial(float StartRot, float EndRot, FVector TeleportEndLoc, int32 WhichMaterial, FVector EndLocation, FVector StartLocation);
 
 protected:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
+	UNiagaraComponent* NiagaraEffectStart;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
+	UNiagaraComponent* NiagaraEffectEnd;
+
 	// Called when the game starts or when spawned
 	//virtual void BeginPlay() override;
 

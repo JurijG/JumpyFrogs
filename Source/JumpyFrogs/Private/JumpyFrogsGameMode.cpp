@@ -6,6 +6,7 @@
 #include "UI/JumpyFrogsHUD.h"
 
 #include "Actors/Frog.h"
+#include "Actors/WizardFrog.h"
 #include "Actors/Teleporter.h"
 #include "Actors/LilyPads.h"
 #include "Actors/EmptySlot.h"
@@ -230,6 +231,15 @@ void AJumpyFrogsGameMode::AddFrog(FVector2D Pos)
 	T.Z = 202.0f;//T.Z = 278.0f;
 	FrogsArray.Add(GetWorld()->SpawnActor<AFrog>(T, FRotator::ZeroRotator));
 }
+void AJumpyFrogsGameMode::AddWizardFrog(FVector2D Pos)
+{
+	FVector T;
+	T.X = Pos.X;
+	T.Y = Pos.Y;
+	T.Z = 202.0f;//T.Z = 278.0f;
+	//AWizardFrog* Wiz = 
+	FrogsArray.Add(GetWorld()->SpawnActor<AWizardFrog>(T, FRotator::ZeroRotator));
+}
 void AJumpyFrogsGameMode::AddSlot(FVector2D Pos)
 {
 	FVector T;
@@ -422,8 +432,8 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 		for (int32 i = 0; i < iMax; i++)
 		{
 			//AddFrog(LevelsList[CurrentLevel][i]);
-			AddFrog(SpawnLevelsList[CurrentLevel]->Level[i]);
-			//FrogsArray[i]->IsThisBomb = true;
+			AddWizardFrog(SpawnLevelsList[CurrentLevel]->Level[i]);
+			//FrogsArray[i]->bWizardFrog = true;
 		}
 	}
 	iMax = FrogsRemaining;

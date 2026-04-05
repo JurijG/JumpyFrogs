@@ -160,7 +160,7 @@ FSlateFontInfo SFrogFacts::FitTextToBox(const FText& Text, const FSlateFontInfo&
 
 		// Simple heuristic: if single-line width is larger than MaxWidth, assume it will wrap
 		float EstimatedLines = FMath::CeilToFloat(TextSize.X / MaxWidth);
-		float EstimatedHeight = EstimatedLines * TextSize.Y * 1.3f;
+		float EstimatedHeight = EstimatedLines * TextSize.Y * 1.5f;
 
 		if (TextSize.X <= MaxWidth || EstimatedHeight <= MaxHeight)
 			break;

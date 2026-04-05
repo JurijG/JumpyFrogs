@@ -75,6 +75,7 @@ protected:
 #pragma region SpawningLevels
 	
 	void AddFrog(FVector2D Pos);
+	void AddWizardFrog(FVector2D Pos);
 
 	void AddSlot(FVector2D Pos);
 

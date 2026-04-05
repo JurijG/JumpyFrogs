@@ -9,6 +9,10 @@
 
 #include "Interfaces/GameModeInterface.h"
 
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
+
 //#include "JumpyFrogsGameModeBase.h"
 
 // Sets default values
@@ -28,6 +32,7 @@ ATeleporter::ATeleporter()
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> GreenMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> PurpleMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UParticleSystem> LilyPadOrange;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraAsset;
 
 		FConstructorStatics() //StaticMesh'/Game/EmptySlot/StaticMesh/EmptySlot.EmptySlot'
 			:// TelLilyPadMesh(TEXT("/Game/EmptySlot/StaticMesh/EmptySlot")),// //(TEXT("/Game/Teleporter/TeleporterStartMesh")),
@@ -39,7 +44,8 @@ ATeleporter::ATeleporter()
 			YellowMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Yellow")),
 			GreenMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Green")),
 			PurpleMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Purple")),
-			LilyPadOrange(TEXT("/Game/LilyPads/Materials/Lily_Pad_Mat_Inst_Orange"))
+			LilyPadOrange(TEXT("/Game/LilyPads/Materials/Lily_Pad_Mat_Inst_Orange")),
+			NiagaraAsset(TEXT("/Game/Niagara/NS_FrogHand.NS_FrogHand"))
 		{
 		}
 	};
@@ -79,6 +85,31 @@ ATeleporter::ATeleporter()
 	TeleporterEndMesh->bCastDynamicShadow = false;
 	TeleporterEndMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterEndClicked);
 	TeleporterEndMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedEndTeleport);
+
+	
+	// Create Niagara component
+	NiagaraEffectStart = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffectStart"));
+	NiagaraEffectStart->SetAsset(ConstructorStatics.NiagaraAsset.Object);
+	// Attach to root (or any component you want)
+	NiagaraEffectStart->SetupAttachment(TeleporterStartMesh);
+
+	// Optional: auto-activate
+	NiagaraEffectStart->bAutoActivate = true;
+	
+
+	NiagaraEffectEnd = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffectEnd"));
+	NiagaraEffectEnd->SetAsset(ConstructorStatics.NiagaraAsset.Object);
+	// Attach to root (or any component you want)
+	NiagaraEffectEnd->SetupAttachment(TeleporterEndMesh);
+
+	// Optional: auto-activate
+	NiagaraEffectEnd->bAutoActivate = true;
+
+	
+
+
+	//NiagaraEffect->Activate();
+	//NiagaraEffect->Deactivate();
 }
 //
 //void ATeleporter::BeginPlay()
@@ -91,11 +122,22 @@ void ATeleporter::RepositionTeleportersAndApplyMaterial(float StartRot, float En
 {
 	switch (WhichMaterial)
 	{
-	case 1: TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);  TeleporterStartMesh->SetMaterial(1, TeleportMatBlue); TeleporterEndMesh->SetMaterial(1, TeleportMatBlue); break; //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowB, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot); break; // TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartBlue, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); 
-	case 2: TeleporterStartMesh->SetMaterial(0, TeleportMatYellow); TeleporterEndMesh->SetMaterial(0, TeleportMatYellow); TeleporterStartMesh->SetMaterial(1, TeleportMatYellow); TeleporterEndMesh->SetMaterial(1, TeleportMatYellow); break; //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowY, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); break; //TeleporterStartEmmiter->AttachTo(DummyRoot); break; //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TeleporterStartYellow, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); 
-	case 3: TeleporterStartMesh->SetMaterial(0, TeleportMatPurple); TeleporterEndMesh->SetMaterial(0, TeleportMatPurple); TeleporterStartMesh->SetMaterial(1, TeleportMatPurple); TeleporterEndMesh->SetMaterial(1, TeleportMatPurple); break; //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowR, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); break;  //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartRed, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot); TeleporterStartEmmiter->AttachTo(DummyRoot); break;
-	case 4: TeleporterStartMesh->SetMaterial(0, TeleportMatGreen); TeleporterEndMesh->SetMaterial(0, TeleportMatGreen); TeleporterStartMesh->SetMaterial(1, TeleportMatGreen); TeleporterEndMesh->SetMaterial(1, TeleportMatGreen);  break; //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowG, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot);  break; //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartGreen, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); TeleporterStartEmmiter->AttachTo(DummyRoot); break;
-
+	case 1: TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);  TeleporterStartMesh->SetMaterial(1, TeleportMatBlue); TeleporterEndMesh->SetMaterial(1, TeleportMatBlue); //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowB, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot); break; // TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartBlue, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); 
+		NiagaraEffectStart->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Blue);
+		NiagaraEffectEnd->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Blue);
+		break;
+	case 2: TeleporterStartMesh->SetMaterial(0, TeleportMatYellow); TeleporterEndMesh->SetMaterial(0, TeleportMatYellow); TeleporterStartMesh->SetMaterial(1, TeleportMatYellow); TeleporterEndMesh->SetMaterial(1, TeleportMatYellow); //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowY, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); break; //TeleporterStartEmmiter->AttachTo(DummyRoot); break; //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(),TeleporterStartYellow, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); 
+		NiagaraEffectStart->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Yellow);
+		NiagaraEffectEnd->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Yellow);
+		break;
+	case 3:	TeleporterStartMesh->SetMaterial(0, TeleportMatPurple); TeleporterEndMesh->SetMaterial(0, TeleportMatPurple); TeleporterStartMesh->SetMaterial(1, TeleportMatPurple); TeleporterEndMesh->SetMaterial(1, TeleportMatPurple); //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowR, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); break;  //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartRed, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot); TeleporterStartEmmiter->AttachTo(DummyRoot); break;
+		NiagaraEffectStart->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor(0.25f, 0.f, 0.31f, 1.f));
+		NiagaraEffectEnd->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor(0.25f, 0.f, 0.31f, 1.f));
+		break;
+	case 4: TeleporterStartMesh->SetMaterial(0, TeleportMatGreen); TeleporterEndMesh->SetMaterial(0, TeleportMatGreen); TeleporterStartMesh->SetMaterial(1, TeleportMatGreen); TeleporterEndMesh->SetMaterial(1, TeleportMatGreen); //TeleporterEndEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), GlowG, EndLocation, FRotator(0.0f, 0.0f, 90.0f), true); TeleporterEndEmmiter->AttachTo(DummyRoot);  break; //TeleporterStartEmmiter = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), TeleporterStartGreen, StartLocation, FRotator(0.0f, 0.0f, 90.0f), true);  TeleporterEndEmmiter->AttachTo(DummyRoot); TeleporterStartEmmiter->AttachTo(DummyRoot); break;
+		NiagaraEffectStart->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Green);
+		NiagaraEffectEnd->SetVariableLinearColor(TEXT("User.TelColor"), FLinearColor::Green);
+		break;
 	default:;//TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);
 	}
 
