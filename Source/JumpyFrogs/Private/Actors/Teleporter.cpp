@@ -3,7 +3,8 @@
 
 #include "Actors/Teleporter.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/TeleporterComponent.h"
+//#include "Components/StaticMeshComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Materials/MaterialInstance.h"
 
@@ -33,19 +34,23 @@ ATeleporter::ATeleporter()
 		ConstructorHelpers::FObjectFinderOptional<UMaterialInstance> PurpleMaterial;
 		ConstructorHelpers::FObjectFinderOptional<UParticleSystem> LilyPadOrange;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraAsset;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraTeleportIn_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraTeleportOut_Obj;
 
 		FConstructorStatics() //StaticMesh'/Game/EmptySlot/StaticMesh/EmptySlot.EmptySlot'
 			:// TelLilyPadMesh(TEXT("/Game/EmptySlot/StaticMesh/EmptySlot")),// //(TEXT("/Game/Teleporter/TeleporterStartMesh")),
 			TelLilyPadMesh(TEXT("/Game/Teleporter/StaticMesh/TeleporterStone")),
 			TeleporterEndMesh01(TEXT("/Game/Teleporter/StaticMesh/TeleporterStone")),//TeleporterEndMesh01(TEXT("/Game/Teleporter/TeleporterEndMesh")),
 			//	BlueMaterial(TEXT("/Game/EmptySlot/Materials/Invisible_Mat")),		//	BlueMaterial(TEXT("/Game/Teleporter/TeleporterOrangeMat")), Material'/Game/EmptySlot/Materials/Invisible_Mat.Invisible_Mat'
-			BaseMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneBaseMat")),
+			BaseMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Default")),
 			BlueMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Blue")),
 			YellowMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Yellow")),
 			GreenMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Green")),
 			PurpleMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Purple")),
 			LilyPadOrange(TEXT("/Game/LilyPads/Materials/Lily_Pad_Mat_Inst_Orange")),
-			NiagaraAsset(TEXT("/Game/Niagara/NS_FrogHand.NS_FrogHand"))
+			NiagaraAsset(TEXT("/Game/Niagara/NS_FrogHand.NS_FrogHand")),
+			NiagaraTeleportIn_Obj(TEXT("/Game/Niagara/NS_FrogHand.NS_FrogHand")),
+			NiagaraTeleportOut_Obj(TEXT("/Game/Niagara/NS_FrogHand.NS_FrogHand"))
 		{
 		}
 	};
@@ -62,19 +67,21 @@ ATeleporter::ATeleporter()
 	RootComponent = DummyRoot;
 
 	// Create static mesh component
-	TeleporterStartMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TeleporterStartMesh"));
+	TeleporterStartMesh = CreateDefaultSubobject<UTeleporterComponent>(TEXT("TeleporterStartMesh"));
 	TeleporterStartMesh->SetStaticMesh(ConstructorStatics.TelLilyPadMesh.Get());
 	//TeleporterStartMesh->SetRelativeRotation(FRotator(0.0f, -39.0f, 0.0f));
 	TeleporterStartMesh->SetRelativeScale3D(FVector(0.9f, 0.9f, 0.9f));
+	//TeleporterStartMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f)); //180.0f
 	TeleporterStartMesh->SetRelativeLocation(FVector(8.0f, 12.0f, 180.0f)); //180.0f
 	TeleporterStartMesh->SetMaterial(0, TeleportMatBlue);
 	TeleporterStartMesh->SetupAttachment(DummyRoot);//TeleporterStartMesh->AttachTo(DummyRoot);
 	TeleporterStartMesh->bCastDynamicShadow = false;
 	TeleporterStartMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterStartClicked);
 	TeleporterStartMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedTeleport);
+	TeleporterStartMesh->TeleporterType = ETeleporterType::Start;
 
 
-	TeleporterEndMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TeleporterEndMesh"));
+	TeleporterEndMesh = CreateDefaultSubobject<UTeleporterComponent>(TEXT("TeleporterEndMesh"));
 	TeleporterEndMesh->SetStaticMesh(ConstructorStatics.TelLilyPadMesh.Get());
 	TeleporterEndMesh->SetRelativeScale3D(FVector(0.9f, -0.9f, 0.9f));
 	TeleporterEndMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 180.0f)); //180.f
@@ -85,7 +92,7 @@ ATeleporter::ATeleporter()
 	TeleporterEndMesh->bCastDynamicShadow = false;
 	TeleporterEndMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterEndClicked);
 	TeleporterEndMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedEndTeleport);
-
+	TeleporterEndMesh->TeleporterType = ETeleporterType::End;
 	
 	// Create Niagara component
 	NiagaraEffectStart = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffectStart"));
@@ -104,10 +111,7 @@ ATeleporter::ATeleporter()
 
 	// Optional: auto-activate
 	NiagaraEffectEnd->bAutoActivate = true;
-
 	
-
-
 	//NiagaraEffect->Activate();
 	//NiagaraEffect->Deactivate();
 }
@@ -175,7 +179,65 @@ void ATeleporter::RepositionTeleportersAndApplyMaterial(float StartRot, float En
 
 
 	//TeleporterStartMesh->SetMaterial WhichMaterial
+}
 
+void ATeleporter::Deactivate_Implementation()
+{
+	TeleporterStartMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	TeleporterEndMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	NiagaraEffectStart->Deactivate();
+	NiagaraEffectStart->DestroyComponent();
+	NiagaraEffectEnd->Deactivate();
+	NiagaraEffectEnd->DestroyComponent();
+
+	TeleporterStartMesh->SetMaterial(0, TeleportMatStoneBase);
+	TeleporterEndMesh->SetMaterial(0, TeleportMatStoneBase);
+
+	//MeshComponent->MarkRenderStateDirty();
+
+	TeleporterStartMesh->SetMaterial(1, TeleportMatStoneBase);
+	TeleporterEndMesh->SetMaterial(1, TeleportMatStoneBase);
+
+
+	//TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);
+	//TeleporterStartMesh->SetMaterial(1, TeleportMatBlue); TeleporterEndMesh->SetMaterial(1, TeleportMatBlue);
+
+	//TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(1, TeleportMatStoneBase);
+	//TeleporterEndMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(1, TeleportMatStoneBase);
+}
+bool ATeleporter::IsThisStart_Implementation(UObject* InComponent) const
+{
+	if(UTeleporterComponent* InTeleporterComponent = Cast<UTeleporterComponent>(InComponent))
+	{
+		if(InTeleporterComponent->TeleporterType == ETeleporterType::Start)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+FVector ATeleporter::GetStartLocation_Implementation() const
+{
+	FVector ReturnStartLoc = TelStartLoc;
+	ReturnStartLoc.Z = 202.f;
+	return ReturnStartLoc;
+	/*FVector ReturnStartLoc = TeleporterStartMesh->GetComponentLocation();
+	ReturnStartLoc.X -= 8.f;
+	ReturnStartLoc.Y -= 12.f;
+	ReturnStartLoc.Z = 202.f;
+	return ReturnStartLoc;*/
+}
+FVector ATeleporter::GetEndLocation_Implementation() const
+{
+	FVector ReturnLoc = EndPosition;
+	ReturnLoc.Z = 202.f;
+	return ReturnLoc;
+	//FVector ReturnEndLoc = TeleporterEndMesh->GetComponentLocation();
+	///*ReturnEndLoc.X -= 8.f;
+	//ReturnEndLoc.Y -= 12.f;*/
+	//ReturnEndLoc.Z = 202.f;
+	//return ReturnEndLoc;
 }
 
 void ATeleporter::OnFingerPressedTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)

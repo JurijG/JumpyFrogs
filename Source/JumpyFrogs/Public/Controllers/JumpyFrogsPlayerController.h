@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
+#include "SharedData.h"
 #include "JumpyFrogsPlayerController.generated.h"
 
 /**
@@ -53,13 +54,20 @@ protected:
 	void OnTouchStart(const FInputActionValue& Value);
 	void OnTouchEnd(const FInputActionValue& Value);
 
-	bool IsSlotAlreadyMarked(const FVector SlotLoc);
+	//const bool IsTeleporterAlreadyMarked(const FVector TeleporterLoc);
+
+	const bool IsSlotAlreadyMarked(const FVector SlotLoc);
 
 	TArray<FVector> JumpPathLocations;
 	//TArray<UObject*> MarkedSlots;
+
 	TArray<FVector> MarkedSlots;
+	//TMap<FVector, ESlotType> MappedJumps;
+
+	//TArray<FVector> MarkedTeleporters;
 	TArray<FVector> FrogsToRemoveLocations;
 
 	UObject* SelectedFrog;
 	AJumpVisualizer* JumpVisualizer = nullptr;
+	bool bTeleporterAdded = false;
 };

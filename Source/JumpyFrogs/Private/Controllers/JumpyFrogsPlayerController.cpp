@@ -12,7 +12,8 @@
 #include "Interfaces/FrogInterface.h"
 #include "Interfaces/EmptySlotInterface.h"
 #include "Interfaces/GameModeInterface.h"
-//
+#include "Interfaces/TeleporterInterface.h"
+#include "SharedData.h"
 // Script / EnhancedInput.InputMappingContext'/Game/IA_DefaultMappingContext.IA_DefaultMappingContext'
 // Script / EnhancedInput.InputAction'/Game/IA_MouseClick.IA_MouseClick'
 // Script / EnhancedInput.InputAction'/Game/IA_MouseRelease.IA_MouseRelease'
@@ -118,7 +119,7 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
             {
                 UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitActor->GetName());
                 UWorld* World = GetWorld();
-                if (World)
+                if (World && !bTeleporterAdded)
                 {
                     if (JumpVisualizer == nullptr)
                     {
@@ -165,6 +166,7 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
                                             if (IGameModeInterface::Execute_IsMoveValidCheck(GM, MidLoc))
                                             {
                                                 MarkedSlots.Add(SlotLocation);
+                                               // MappedJumps.Add(SlotLocation, ESlotType::Normal);
                                                 FrogsToRemoveLocations.Add(MidLoc);
                                                 JumpPathLocations[2] = SlotLocation;
                                                 JumpVisualizer->AddDestinationRing(SlotLocation, JumpPathLocations);
@@ -183,7 +185,70 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
                                 }
                             }
                         }
-                      
+                        else if (HitActor->Implements<UTeleporterInterface>())
+                        {
+                            
+
+                            //UActorComponent* HitComponent = Hit.GetComponent();// ->GetWorldLocation()  Location();
+                            USceneComponent* TelComponent = Cast<USceneComponent>(Hit.GetComponent());
+                            if (TelComponent)
+                            {
+                                //FVector TeleporterLocation = TelComponent->GetComponentLocation();
+                                bool bIsStart = ITeleporterInterface::Execute_IsThisStart((UObject*)HitActor, TelComponent);
+
+                                FVector TelStart = ITeleporterInterface::Execute_GetStartLocation((UObject*)HitActor);
+                                FVector TelEnd = ITeleporterInterface::Execute_GetEndLocation((UObject*)HitActor);
+                                FVector Start = bIsStart ? TelStart : TelEnd;
+                                FVector End = bIsStart ? TelEnd : TelStart;
+
+                                //if (!IsTeleporterAlreadyMarked(Start))
+                                {
+                                    if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+                                    {
+                                        if (GM->Implements<UGameModeInterface>())
+                                        {
+                                            //if we already have pre planned jump, get last marked slot location, so we take the previous Jump end location for next move, where frog will be located after jump is executed
+                                            FVector StartLocation = MarkedSlots.Num() > 0 ? MarkedSlots[MarkedSlots.Num() - 1] : JumpVisualizer->GetActorLocation();
+                                            //check if move is valid, if frog is in the inbetween position
+                                            //UE_LOG(LogTemp, Warning, TEXT("Distance : %s"), *FString::SanitizeFloat(FVector::Distance(StartLocation, SlotLocation))); 
+                                            //UE_LOG(LogTemp, Warning, TEXT("Distance from frog to emptyslot: %s"), *FString::SanitizeFloat(FVector::Distance(StartLocation, SlotLocation)));
+                                            FVector MidLoc = (StartLocation + Start) / 2;
+                                            if (FVector::Distance(StartLocation, Start) < 503.f && !CheckIfFrogAlreadyAdded(MidLoc))
+                                            {
+                                                if (IGameModeInterface::Execute_IsMoveValidCheck(GM, MidLoc))
+                                                {                                                   
+                                                    MarkedSlots.Add(Start);
+                                                   // MarkedTeleporterLoc.Add(Start);
+                                                   // MarkedTeleporterLoc.Add(End);
+
+                                                    //MappedJumps.Add(Start, ESlotType::Teleporter);
+                                                   
+                                                    FrogsToRemoveLocations.Add(MidLoc);
+                                                    JumpPathLocations[2] = Start;
+                                                    JumpVisualizer->AddDestinationRing(Start, JumpPathLocations);
+                                                    //JumpVisualizer->AddDestinationRing(End, JumpPathLocations);
+                                                  
+                                                /*    JumpPathLocations[0] = Start;
+                                                    JumpPathLocations[1] = Start;*/
+
+                                                    bTeleporterAdded = true;
+                                                    JumpVisualizer->SetTraceNiagaraVectorArray(JumpPathLocations);
+                                                    //JumpPathLocations[0] = End;
+                                                    //JumpPathLocations[1] = End;
+
+                                                    //JumpPathLocations[2] = SlotLocation;
+                                                    /*JumpPathLocations[JumpPathLocations.Num() - 1] = SlotLocation;
+                                                    JumpPathLocations.Add(SlotLocation);
+                                                    JumpPathLocations.Add(SlotLocation);*/
+
+                                                    //JumpVisualizer->SetTraceNiagaraVectorArray(JumpPathLocations);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         //else
                         //{
                         //    FVector StartOfCurve = JumpPathLocations[0];
@@ -201,7 +266,7 @@ void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
                     }
                 }
             }
-            else if (JumpVisualizer != nullptr)
+            else if (JumpVisualizer != nullptr && !bTeleporterAdded)
             {
                 FVector Midpoint = (JumpPathLocations[0] + Hit.Location) / 2.0f;
                 Midpoint.Z += FVector::Distance(JumpPathLocations[0], Hit.Location) / 5.f;
@@ -292,6 +357,7 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
     if (SelectedFrog && MarkedSlots.Num() > 0)
     {
         bMoveInAction = true;
+        //IFrogInterface::Execute_Jump(SelectedFrog, MappedJumps, MarkedSlots);
         IFrogInterface::Execute_Jump(SelectedFrog, MarkedSlots);
        
         ////Spawn EmptySlots in places where frogs dissapear
@@ -304,6 +370,7 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
         //}
     }
     SelectedFrog = nullptr;
+    bTeleporterAdded = false;
     MarkedSlots.Empty();
     FrogsToRemoveLocations.Empty();
 
@@ -337,7 +404,23 @@ void AJumpyFrogsPlayerController::OnTouchEnd(const FInputActionValue& Value)
    
 }
 
-bool AJumpyFrogsPlayerController::IsSlotAlreadyMarked(const FVector SlotLoc)
+//const bool AJumpyFrogsPlayerController::IsTeleporterAlreadyMarked(const FVector TeleporterLoc)
+//{
+//    return false;
+//    for (const FVector& MarkedTeleporterLoc : MarkedTeleporters)
+//    {
+//        if (MarkedTeleporterLoc == TeleporterLoc)
+//        {
+//            if (TeleporterLoc != MarkedTeleporters[MarkedTeleporters.Num() - 1] && TeleporterLoc != MarkedTeleporters[MarkedTeleporters.Num() - 2])
+//            {
+//                return false;
+//            }
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+const bool AJumpyFrogsPlayerController::IsSlotAlreadyMarked(const FVector SlotLoc)
 {
     for (const FVector& MarkedSlotLoc : MarkedSlots)
     {

@@ -9,6 +9,9 @@
 /**
  * 
  */
+
+//class UNiagaraComponent;
+
 UCLASS()
 class JUMPYFROGS_API AWizardFrog : public AFrog
 {
@@ -21,4 +24,7 @@ public:
 protected:
 	TObjectPtr<UStaticMeshComponent> WizardHatMesh;
 	TObjectPtr<UStaticMeshComponent> MagicWandMesh;
+
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
+	UNiagaraComponent* WaterMagic;*/
 };

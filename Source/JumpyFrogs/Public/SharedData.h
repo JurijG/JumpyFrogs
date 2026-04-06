@@ -9,6 +9,15 @@
  * 
  */
 
+
+//UENUM(BlueprintType)
+//enum class ESlotType : uint8
+//{
+//	Normal,
+//	Teleporter
+//};
+//
+
 class JUMPYFROGS_API SharedData
 {
 public:

@@ -31,6 +31,10 @@ public:
 	
 protected:
 	 
+	TWeakObjectPtr<UObject> NiagaraSpawnerWPtr;
+	// Store a reference to the Audio Player in GameModeBase
+	TWeakObjectPtr<UObject> AudioPlayerWPtr;
+
 	bool bNewLevUnlocked; //TODO: maybe move this to HUD?
 	bool bBlockClicks;    //TODO: maybe move this to HUD?
 	bool bAchievementUnlocked;    //TODO: maybe move this to HUD?
@@ -62,7 +66,7 @@ protected:
 	int32 FrogsRemaining = 0;
 	TArray <AActor*> FrogsArray;
 	TArray <AActor*> SlotsArray;
-	TArray <AActor*> TheTeleportersArray;
+	TArray <AActor*> TeleportersArray;
 	//TArray <AEmptySlot*> TheSlotsArray;
 
 #pragma region DataTableVars
@@ -90,7 +94,10 @@ protected:
 
 	bool IsMoveValidCheck_Implementation(const FVector Location);
 	void RemoveFrogAddSlot_Implementation(const FVector NewFrogLoc, const  FVector MiddleLoc);
-	void FrogJumpingEnded_Implementation();
+	void TeleportTheFrog(AActor* FrogToMove, FVector FrogLoc);
+	//bool ShouldTeleport_Implementation(FVector FrogLoc);
+	void FrogJumpingEnded_Implementation(AActor* FrogInAction);
+	void ContinueGame();
 	void LoadLevel_Implementation(int32 LevelNumber);
 
 
@@ -112,6 +119,10 @@ protected:
 
 	void ResetGameData();
 	void LoadMap();
+
+	void SetAudioPlayerWPtr();
+
+	void SetNiagaraSpawnerWPtr();
 
 	//void SaveVarsAndLoadMap();
 

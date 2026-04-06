@@ -26,6 +26,9 @@ public:
 	/*UFUNCTION(BlueprintNativeEvent)
 	void LoadNextLevel();*/
 
+	/*UFUNCTION(BlueprintNativeEvent)
+	bool ShouldTeleport(FVector FrogLoc) const;*/
+
 	UFUNCTION(BlueprintNativeEvent)
 	void LoadLevel(int32 LevelNumber);
 
@@ -45,7 +48,8 @@ public:
 	void RemoveFrogsAndAddSlots(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void FrogJumpingEnded();
+	void FrogJumpingEnded(AActor* FrogInAction);
+	//void FrogJumpingEnded(FVector FrogLoc);
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetScore() const;

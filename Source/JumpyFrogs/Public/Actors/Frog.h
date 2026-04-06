@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/FrogInterface.h"
+//#include "SharedData.h"
 #include "Frog.generated.h"
 
 
@@ -173,6 +174,7 @@ protected:
 
 	//void Jump(const TArray<FVector> InMarkedSlots)
 	void Jump_Implementation(const TArray<FVector>& InMarkedSlots);
+	//void Jump_Implementation(const TMap<FVector, ESlotType>& InMappedJumps, const TArray<FVector>& InMarkedSlots) override;
 
 	void DestroyFrog_Implementation();
 	void JumpAway_Implementation();
@@ -188,7 +190,8 @@ protected:
 	TArray<EJumpMontage> MarkedJumps;
 
 	TArray<FVector> MarkedSlots;
-
+	//TMap<FVector, ESlotType> MappedMarkedJumps;
+	bool bShouldTeleport = false;
 	uint8 CurrentJumpIndex = 0;
 	void PerformJump();
 	//void AddMergedDirection(EFrogJump Single, EFrogJump Out, EFrogJump InOut, EFrogJump In, int32 RepeatCount);

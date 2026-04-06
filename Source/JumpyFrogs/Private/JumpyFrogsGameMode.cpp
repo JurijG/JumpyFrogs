@@ -16,6 +16,12 @@
 #include "HAL/PlatformFilemanager.h"
 #include "Serialization/BufferArchive.h"
 
+#include "Interfaces/NiagaraSpawnInterface.h"
+
+
+#include "Audio/AudioPlayer.h"
+#include "Effects/NiagaraSpawner.h"
+
 //#include "Actors/EmptySlot.h"
 //#include "TimerManager.h"
 
@@ -134,6 +140,9 @@ void AJumpyFrogsGameMode::BeginPlay()
 {
 	//SpawnFrogsAndProps(5); //GameInstanceReference->LevelNumber
 	
+	/*APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	PC->SetViewTarget(this);*/
+
 	FString Path = FPaths::ProjectDir();
 	Path.Append("\\Saved\\jumpyfrogs.save");
 
@@ -189,6 +198,18 @@ void AJumpyFrogsGameMode::BeginPlay()
 	}*/
 	
 	
+	//spawn NiagaraParticleSpawner and AudioPlayer classes:
+	if (ANiagaraSpawner* NiagaraSpawner = GetWorld()->SpawnActor<ANiagaraSpawner>(FVector(0.0f, 0.0f, 2000.0f), FRotator::ZeroRotator))
+	{
+		NiagaraSpawnerWPtr = NiagaraSpawner;
+		UE_LOG(LogTemp, Warning, TEXT("NiagaraSpawnerWPtr() set in BeginPlay"));
+	}
+	if (AAudioPlayer* AudioPlayer = GetWorld()->SpawnActor<AAudioPlayer>(FVector(0.0f, 0.0f, 2010.0f), FRotator::ZeroRotator))
+	{
+		AudioPlayerWPtr = AudioPlayer;
+		UE_LOG(LogTemp, Warning, TEXT("NiagaraSpawnerWPtr() set in BeginPlay"));
+	}
+
 	
 }
 //void AJumpyFrogsGameMode::SpawnFrogsShort()
@@ -339,7 +360,81 @@ void AJumpyFrogsGameMode::RemoveFrogAddSlot_Implementation(const FVector StartFr
 		FrogsArray.RemoveSingle(FrogRef);
 	}
 }
-void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation()
+//bool AJumpyFrogsGameMode::ShouldTeleport_Implementation(FVector FrogLoc)
+//{
+//	for (AActor* Teleporter : TeleportersArray)
+//	{
+//		if (!IsValid(Teleporter)) continue;
+//		if (Teleporter->GetActorLocation() == FrogLoc)
+//		{
+//			return true;
+//		}
+//	}
+//	return false;
+//}
+
+void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction)
+{
+	///FrogJumpingEnded
+	
+	FVector FrogLoc = FrogInAction->GetActorLocation();
+
+	FTimerHandle TimerHandle;
+	FTimerDelegate Delegate;
+
+	bool bPerformTeleport = false;
+	for (AActor* Teleporter : TeleportersArray)
+	{
+		if (!IsValid(Teleporter)) continue;
+		FVector TelStart = ITeleporterInterface::Execute_GetStartLocation(Teleporter);
+		FVector TelEnd = ITeleporterInterface::Execute_GetEndLocation(Teleporter);
+		if (TelStart == FrogLoc)
+		{
+			bPerformTeleport = true;
+			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelEnd);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.2f, false);
+			ITeleporterInterface::Execute_Deactivate(Teleporter);
+			AddSlot(FVector2D(TelStart.X, TelStart.Y));
+			break;
+		}
+		else if (TelEnd == FrogLoc)
+		{
+			bPerformTeleport = true;
+
+			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelStart);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.2f, false);
+			ITeleporterInterface::Execute_Deactivate(Teleporter);
+			AddSlot(FVector2D(TelEnd.X, TelEnd.Y));
+			
+			break;
+		}
+	}
+	if (bPerformTeleport)
+	{
+		if (NiagaraSpawnerWPtr.IsValid())
+		{
+			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, FrogLoc);
+			//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
+		}
+	}
+	else
+	{
+		ContinueGame();
+	}
+}
+void AJumpyFrogsGameMode::TeleportTheFrog(AActor* FrogToMove, FVector FrogLoc)
+{
+	if (NiagaraSpawnerWPtr.IsValid())
+	{
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, FrogLoc);
+		//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
+	}
+	FrogToMove->SetActorLocation(FrogLoc);
+
+	
+	ContinueGame();
+}
+void AJumpyFrogsGameMode::ContinueGame()
 {
 	AJumpyFrogsPlayerController* const MyPlayer = Cast<AJumpyFrogsPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	if (MyPlayer != NULL)
@@ -347,7 +442,6 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation()
 		MyPlayer->bMoveInAction = false;
 	}
 }
-
 
 
 void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots)
@@ -458,9 +552,9 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 		{
 			//TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TeleportersList[CurrentLevel - 100][i * 4], Rot));
 			//TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelDataList[CurrentLevel - 100][i * 3], TelDataList[CurrentLevel - 100][i * 3 + 1], TeleportersList[CurrentLevel - 100][i * 4 + 1], (int32)TelDataList[CurrentLevel - 100][i * 3 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 2], TeleportersList[CurrentLevel - 100][i * 4 + 3]);
-			TheTeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4], FRotator::ZeroRotator));
+			TeleportersArray.Add(GetWorld()->SpawnActor<ATeleporter>(TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4], FRotator::ZeroRotator));
 			//TheTeleportersArray[i]->RepositionTeleportersAndApplyMaterial(TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3], TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 1], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 1], (int32)TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 3]);
-			if (ATeleporter* Tel = Cast<ATeleporter>(TheTeleportersArray[i]))
+			if (ATeleporter* Tel = Cast<ATeleporter>(TeleportersArray[i]))
 			{
 				Tel->RepositionTeleportersAndApplyMaterial(TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3], TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 1], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 1], (int32)TelAndBombsList[CurrentLevel - 100]->TelDataList[i * 3 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 2], TelAndBombsList[CurrentLevel - 100]->TeleportersList[i * 4 + 3]);
 			}
@@ -806,3 +900,26 @@ void AJumpyFrogsGameMode::LoadMap()
 //	//UGameplayStatics::OpenLevel(this, FName(*(GetWorld()->GetName() + "?listen?game=AJumpyFrogsGameMode ")), false);
 //}
 //
+
+void AJumpyFrogsGameMode::SetAudioPlayerWPtr()
+{
+	// Find the AudioPlayer actor and store a reference to it
+	//UObject* AudioPlayer = Cast<UObject>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioPlayer::StaticClass()));
+	UObject* AudioPlayer = UGameplayStatics::GetActorOfClass(GetWorld(), AAudioPlayer::StaticClass());
+	if (AudioPlayer)
+	{
+		AudioPlayerWPtr = AudioPlayer;
+		UE_LOG(LogTemp, Warning, TEXT("SetAudioPlayerWPtr() Called"));
+	}
+}
+void AJumpyFrogsGameMode::SetNiagaraSpawnerWPtr()
+{
+	// Find the ParticleSpawner actor and store a reference to it
+	//UObject* ParticleSpawner = Cast<UObject>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioPlayer::StaticClass()));
+	UObject* ParticleSpawner = UGameplayStatics::GetActorOfClass(GetWorld(), ANiagaraSpawner::StaticClass());
+	if (ParticleSpawner)
+	{
+		NiagaraSpawnerWPtr = ParticleSpawner;
+		UE_LOG(LogTemp, Warning, TEXT("SetNiagaraSpawnerWPtr() Called"));
+	}
+}

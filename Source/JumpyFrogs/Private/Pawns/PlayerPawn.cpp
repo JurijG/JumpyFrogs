@@ -36,7 +36,7 @@ APlayerPawn::APlayerPawn()
 	//Camera->bUsePawnControlRotation = true;
 	Camera->FieldOfView = 90.f;
 
-	this->SetActorLocation(FVector(250.f, 300.f, 200.f));
+	//this->SetActorLocation(FVector(250.f, 300.f, 200.f));
 }
 
 

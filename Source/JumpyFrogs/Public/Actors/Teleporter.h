@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/TeleporterInterface.h"
 #include "Teleporter.generated.h"
 
 
 class UNiagaraComponent;
 UCLASS()
-class JUMPYFROGS_API ATeleporter : public AActor
+class JUMPYFROGS_API ATeleporter : public AActor, public ITeleporterInterface
 {
 	GENERATED_BODY()
 	
@@ -20,7 +21,11 @@ public:
 	void RepositionTeleportersAndApplyMaterial(float StartRot, float EndRot, FVector TeleportEndLoc, int32 WhichMaterial, FVector EndLocation, FVector StartLocation);
 
 protected:
+	void Deactivate_Implementation() override;
+	bool IsThisStart_Implementation(UObject* InComponent) const override;
 
+	FVector GetStartLocation_Implementation() const override;
+	FVector GetEndLocation_Implementation() const override;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
 	UNiagaraComponent* NiagaraEffectStart;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
@@ -34,10 +39,10 @@ protected:
 	USceneComponent* DummyRoot;
 
 	//UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* TeleporterStartMesh;
+	class UTeleporterComponent* TeleporterStartMesh;
 
 	//UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	class UStaticMeshComponent* TeleporterEndMesh;
+	class UTeleporterComponent* TeleporterEndMesh;
 
 	//UPROPERTY(Category = Block, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* LilyPadMesh;

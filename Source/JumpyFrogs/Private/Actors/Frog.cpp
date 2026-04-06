@@ -8,6 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/GameModeInterface.h"
+//#include "SharedData.h"
 // Sets default values
 AFrog::AFrog()
 {
@@ -675,6 +676,7 @@ AFrog::AFrog()
 
 
 void AFrog::Jump_Implementation(const TArray<FVector>& InMarkedSlots)
+//void AFrog::Jump_Implementation(const TMap<FVector, ESlotType>& InMappedJumps, const TArray<FVector>& InMarkedSlots)
 {
 	MarkedJumpDirections.Empty();
 	MarkedJumpAnims.Empty();
@@ -682,6 +684,10 @@ void AFrog::Jump_Implementation(const TArray<FVector>& InMarkedSlots)
 
 	MarkedSlots = InMarkedSlots;
 	MarkedSlots.Insert(GetActorLocation(), 0);
+	
+	
+	//MappedMarkedJumps = InMappedJumps;
+	
 	CurrentJumpIndex = 0;
 	int i = 0;
 	while (i < MarkedSlots.Num()-1)
@@ -1041,10 +1047,10 @@ void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 		if (GM->Implements<UGameModeInterface>())
 		{
 			/*	FVector First = MarkedSlots[0];
-				FVector Second = MarkedSlots[1];
+			FVector Second = MarkedSlots[1];
 
-				FVector test = (First + Second) /2;*/
-			IGameModeInterface::Execute_FrogJumpingEnded(GM);
+			FVector test = (First + Second) /2;*/
+			IGameModeInterface::Execute_FrogJumpingEnded(GM, this);
 			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
 		}
 

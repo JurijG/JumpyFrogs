@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+//#include "SharedData.h"
 #include "FrogInterface.generated.h"
 
 // This class does not need to be modified.
@@ -24,6 +25,7 @@ class JUMPYFROGS_API IFrogInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent)
+	//void Jump(const TMap<FVector, ESlotType>& InMappedJumps, const TArray<FVector>& InMarkedSlots);
 	void Jump(const TArray<FVector>& InMarkedSlots);
 
 	UFUNCTION(BlueprintNativeEvent)
