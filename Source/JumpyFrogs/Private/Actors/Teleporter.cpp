@@ -42,7 +42,7 @@ ATeleporter::ATeleporter()
 			TelLilyPadMesh(TEXT("/Game/Teleporter/StaticMesh/TeleporterStone")),
 			TeleporterEndMesh01(TEXT("/Game/Teleporter/StaticMesh/TeleporterStone")),//TeleporterEndMesh01(TEXT("/Game/Teleporter/TeleporterEndMesh")),
 			//	BlueMaterial(TEXT("/Game/EmptySlot/Materials/Invisible_Mat")),		//	BlueMaterial(TEXT("/Game/Teleporter/TeleporterOrangeMat")), Material'/Game/EmptySlot/Materials/Invisible_Mat.Invisible_Mat'
-			BaseMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Default")),
+			BaseMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneBaseMat")),
 			BlueMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Blue")),
 			YellowMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Yellow")),
 			GreenMaterial(TEXT("/Game/Teleporter/Materials/TeleporterStoneMat_Green")),
@@ -186,18 +186,28 @@ void ATeleporter::Deactivate_Implementation()
 	TeleporterStartMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TeleporterEndMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	NiagaraEffectStart->Deactivate();
-	NiagaraEffectStart->DestroyComponent();
-	NiagaraEffectEnd->Deactivate();
-	NiagaraEffectEnd->DestroyComponent();
-
+	if (NiagaraEffectStart)
+	{
+		NiagaraEffectStart->Deactivate();
+		NiagaraEffectStart->DestroyComponent();
+	}
 	TeleporterStartMesh->SetMaterial(0, TeleportMatStoneBase);
+	TeleporterStartMesh->SetMaterial(1, TeleportMatStoneBase);
+	if (NiagaraEffectEnd)
+	{
+		NiagaraEffectEnd->Deactivate();
+		NiagaraEffectEnd->DestroyComponent();
+
+	}
+
 	TeleporterEndMesh->SetMaterial(0, TeleportMatStoneBase);
+	TeleporterEndMesh->SetMaterial(1, TeleportMatStoneBase);
+
 
 	//MeshComponent->MarkRenderStateDirty();
 
-	TeleporterStartMesh->SetMaterial(1, TeleportMatStoneBase);
-	TeleporterEndMesh->SetMaterial(1, TeleportMatStoneBase);
+	
+	
 
 
 	//TeleporterStartMesh->SetMaterial(0, TeleportMatBlue); TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);

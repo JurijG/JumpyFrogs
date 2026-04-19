@@ -107,7 +107,7 @@ AFrog::AFrog()
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftToDownRightObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> JumpLeftShortInToDownRightObj;
 
-		ConstructorHelpers::FObjectFinder<UAnimMontage> LeaveBwdLeftObj;
+		//ConstructorHelpers::FObjectFinder<UAnimMontage> LeaveBwdLeftObj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> SwimAwayObj;
 		FConstructorStatics()
 			: FrogMeshObj(TEXT("/Game/Frog/SkelMesh/FrogSkelMesh"))
@@ -193,7 +193,7 @@ AFrog::AFrog()
 			, JumpLeftToDownRightObj(TEXT("/Game/Frog/Animations/Montages/New/JumpLeftToDownRight_Montage"))
 			, JumpLeftShortInToDownRightObj(TEXT("/Game/Frog/Animations/Montages/New/JumpLeftShortInToDownRight_Montage"))
 
-			, LeaveBwdLeftObj(TEXT("/Game/Frog/Animations/Montages/Remove/LeaveBwdLeft_Montage"))
+			//, LeaveBwdLeftObj(TEXT("/Game/Frog/Animations/Montages/Remove/LeaveBwdLeft_Montage"))
 			, SwimAwayObj(TEXT("/Game/Frog/Animations/Montages/New/SwimAway_Montage"))
 		
 			
@@ -206,7 +206,7 @@ AFrog::AFrog()
 	};
 
 	BoxMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComp"));
-	BoxMesh->bHiddenInGame = false;
+	BoxMesh->bHiddenInGame = true;
 	BoxMesh->SetBoxExtent(FVector(80.f, 70.f, 10.f));
 	BoxMesh->SetCollisionProfileName(TEXT("EmptySlotProfile"));
 	BoxMesh->ShapeColor = FColor::Blue;
@@ -221,6 +221,7 @@ AFrog::AFrog()
 	FrogMesh->SetSkeletalMesh(ConstructorStatics.FrogMeshObj.Object);
 
 	FrogMesh->SetupAttachment(RootComponent);
+	FrogMesh->bCastHiddenShadow = true;
 
 	//FrogMesh->SetRelativeLocation(FVector(0.f, 0.f, -80.0f));
 	FrogMesh->bCastDynamicShadow = true;
@@ -295,7 +296,7 @@ AFrog::AFrog()
 	JumpLeftShortInToDownRight = ConstructorStatics.JumpLeftShortInToDownRightObj.Object;
 
 
-	LeaveBwdLeft = ConstructorStatics.LeaveBwdLeftObj.Object;
+	//LeaveBwdLeft = ConstructorStatics.LeaveBwdLeftObj.Object;
 
 	SwimAway = ConstructorStatics.SwimAwayObj.Object;
 
@@ -941,12 +942,29 @@ void AFrog::JumpAway_Implementation()
 	UAnimInstance* AnimInstance = FrogMesh->GetAnimInstance();
 	if (AnimInstance)
 	{
-		if (LeaveBwdLeft)
+		if (SwimAway)
 		{
 			AnimInstance->Montage_Play(SwimAway);
 			//AnimInstance->Montage_Play(LeaveBwdLeft);
 			//BoxMesh->SetCollisionProfileName(TEXT("NoCollision"));
 			//BoxMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+			if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+			{
+				if (GM->Implements<UGameModeInterface>())
+				{
+					/*	FVector First = MarkedSlots[0];
+						FVector Second = MarkedSlots[1];
+
+						FVector test = (First + Second) /2;*/
+					FVector WaterSplashLoc = GetActorLocation() + FVector(90.f, 87.0f, -15.0f);
+
+					/*(X = 448.000000, Y = 448.000000, Z = 202.000000)
+					(X = 546.319990, Y = 551.376322, Z = 193.396221)*/
+					IGameModeInterface::Execute_SetupSplashEffect(GM, WaterSplashLoc);
+					//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
+				}
+			}
 		}
 		
 		//else
@@ -1024,36 +1042,38 @@ void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 	UE_LOG(LogTemp, Warning, TEXT("OnAnyMontageEnded called for  %s, with bInterrupted = %s."), *Montage->GetName(), bInterrupted ? *FString(TEXT("True")) : *FString(TEXT("False")));
 
 	CurrentJumpIndex++;
-
-	if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+	//if (MarkedSlots.Num() > 0) //safety and to prevent below code to execute when non jump animation montages are played, like CastSpell etc
 	{
-		if (GM->Implements<UGameModeInterface>())
+		if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 		{
-			/*	FVector First = MarkedSlots[0];
+			if (GM->Implements<UGameModeInterface>())
+			{
+				/*	FVector First = MarkedSlots[0];
+					FVector Second = MarkedSlots[1];
+
+					FVector test = (First + Second) /2;*/
+				IGameModeInterface::Execute_RemoveFrogAddSlot(GM, MarkedSlots[CurrentJumpIndex - 1], MarkedSlots[CurrentJumpIndex]);
+				//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
+			}
+		}
+		SetActorLocation(MarkedSlots[CurrentJumpIndex]);
+		if (CurrentJumpIndex < MarkedJumpDirections.Num())
+		{
+			PerformJump();
+		}
+		else if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+		{
+			if (GM->Implements<UGameModeInterface>())
+			{
+				/*	FVector First = MarkedSlots[0];
 				FVector Second = MarkedSlots[1];
 
 				FVector test = (First + Second) /2;*/
-			IGameModeInterface::Execute_RemoveFrogAddSlot(GM, MarkedSlots[CurrentJumpIndex - 1], MarkedSlots[CurrentJumpIndex]);
-			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
-		}
-	}
-	SetActorLocation(MarkedSlots[CurrentJumpIndex]);
-	if (CurrentJumpIndex < MarkedJumpDirections.Num())
-	{
-		PerformJump();
-	}
-	else if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
-	{
-		if (GM->Implements<UGameModeInterface>())
-		{
-			/*	FVector First = MarkedSlots[0];
-			FVector Second = MarkedSlots[1];
+				IGameModeInterface::Execute_FrogJumpingEnded(GM, this, MarkedSlots[CurrentJumpIndex - 1]);
+				//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
+			}
 
-			FVector test = (First + Second) /2;*/
-			IGameModeInterface::Execute_FrogJumpingEnded(GM, this);
-			//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
 		}
-
 	}
 }
 //void AMyCharacter::WarmupMontages() //TODO: Add preload to animations and effects

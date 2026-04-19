@@ -38,8 +38,8 @@ protected:
 	TArray<UNiagaraComponent*> NS_TeleportRingArray;  // NiagaraSystem;
 
 	//// Niagara System to use
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "VRVisualizer|Effects")
-	UNiagaraComponent* NS_PlayAreaBounds;  // NiagaraSystem;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "VRVisualizer|Effects")
+	UNiagaraComponent* NS_PlayAreaBounds;  */
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "VRVisualizer|Effects")

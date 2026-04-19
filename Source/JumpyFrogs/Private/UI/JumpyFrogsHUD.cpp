@@ -2619,6 +2619,14 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Pause clicked ..."));
 					//if (!GameModeReference->bIsFrogInAction)
 					{
+						if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+						{
+							if (GM->Implements<UGameModeInterface>())
+							{
+								UE_LOG(LogTemp, Warning, TEXT("Disable Input aka remove MappingContext"));
+								IGameModeInterface::Execute_DisableInput(GM, true);
+							}
+						}
 						bDrawHudIcons = false;
 						bDrawPauseMenu = true;
 						bStartMenu = false;
@@ -2671,10 +2679,20 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				{
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Continue clicked ..."));
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-Continue clicked");
+					
+					
 					APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 					if (MyPlayer != NULL)
 					{
 						MyPlayer->SetPause(false);
+					}
+					if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+					{
+						if (GM->Implements<UGameModeInterface>())
+						{
+							UE_LOG(LogTemp, Warning, TEXT("Disable Input aka remove MappingContext"));
+							IGameModeInterface::Execute_DisableInput(GM, false);
+						}
 					}
 					bDrawHudIcons = true;
 					bDrawPauseMenu = false;

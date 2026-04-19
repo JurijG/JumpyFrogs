@@ -48,11 +48,17 @@ public:
 	void RemoveFrogsAndAddSlots(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
 
 	UFUNCTION(BlueprintNativeEvent)
-	void FrogJumpingEnded(AActor* FrogInAction);
+	void FrogJumpingEnded(AActor* FrogInAction, FVector PrevLoc);
 	//void FrogJumpingEnded(FVector FrogLoc);
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetScore() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SetupSplashEffect(FVector SplashLoc);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void DisableInput(const bool bDisabled);
 
 	UFUNCTION(BlueprintNativeEvent)
 	TArray<bool> GetUnlockedArray() const;
@@ -74,6 +80,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetAchIndex() const;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void CastWizardFrogSpell(AActor* WizardFrog);
 
 	
 };

@@ -163,7 +163,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	
+	//EFrogType FrogType = EFrogType::Normal;
 	//void PlayNextAnimation_Implementation();
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -275,7 +275,7 @@ protected:
 	UAnimMontage* JumpDownRightShortInToDownLeft;
 
 
-	UAnimMontage* LeaveBwdLeft;
+	//UAnimMontage* LeaveBwdLeft;
 
 	/*UAnimMontage* JumpRightShortInToDownRight;
 	UAnimMontage* JumpLeftShortInToDownLeft;*/

@@ -25,12 +25,20 @@ class JUMPYFROGS_API AJumpyFrogsPlayerController : public APlayerController
 	void SetupInputComponent() override;
 
 public:
-	bool bMoveInAction = false;
+	
 
+	void EnableDisableInput(const bool bDisabled);
+
+	void MouseOrTouchEnd();
+
+	void ResetVizualizer();
 protected:
-	void BeginPlay() override;
 
+	//void BeginPlay() override;
+
+	void UpdateTouchOrClick();
 	void UpdateJumpVisualizer();
+
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	class UInputAction* IA_MouseClick;
@@ -49,13 +57,18 @@ protected:
 	bool CheckIfFrogAlreadyAdded(const FVector InFrogLoc);
 
 	void OnMouseClicked();
+	void ResetClickCount();
 	void OnMousePulse();
 	void OnMouseReleased();
+
+	
+
 	void OnTouchStart(const FInputActionValue& Value);
 	void OnTouchEnd(const FInputActionValue& Value);
 
+	
 	//const bool IsTeleporterAlreadyMarked(const FVector TeleporterLoc);
-
+	bool bWasRecentlyClicked = false;
 	const bool IsSlotAlreadyMarked(const FVector SlotLoc);
 
 	TArray<FVector> JumpPathLocations;

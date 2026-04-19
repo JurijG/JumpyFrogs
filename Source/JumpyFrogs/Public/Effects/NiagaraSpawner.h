@@ -27,6 +27,10 @@ protected:
 	UNiagaraSystem* TeleportIn;
 	UNiagaraSystem* TeleportOut;
 	UNiagaraSystem* WaterMagic;
+	UNiagaraSystem* WaterMagicBuff;
+	UNiagaraSystem* WaterSplash;
+	UNiagaraSystem* WaterSplashRipple;
+	UNiagaraSystem* RippleShort;
 
 public:	
 	// Called every frame

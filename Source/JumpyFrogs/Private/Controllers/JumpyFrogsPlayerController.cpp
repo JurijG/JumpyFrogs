@@ -89,28 +89,75 @@ void AJumpyFrogsPlayerController::SetupInputComponent()
  
 }
 
-void AJumpyFrogsPlayerController::BeginPlay()
+//void AJumpyFrogsPlayerController::BeginPlay()
+//{
+//    Super::BeginPlay();
+//    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(this->GetLocalPlayer()))
+//{
+//    if (!IMC_Default_MappingContext) return;
+//    Subsystem->AddMappingContext(IMC_Default_MappingContext, 0);
+//    /* if (!IMC_Hands_MappingContext) return;
+//        Subsystem->AddMappingContext(IMC_Hands_MappingContext, 1);*/
+//}
+//  
+//}
+
+
+
+void AJumpyFrogsPlayerController::UpdateTouchOrClick()
 {
-    Super::BeginPlay();
-
-    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(this->GetLocalPlayer()))
+    UE_LOG(LogTemp, Warning, TEXT("UpdateTouchOrClick"));
+    //if (!bMoveInAction)
     {
-        if (!IMC_Default_MappingContext) return;
-        Subsystem->AddMappingContext(IMC_Default_MappingContext, 0);
-        /* if (!IMC_Hands_MappingContext) return;
-            Subsystem->AddMappingContext(IMC_Hands_MappingContext, 1);*/
+        FHitResult Hit;
+        if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
+        {
+            if (AActor* HitActor = Hit.GetActor())
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Hit: %s"), *HitActor->GetName());
+                UWorld* World = GetWorld();
+                if (World)
+                {
+                    if (HitActor->Implements<UFrogInterface>())
+                    {
+                        if (IFrogInterface::Execute_IsAWizard(HitActor) && bWasRecentlyClicked)
+                        {
+                            if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+                            {
+                                if (GM->Implements<UGameModeInterface>())
+                                {
+                                    
+                                    EnableDisableInput(true);
+                                    IGameModeInterface::Execute_CastWizardFrogSpell(GM, HitActor);
+                                    FTimerHandle rstvz;
+                                    GetWorld()->GetTimerManager().SetTimer(rstvz, this, &AJumpyFrogsPlayerController::ResetVizualizer, 0.01f, false);
+                                    //ResetVizualizer();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            FTimerHandle ClickResetTimer;
+                            GetWorld()->GetTimerManager().SetTimer(ClickResetTimer, this, &AJumpyFrogsPlayerController::ResetClickCount, 0.3f, false);
+                            UE_LOG(LogTemp, Warning, TEXT("Double Click / Tap!"));
+                            //GetWorld()->GetTimerManager().ClearTimer(ClickResetTimer);
+                            bWasRecentlyClicked = true; // reset after detection
+                        }
+
+                       /* SelectedFrog = HitActor;
+                        JumpVisualizer = GetWorld()->SpawnActor<AJumpVisualizer>(HitActor->GetActorLocation(), FRotator(0.0f, 0.f, 0.0f));
+                        FVector StartLocation = JumpVisualizer->GetActorLocation();*/
+                    }
+                }
+            }
+        }
     }
-
-
-  
-
 }
-
 void AJumpyFrogsPlayerController::UpdateJumpVisualizer()
 {
     UE_LOG(LogTemp, Warning, TEXT("UpdateJumpVisualizer"));
 
-    if (!bMoveInAction)
+    //if (!bMoveInAction)
     {
         FHitResult Hit;
         if (GetHitResultUnderCursor(ECC_Visibility, false, Hit))
@@ -334,10 +381,13 @@ bool AJumpyFrogsPlayerController::CheckIfFrogAlreadyAdded(const FVector InFrogLo
 void AJumpyFrogsPlayerController::OnMouseClicked()
 {
     UE_LOG(LogTemp, Warning, TEXT("OnMouseClicked"));
-    
-  
+    UpdateTouchOrClick();
 }
 
+void AJumpyFrogsPlayerController::ResetClickCount()
+{
+    bWasRecentlyClicked = false;
+}
 void AJumpyFrogsPlayerController::OnMousePulse()
 {
     UE_LOG(LogTemp, Warning, TEXT("OnMousePulse"));
@@ -347,6 +397,11 @@ void AJumpyFrogsPlayerController::OnMousePulse()
 void AJumpyFrogsPlayerController::OnMouseReleased()
 {
     UE_LOG(LogTemp, Warning, TEXT("OnMouseReleased"));
+    MouseOrTouchEnd();
+}
+
+void AJumpyFrogsPlayerController::MouseOrTouchEnd()
+{
     //set all remaining slots bHasVisualizerRing to false;
    /* for (UObject* Slot : MarkedSlots)
     {
@@ -356,10 +411,13 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
     //execute frog jump(s)
     if (SelectedFrog && MarkedSlots.Num() > 0)
     {
-        bMoveInAction = true;
-        //IFrogInterface::Execute_Jump(SelectedFrog, MappedJumps, MarkedSlots);
+        EnableDisableInput(true);
+        /* DisableInput(this);
+         bMoveInAction = true;*/
+
+         //IFrogInterface::Execute_Jump(SelectedFrog, MappedJumps, MarkedSlots);
         IFrogInterface::Execute_Jump(SelectedFrog, MarkedSlots);
-       
+
         ////Spawn EmptySlots in places where frogs dissapear
         //if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
         //{
@@ -369,6 +427,11 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
         //    }
         //}
     }
+    ResetVizualizer();
+
+}
+void AJumpyFrogsPlayerController::ResetVizualizer()
+{
     SelectedFrog = nullptr;
     bTeleporterAdded = false;
     MarkedSlots.Empty();
@@ -379,11 +442,7 @@ void AJumpyFrogsPlayerController::OnMouseReleased()
         JumpVisualizer->Destroy();
         JumpVisualizer = nullptr;
     }
-
-
-  
 }
-
 void AJumpyFrogsPlayerController::OnTouchStart(const FInputActionValue& Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("OnTouchBegin"));
@@ -401,6 +460,25 @@ void AJumpyFrogsPlayerController::OnTouchStart(const FInputActionValue& Value)
 void AJumpyFrogsPlayerController::OnTouchEnd(const FInputActionValue& Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("OnTouchEnd"));
+    MouseOrTouchEnd();
+}
+
+void AJumpyFrogsPlayerController::EnableDisableInput(const bool bDisabled)
+{
+    if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(this->GetLocalPlayer()))
+    {
+        if (!IMC_Default_MappingContext) return;
+        if (bDisabled)
+        {
+            Subsystem->RemoveMappingContext(IMC_Default_MappingContext);
+        }
+        else
+        {
+            Subsystem->AddMappingContext(IMC_Default_MappingContext, 0);
+        }
+        /* if (!IMC_Hands_MappingContext) return;
+            Subsystem->AddMappingContext(IMC_Hands_MappingContext, 1);*/
+    }
    
 }
 

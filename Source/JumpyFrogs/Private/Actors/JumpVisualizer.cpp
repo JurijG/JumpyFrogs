@@ -22,9 +22,9 @@ AJumpVisualizer::AJumpVisualizer()
 	NS_TeleportRingArray[0]->SetupAttachment(Root);
 	//NS_TeleportRing->SetupAttachment(Root);
 
-	NS_PlayAreaBounds = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NS_PlayAreaBounds"));
-
-	NS_PlayAreaBounds->SetupAttachment(Root);
+	//NS_PlayAreaBounds = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NS_PlayAreaBounds"));
+	//NS_PlayAreaBounds->SetupAttachment(Root);
+	
 	TeleportTraceNiagaraSystem = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TeleportTraceNiagaraSystem"));
 	TeleportTraceNiagaraSystem->bHiddenInGame = true;
 
@@ -49,11 +49,11 @@ AJumpVisualizer::AJumpVisualizer()
 		//NS_TeleportRing->SetAsset(NS_TeleportRingAsset.Object);
 		NS_TeleportRingArray[0]->SetAsset(NS_TeleportRingAsset.Object);
 	}
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_PlayAreaBoundsAsset(TEXT("NiagaraSystem'/Game/VRTemplate/VFX/NS_PlayAreaBounds.NS_PlayAreaBounds'"));
-	if (NS_PlayAreaBoundsAsset.Succeeded())
-	{
-		NS_PlayAreaBounds->SetAsset(NS_PlayAreaBoundsAsset.Object);
-	}
+	//static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_PlayAreaBoundsAsset(TEXT("NiagaraSystem'/Game/VRTemplate/VFX/NS_PlayAreaBounds.NS_PlayAreaBounds'"));
+	//if (NS_PlayAreaBoundsAsset.Succeeded())
+	//{
+	//	NS_PlayAreaBounds->SetAsset(NS_PlayAreaBoundsAsset.Object);
+	//}
 	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportTraceNiagaraSystemAsset(TEXT("NiagaraSystem'/Game/VRTemplate/VFX/NS_TeleportTrace.NS_TeleportTrace'"));
 	if (TeleportTraceNiagaraSystemAsset.Succeeded())
 	{
@@ -75,7 +75,7 @@ void AJumpVisualizer::BeginPlay()
 		//NS_TeleportRing->Activate();
 		NS_TeleportRingArray[0]->Activate();
 
-		NS_PlayAreaBounds->Activate();
+		//NS_PlayAreaBounds->Activate();
 		
 		TeleportTraceNiagaraSystem->Activate();
 		//TeleportTraceNiagaraSystem2->Activate();

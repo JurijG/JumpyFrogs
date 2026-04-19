@@ -94,15 +94,26 @@ protected:
 
 	bool IsMoveValidCheck_Implementation(const FVector Location);
 	void RemoveFrogAddSlot_Implementation(const FVector NewFrogLoc, const  FVector MiddleLoc);
-	void TeleportTheFrog(AActor* FrogToMove, FVector FrogLoc);
+	
+	//void TeleportTheFrog(AActor* FrogToMove);
+	void TeleportTheFrog(AActor* FrogToMove, FVector MoveToLoc);
+	void FinishTeleport(AActor* FrogToMove);//, AActor* FrogShadow);
 	//bool ShouldTeleport_Implementation(FVector FrogLoc);
-	void FrogJumpingEnded_Implementation(AActor* FrogInAction);
+	void FrogJumpingEnded_Implementation(AActor* FrogInAction, FVector PrevLoc);
+	void SetupSplashEffect_Implementation(FVector SplashLoc);
+	void SpawnWaterSplash(FVector SplashLoc);
 	void ContinueGame();
 	void LoadLevel_Implementation(int32 LevelNumber);
+	void CastWizardFrogSpell_Implementation(AActor* WizardFrog);
 
+	void SpawnWaterSpell(AActor* FrogWizard);//, FVector MoveToLoc);
+	void FrogsTeleportOut(AActor* FrogWizard);//, FVector MoveToLoc);
+
+	TArray<AActor*> GetFrogsInRadius(const FVector& Center, float Radius);
 
 	//void LoadNextLevel_Implementation();
 
+	void DisableInput_Implementation(const bool bDisabled);
 	void RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots);
 	void SpawnFrogsAndProps();
 

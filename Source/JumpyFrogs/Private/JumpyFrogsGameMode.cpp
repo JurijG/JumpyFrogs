@@ -8,7 +8,7 @@
 #include "Actors/Frog.h"
 #include "Actors/WizardFrog.h"
 #include "Actors/Teleporter.h"
-#include "Actors/LilyPads.h"
+//#include "Actors/LilyPads.h"
 #include "Actors/EmptySlot.h"
 #include "Actors/Water.h"
 #include "GameInstances/JumpyFrogsGameInstance.h"
@@ -21,6 +21,8 @@
 
 #include "Audio/AudioPlayer.h"
 #include "Effects/NiagaraSpawner.h"
+
+//#include "Actors/TeleportShadowGhost.h"
 
 //#include "Actors/EmptySlot.h"
 //#include "TimerManager.h"
@@ -50,7 +52,7 @@
 //#include "Animation/AnimMontage.h"
 #include "Runtime/Engine/Classes/Components/ApplicationLifecycleComponent.h"
 #include "SharedData.h"
-
+#include "Actors/LilyPad.h"
 
 
 AJumpyFrogsGameMode::AJumpyFrogsGameMode()
@@ -185,6 +187,7 @@ void AJumpyFrogsGameMode::BeginPlay()
 		
 		CurrentLevel = GI->CurrentLevel;
 		SpawnFrogsAndProps();
+		ContinueGame();
 		/*FTimerHandle chr6;
 		GetWorld()->GetTimerManager().SetTimer(chr6, this, &AJumpyFrogsGameMode::SpawnFrogsShort, 0.01f, false);*/
 	}
@@ -373,7 +376,7 @@ void AJumpyFrogsGameMode::RemoveFrogAddSlot_Implementation(const FVector StartFr
 //	return false;
 //}
 
-void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction)
+void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction, FVector PrevLoc)
 {
 	///FrogJumpingEnded
 	
@@ -391,29 +394,56 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction)
 		if (TelStart == FrogLoc)
 		{
 			bPerformTeleport = true;
-			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelEnd);
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.2f, false);
+			if (NiagaraSpawnerWPtr.IsValid())
+			{
+				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, TelStart);
+				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, TelEnd);
+			}
+			FrogInAction->SetActorHiddenInGame(true);
+			//FrogInAction->SetActorLocation(TelEnd);
+
+			/*ATeleportShadowGhost* TelShadow = GetWorld()->SpawnActor<ATeleportShadowGhost>(TelStart, FRotator::ZeroRotator);
+			TelShadow->SetRelativeEndLocation(TelEnd - TelStart);*/
+
+			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelEnd);// , (AActor*)TelShadow);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.5f, false);
+
 			ITeleporterInterface::Execute_Deactivate(Teleporter);
 			AddSlot(FVector2D(TelStart.X, TelStart.Y));
+			AddSlot(FVector2D(PrevLoc.X, PrevLoc.Y));
 			break;
 		}
 		else if (TelEnd == FrogLoc)
 		{
 			bPerformTeleport = true;
+			if (NiagaraSpawnerWPtr.IsValid())
+			{
+				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, TelStart);
+				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, TelEnd);
+			}
+			FrogInAction->SetActorHiddenInGame(true);
+			//FrogInAction->SetActorLocation(TelStart);
 
-			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelStart);
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.2f, false);
-			ITeleporterInterface::Execute_Deactivate(Teleporter);
-			AddSlot(FVector2D(TelEnd.X, TelEnd.Y));
+			//ATeleportShadowGhost* TelShadow = GetWorld()->SpawnActor<ATeleportShadowGhost>(TelEnd, FRotator::ZeroRotator);
+			//TelShadow->SetRelativeEndLocation(TelStart - TelEnd);
+
+			Delegate.BindUObject(this, &AJumpyFrogsGameMode::TeleportTheFrog, FrogInAction, TelStart);//, (AActor*)TelShadow);
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.5f, false);
 			
+			ITeleporterInterface::Execute_Deactivate(Teleporter);
+
+			AddSlot(FVector2D(TelEnd.X, TelEnd.Y));
 			break;
 		}
 	}
+
 	if (bPerformTeleport)
 	{
 		if (NiagaraSpawnerWPtr.IsValid())
 		{
-			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, FrogLoc);
+		/*	INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, TelStart);
+			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, TelEnd);
+			*/
 			//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
 		}
 	}
@@ -422,16 +452,52 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction)
 		ContinueGame();
 	}
 }
-void AJumpyFrogsGameMode::TeleportTheFrog(AActor* FrogToMove, FVector FrogLoc)
+void AJumpyFrogsGameMode::SetupSplashEffect_Implementation(FVector SplashLoc)
+{
+	FTimerHandle TimerHandle;
+	FTimerDelegate Delegate;
+	Delegate.BindUObject(this, &AJumpyFrogsGameMode::SpawnWaterSplash, SplashLoc);//, (AActor*)TelShadow);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.2f, false);
+}
+void AJumpyFrogsGameMode::SpawnWaterSplash(FVector SplashLoc)
 {
 	if (NiagaraSpawnerWPtr.IsValid())
 	{
-		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, FrogLoc);
-		//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterSplash, SplashLoc);
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterSplashRipple, SplashLoc);
 	}
-	FrogToMove->SetActorLocation(FrogLoc);
+}
 
+void AJumpyFrogsGameMode::TeleportTheFrog(AActor* FrogToMove, FVector MoveToLoc)
+{
+	FrogToMove->SetActorLocation(MoveToLoc);
+
+	FTimerHandle TimerHandle;
+	FTimerDelegate Delegate;
+	Delegate.BindUObject(this, &AJumpyFrogsGameMode::FinishTeleport, FrogToMove);//, (AActor*)TelShadow);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.48f, false);
+}
+//void AJumpyFrogsGameMode::TeleportTheFrog(AActor* FrogToMove, FVector StartLoc, FVector EndLoc)
+//{
+//	if (NiagaraSpawnerWPtr.IsValid())
+//	{
+//		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, FrogToMove->GetActorLocation());
+//		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, EndLoc);
+//
+//		//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, FrogLoc);
+//		//INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
+//	}
+//	FrogToMove->SetActorHiddenInGame(true);
+//	FTimerHandle TimerHandle;
+//	FTimerDelegate Delegate;
+//	Delegate.BindUObject(this, &AJumpyFrogsGameMode::FinishTeleport, FrogToMove);
+//	GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 0.98f, false);
+//}
+void AJumpyFrogsGameMode::FinishTeleport(AActor* FrogToMove)//, AActor* FrogShadow)
+{
+	FrogToMove->SetActorHiddenInGame(false);
 	
+	//FrogShadow->Destroy();
 	ContinueGame();
 }
 void AJumpyFrogsGameMode::ContinueGame()
@@ -439,10 +505,20 @@ void AJumpyFrogsGameMode::ContinueGame()
 	AJumpyFrogsPlayerController* const MyPlayer = Cast<AJumpyFrogsPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	if (MyPlayer != NULL)
 	{
-		MyPlayer->bMoveInAction = false;
+		EnableInput(MyPlayer);
+		MyPlayer->EnableDisableInput(false);
 	}
 }
 
+
+void AJumpyFrogsGameMode::DisableInput_Implementation(const bool bDisabled)
+{
+	AJumpyFrogsPlayerController* const MyPC = Cast<AJumpyFrogsPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	if (MyPC != NULL)
+	{
+		MyPC->EnableDisableInput(bDisabled);
+	}
+}
 
 void AJumpyFrogsGameMode::RemoveFrogsAndAddSlots_Implementation(FVector SelectedFrogLoc, TArray<FVector>& InMarkedSlots)
 {
@@ -513,12 +589,15 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 
 	FrogsRemaining = SpawnLevelsList[CurrentLevel]->FrogsList;
 	 
-	ALilyPads* LilyPadsObject = GetWorld()->SpawnActor<ALilyPads>(FVector(0.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
-	//LilyPadsObject->ReApplyStaticMesh(LilyPadsMeshNumList[CurrentLevel]);
-	LilyPadsObject->ReApplyStaticMesh(SpawnLevelsList[CurrentLevel]->LilyPadsMeshNumList);
+	//ALilyPads* LilyPadsObject = GetWorld()->SpawnActor<ALilyPads>(FVector(0.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
+	////LilyPadsObject->ReApplyStaticMesh(LilyPadsMeshNumList[CurrentLevel]);
+	//LilyPadsObject->ReApplyStaticMesh(SpawnLevelsList[CurrentLevel]->LilyPadsMeshNumList);
 	//LilyPadsObject->ReApplyStaticMesh(5);
+
+	ALilyPad* LilyPads = GetWorld()->SpawnActor<ALilyPad>(FVector(0.0f, 0.0f, 0.0f), FRotator::ZeroRotator);
+	
 	int32 iMax; int32 deltai = 0;
-	if (CurrentLevel > 200)
+	if (CurrentLevel > 200) 
 	{
 		//deltai = NumOfBombsList[CurrentLevel - 200];
 		deltai = TelAndBombsList[CurrentLevel - 100]->NumOfBombsList;
@@ -527,14 +606,17 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 		{
 			//AddFrog(LevelsList[CurrentLevel][i]);
 			AddWizardFrog(SpawnLevelsList[CurrentLevel]->Level[i]);
+			LilyPads->AddLilyPad(SpawnLevelsList[CurrentLevel]->Level[i]);
 			//FrogsArray[i]->bWizardFrog = true;
 		}
+		//LilyPads->SpawnLilyPads(SpawnLevelsList);
 	}
 	iMax = FrogsRemaining;
 	for (int32 i = 0 + deltai; i < iMax; i++)
 	{
 		//AddFrog(LevelsList[CurrentLevel][i]);
 		AddFrog(SpawnLevelsList[CurrentLevel]->Level[i]);
+		LilyPads->AddLilyPad(SpawnLevelsList[CurrentLevel]->Level[i]);
 	}
 	//then we spawn empty slots based on remaining number of vectors in the LevelsList 
 	//iMax = LevelsList[CurrentLevel].Num();
@@ -542,6 +624,7 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 	for (int32 i = FrogsRemaining; i < iMax; i++)
 	{
 		AddSlot(SpawnLevelsList[CurrentLevel]->Level[i]);
+		LilyPads->AddLilyPad(SpawnLevelsList[CurrentLevel]->Level[i]);
 	}
 	//now we spawn the teleporters if there are any
 	if (CurrentLevel > 100)
@@ -844,6 +927,91 @@ void AJumpyFrogsGameMode::LoadLevel_Implementation(int32 LevelNumber)
 	GameInstanceReference->CurrentLevel = LevelNumber;*/
 	LoadMap(); 
 }
+void AJumpyFrogsGameMode::CastWizardFrogSpell_Implementation(AActor* WizardFrog)
+{
+
+	AWizardFrog* TheWizardFrog = Cast<AWizardFrog>(WizardFrog);
+	if (TheWizardFrog)
+	{
+		TheWizardFrog->CastSpell();
+		
+		FTimerHandle TimerHandle;
+		FTimerDelegate Delegate;
+		Delegate.BindUObject(this, &AJumpyFrogsGameMode::SpawnWaterSpell, WizardFrog);// , (AActor*)TelShadow);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 1.2f, false);
+		
+	}	
+
+}
+void AJumpyFrogsGameMode::SpawnWaterSpell(AActor* FrogWizard)//, FVector MoveToLoc)
+{
+	if (NiagaraSpawnerWPtr.IsValid())
+	{
+		FVector SpawnLoc = FrogWizard->GetActorLocation();
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagicBuff, SpawnLoc);
+		SpawnLoc.Z += 50.f;
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, SpawnLoc);
+		//INiagaraSpawnInte-rface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
+
+		FTimerHandle TimerHandle;
+		FTimerDelegate Delegate;
+		Delegate.BindUObject(this, &AJumpyFrogsGameMode::FrogsTeleportOut, FrogWizard);// , (AActor*)TelShadow);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 2.0f, false);
+	}
+
+	/*if (AJumpyFrogsPlayerController* PC = Cast<AJumpyFrogsPlayerController>(GetWorld()->GetFirstPlayerController()))
+	{
+		PC->ResetVizualizer();
+	}*/
+	
+}
+//void AJumpyFrogsGameMode::TeleportFrogs(AActor* FrogWizard)//, FVector MoveToLoc)
+//{
+//
+//
+//}
+void AJumpyFrogsGameMode::FrogsTeleportOut(AActor* FrogWizard)//, FVector MoveToLoc)
+{
+	//find all frogs in the circle
+	FVector SpawnLoc = FrogWizard->GetActorLocation();
+	TArray<AActor*> FrogsToTeleport = GetFrogsInRadius(SpawnLoc, 300.f);
+
+	if (NiagaraSpawnerWPtr.IsValid())
+	{
+		for (AActor* Frog : FrogsToTeleport)
+		{
+			FVector FrogLoc = Frog->GetActorLocation();
+			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, FrogLoc);
+			FrogsArray.Remove(Frog);
+			Frog->Destroy();
+			AddSlot(FVector2D(FrogLoc.X, FrogLoc.Y));
+		}
+		FrogsArray.Remove(FrogWizard);
+		AddSlot(FVector2D(SpawnLoc.X, SpawnLoc.Y));
+	}
+	ContinueGame();
+}
+
+//TArray<AActor*> GetActorsInRadius(const TArray<AActor*>& Actors, const FVector& Center, float Radius)
+TArray<AActor*> AJumpyFrogsGameMode::GetFrogsInRadius(const FVector& Center, float Radius)
+{
+	TArray<AActor*> Result;
+	const float RadiusSquared = Radius * Radius;
+
+	for (AActor* Frog : FrogsArray)
+	{
+		if (!Frog) continue;
+
+		const float DistSquared = FVector::DistSquared(Frog->GetActorLocation(), Center);
+
+		if (DistSquared <= RadiusSquared)
+		{
+			Result.Add(Frog);
+		}
+	}
+	return Result;
+}
+
 void AJumpyFrogsGameMode::LoadMap()
 {
 	TArray<FLevelsDataList*> SpawnLevelsList;

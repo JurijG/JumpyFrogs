@@ -7,6 +7,15 @@
 //#include "SharedData.h"
 #include "FrogInterface.generated.h"
 
+//
+//UENUM()
+//enum EFrogType : uint8
+//{
+//	Normal,
+//	Wizard
+//};
+
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UFrogInterface : public UInterface
@@ -36,4 +45,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void PlayNextAnimation();
+
+	UFUNCTION(BlueprintNativeEvent)
+	bool IsAWizard() const;
 };

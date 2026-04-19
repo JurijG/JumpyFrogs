@@ -18,12 +18,20 @@ ANiagaraSpawner::ANiagaraSpawner()
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportIn_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportOut_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagic_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagicBuff_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterSplash_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterSplashRipple_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> RippleShort_Obj;
 
 		FConstructorStatics() //StaticMesh'/Game/EmptySlot/StaticMesh/EmptySlot.EmptySlot'
 			: ///Script/Niagara.NiagaraSystem'/Game/Niagara/Teleporter/NS_TeleportIn.NS_TeleportIn'
 			TeleportIn_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportIn")),
 			TeleportOut_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportOut")),
-			WaterMagic_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Area1"))
+			WaterMagic_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Area1")),
+			WaterMagicBuff_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Buff")),
+			WaterSplash_Obj(TEXT("/Game/Niagara/NS_Splash")),
+			WaterSplashRipple_Obj(TEXT("/Game/Niagara/NS_SplashRipple")),
+			RippleShort_Obj(TEXT("/Game/Niagara/NS_RippleShort"))
 		{
 		}
 	};
@@ -32,6 +40,10 @@ ANiagaraSpawner::ANiagaraSpawner()
 	TeleportIn = ConstructorStatics.TeleportIn_Obj.Object;
 	TeleportOut = ConstructorStatics.TeleportOut_Obj.Object;
 	WaterMagic = ConstructorStatics.WaterMagic_Obj.Object;
+	WaterMagicBuff = ConstructorStatics.WaterMagicBuff_Obj.Object;
+	WaterSplash = ConstructorStatics.WaterSplash_Obj.Object;
+	WaterSplashRipple = ConstructorStatics.WaterSplashRipple_Obj.Object;
+	RippleShort = ConstructorStatics.RippleShort_Obj.Object;
 }
 
 void ANiagaraSpawner::SpawnNiagara_Implementation(ENiagaraFX NiagaraType, FVector SpawnLoc)
@@ -47,6 +59,10 @@ void ANiagaraSpawner::SpawnNiagara_Implementation(ENiagaraFX NiagaraType, FVecto
 		case ENiagaraFX::TeleportOut: EffectToPlay = TeleportOut;  break;
 		case ENiagaraFX::TeleportIn: EffectToPlay = TeleportIn;  break;
 		case ENiagaraFX::WaterMagic: EffectToPlay = WaterMagic;  break;
+		case ENiagaraFX::WaterMagicBuff: EffectToPlay = WaterMagicBuff;  break;
+		case ENiagaraFX::WaterSplash: EffectToPlay = WaterSplash;  break;
+		case ENiagaraFX::WaterSplashRipple: EffectToPlay = WaterSplashRipple;  break;
+		case ENiagaraFX::RippleShort: EffectToPlay = RippleShort;  break;
 		//default: ENiagaraFX:::
 	}
 

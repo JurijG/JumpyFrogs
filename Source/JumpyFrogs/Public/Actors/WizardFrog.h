@@ -20,11 +20,16 @@ class JUMPYFROGS_API AWizardFrog : public AFrog
 public:
 	// Sets default values for this actor's properties
 	AWizardFrog();
+	void CastSpell();
 
 protected:
 	TObjectPtr<UStaticMeshComponent> WizardHatMesh;
 	TObjectPtr<UStaticMeshComponent> MagicWandMesh;
+	UAnimMontage* CastingSpell;
 
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")
 	UNiagaraComponent* WaterMagic;*/
+
+	bool IsAWizard_Implementation() const override;
+
 };

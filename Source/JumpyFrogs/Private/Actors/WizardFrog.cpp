@@ -12,10 +12,14 @@ AWizardFrog::AWizardFrog()
 	{
 		ConstructorHelpers::FObjectFinder<UStaticMesh> WizardHat_Obj;
 		ConstructorHelpers::FObjectFinder<UStaticMesh> MagicWand_Obj;
+		ConstructorHelpers::FObjectFinder<UAnimMontage> CastingSpellObj;
 		//ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagic_Obj;
 		FConstructorStatics()
 			: WizardHat_Obj(TEXT("/Game/Meshes/Hat.Hat"))
 			, MagicWand_Obj(TEXT("/Game/Meshes/Wand.Wand"))
+			, CastingSpellObj(TEXT("/Game/Frog/Animations/Montages/New/CastingSpell_Montage"))
+			///Script/Engine.AnimMontage'/Game/Frog/Animations/Montages/New/CastingSpell_Montage.CastingSpell_Montage'
+			///Script/Engine.AnimSequence'/Game/Frog/Animations/New/CastingSpell.CastingSpell'
 			//, WaterMagic_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Area1.NS_Water_Magic_Area1"))
 		{
 		}
@@ -31,6 +35,8 @@ AWizardFrog::AWizardFrog()
 	MagicWandMesh->SetStaticMesh(ConstructorStatics.MagicWand_Obj.Object);
 	MagicWandMesh->SetupAttachment(GetFrogMesh(), TEXT("b_WandSocket"));
 
+	CastingSpell = ConstructorStatics.CastingSpellObj.Object;
+	
 	//// Create Niagara component
 	//WaterMagic = CreateDefaultSubobject<UNiagaraComponent>(TEXT("WaterMagic"));
 	//WaterMagic->SetAsset(ConstructorStatics.WaterMagic_Obj.Object);
@@ -41,5 +47,24 @@ AWizardFrog::AWizardFrog()
 
 	//NiagaraEffect->Activate();
 	//NiagaraEffect->Deactivate();
-
+	//FrogType = EFrogType::Wizard;
+}
+bool AWizardFrog::IsAWizard_Implementation() const
+{
+	return true;
+}
+void AWizardFrog::CastSpell()
+{
+	UAnimInstance* AnimInstance = FrogMesh->GetAnimInstance();
+	if (AnimInstance)
+	{
+		if (CastingSpell)
+		{
+			AnimInstance->Montage_Play(CastingSpell);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("WARNING: No montage found for CastingSpell"));
+		}
+	}
 }
