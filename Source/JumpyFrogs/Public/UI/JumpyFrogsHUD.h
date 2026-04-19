@@ -23,7 +23,7 @@ class JUMPYFROGS_API AJumpyFrogsHUD : public AHUD
 
 public:
 	void FirstSave();
-	void StartGame();
+	void StartGame(uint8 InCurrentLevel);
 
 protected:
 

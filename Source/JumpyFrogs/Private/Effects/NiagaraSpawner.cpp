@@ -16,7 +16,9 @@ ANiagaraSpawner::ANiagaraSpawner()
 	{
 		//ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraAsset;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportIn_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportInWizard_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportOut_Obj;
+		ConstructorHelpers::FObjectFinder<UNiagaraSystem> TeleportOutWizard_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagic_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagicBuff_Obj;
 		ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterSplash_Obj;
@@ -26,7 +28,9 @@ ANiagaraSpawner::ANiagaraSpawner()
 		FConstructorStatics() //StaticMesh'/Game/EmptySlot/StaticMesh/EmptySlot.EmptySlot'
 			: ///Script/Niagara.NiagaraSystem'/Game/Niagara/Teleporter/NS_TeleportIn.NS_TeleportIn'
 			TeleportIn_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportIn")),
+			TeleportInWizard_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportInWizard")),
 			TeleportOut_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportOut")),
+			TeleportOutWizard_Obj(TEXT("/Game/Niagara/Teleporter/NS_TeleportOutWizard")),
 			WaterMagic_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Area1")),
 			WaterMagicBuff_Obj(TEXT("/Game/Water_Magic/VFX_Niagara/NS_Water_Magic_Buff")),
 			WaterSplash_Obj(TEXT("/Game/Niagara/NS_Splash")),
@@ -38,7 +42,9 @@ ANiagaraSpawner::ANiagaraSpawner()
 	static FConstructorStatics ConstructorStatics;
 
 	TeleportIn = ConstructorStatics.TeleportIn_Obj.Object;
+	TeleportInWizard = ConstructorStatics.TeleportInWizard_Obj.Object;
 	TeleportOut = ConstructorStatics.TeleportOut_Obj.Object;
+	TeleportOutWizard = ConstructorStatics.TeleportOutWizard_Obj.Object;
 	WaterMagic = ConstructorStatics.WaterMagic_Obj.Object;
 	WaterMagicBuff = ConstructorStatics.WaterMagicBuff_Obj.Object;
 	WaterSplash = ConstructorStatics.WaterSplash_Obj.Object;
@@ -57,7 +63,9 @@ void ANiagaraSpawner::SpawnNiagara_Implementation(ENiagaraFX NiagaraType, FVecto
 	switch (NiagaraType)
 	{
 		case ENiagaraFX::TeleportOut: EffectToPlay = TeleportOut;  break;
+		case ENiagaraFX::TeleportOutWizard: EffectToPlay = TeleportOutWizard;  break;
 		case ENiagaraFX::TeleportIn: EffectToPlay = TeleportIn;  break;
+		case ENiagaraFX::TeleportInWizard: EffectToPlay = TeleportInWizard;  break;
 		case ENiagaraFX::WaterMagic: EffectToPlay = WaterMagic;  break;
 		case ENiagaraFX::WaterMagicBuff: EffectToPlay = WaterMagicBuff;  break;
 		case ENiagaraFX::WaterSplash: EffectToPlay = WaterSplash;  break;

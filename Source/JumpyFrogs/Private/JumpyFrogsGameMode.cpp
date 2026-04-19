@@ -187,6 +187,7 @@ void AJumpyFrogsGameMode::BeginPlay()
 		
 		CurrentLevel = GI->CurrentLevel;
 		SpawnFrogsAndProps();
+		
 		ContinueGame();
 		/*FTimerHandle chr6;
 		GetWorld()->GetTimerManager().SetTimer(chr6, this, &AJumpyFrogsGameMode::SpawnFrogsShort, 0.01f, false);*/
@@ -389,6 +390,8 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction, 
 	for (AActor* Teleporter : TeleportersArray)
 	{
 		if (!IsValid(Teleporter)) continue;
+		if (ITeleporterInterface::Execute_AlreadyUsed(Teleporter)){continue;}
+
 		FVector TelStart = ITeleporterInterface::Execute_GetStartLocation(Teleporter);
 		FVector TelEnd = ITeleporterInterface::Execute_GetEndLocation(Teleporter);
 		if (TelStart == FrogLoc)
@@ -396,8 +399,17 @@ void AJumpyFrogsGameMode::FrogJumpingEnded_Implementation(AActor* FrogInAction, 
 			bPerformTeleport = true;
 			if (NiagaraSpawnerWPtr.IsValid())
 			{
-				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, TelStart);
-				INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, TelEnd);
+				if (IFrogInterface::Execute_IsAWizard(FrogInAction))
+				{
+					INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOutWizard, TelStart);
+					INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportInWizard, TelEnd);
+				}
+				else
+				{
+					INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, TelStart);
+					INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportIn, TelEnd);
+				}
+				
 			}
 			FrogInAction->SetActorHiddenInGame(true);
 			//FrogInAction->SetActorLocation(TelEnd);
@@ -582,6 +594,8 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 	//FrogsArray.Reset();   //Empty();
 	//TheTeleportersArray.Reset();  //Empty();
 
+	//CurrentLevel = 100;
+
 	TArray<FLevelsDataList*> SpawnLevelsList;
 	TArray<FTelAndBombsDataList*> TelAndBombsList;
 	SpawnLevelsDT->GetAllRows<FLevelsDataList>("Some Debug Message String if Fails", SpawnLevelsList);
@@ -645,9 +659,7 @@ void AJumpyFrogsGameMode::SpawnFrogsAndProps()
 	}
 
 	AJumpyFrogsHUD* JFHudRef = Cast<AJumpyFrogsHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	JFHudRef->StartGame();
-
-	//SetMaterials();
+	JFHudRef->StartGame(CurrentLevel);
 
 	/*FTimerHandle stmt;
 	GetWorld()->GetTimerManager().SetTimer(stmt, this, &AJumpyFrogsGameModeBase::ReSetBlackMats, 0.2f, false);

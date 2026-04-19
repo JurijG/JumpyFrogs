@@ -66,8 +66,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	TArray<int32> GetHighScoreArray() const;
 
-	UFUNCTION(BlueprintNativeEvent)
-	int32 GetCurrentLevel() const;
+	/*UFUNCTION(BlueprintNativeEvent)
+	int32 GetCurrentLevel() const;*/
 
 	UFUNCTION(BlueprintNativeEvent)
 	bool GetAchievementUnlocked() const;

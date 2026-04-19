@@ -2640,29 +2640,30 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 				//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("bDrawPauseMenu is true!?"));
 				if (BoxName == FName("HomeMenu"))
 				{
-					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" HomeMenu clicked ..."));
-					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-HomeMenu clicked");
+					UJumpyFrogsGameInstance* GI = Cast<UJumpyFrogsGameInstance>(GetWorld()->GetGameInstance());
+					if (GI) {
+						GI->bFirstMapLoad = true;
+					}
+					LoadLevel();
+					//bDrawPauseMenu = false;
 					//bStartMenu = true;
-					bDrawPauseMenu = false;
-					//GameModeReference->CameraHome();
-					//bTransitionHitBox = true;
-					//bTransitionHitBox = false;
-
-					bStartMenu = true;
-					/*FTimerHandle HomeHandle;
-					GetWorld()->GetTimerManager().SetTimer(HomeHandle, this, &AJF_HUD::GoToHome, 3.0f, false);*/
-					//AJF_HUD::GoToHome();
 				}
 				else if (BoxName == FName("Restart"))
 				{
-					if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+					UE_LOG(LogTemp, Warning, TEXT("Load Restart Level"));
+					if (UJumpyFrogsGameInstance* GI = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance())
+					{
+						CurrentLevel = GI->CurrentLevel;
+					}
+					LoadLevel();
+				/*	if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 					{
 						if (GM->Implements<UGameModeInterface>())
 						{
 							UE_LOG(LogTemp, Warning, TEXT("Load Restart Level"));
 							IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
 						}
-					}
+					}*/
 
 					//class UJumpyFrogsGameInstance* GameInstanceReference = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance();
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Restart clicked ..."));
@@ -2712,17 +2713,25 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-NextLevel clicked");
 					//bDrawHudIcons = true;
 					//bDrawPauseMenu = false;
+					UE_LOG(LogTemp, Warning, TEXT("Load NextLevel"));
 
-					if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+					if (UJumpyFrogsGameInstance* GI = (UJumpyFrogsGameInstance*)GetWorld()->GetGameInstance())
 					{
-						if (GM->Implements<UGameModeInterface>())
-						{
-							UE_LOG(LogTemp, Warning, TEXT("Load NextLevel"));
-							CurrentLevel++;
-							IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
-								
-						}
+						CurrentLevel = GI->CurrentLevel;
+						CurrentLevel++;
 					}
+					LoadLevel();
+					//if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+					//{
+					//	if (GM->Implements<UGameModeInterface>())
+					//	{
+					//		UE_LOG(LogTemp, Warning, TEXT("Load NextLevel"));
+					//		CurrentLevel++;
+					//		
+					//		//IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
+					//			
+					//	}
+					//}
 					//GameModeReference->CurrentLevel++;
 					//SaveVarsBeforeMapLoad();
 					//GameModeReference->LoadMap();
@@ -3836,8 +3845,8 @@ void AJumpyFrogsHUD::LoadLevel()
 	{
 		if (GM->Implements<UGameModeInterface>())
 		{
-			IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
 			UE_LOG(LogTemp, Warning, TEXT("LOAD LEVEL: %s"), *FString::FromInt(CurrentLevel));
+			IGameModeInterface::Execute_LoadLevel(GM, CurrentLevel);
 		}
 	}
 }
@@ -3933,10 +3942,11 @@ void AJumpyFrogsHUD::FirstSave()
 	bBlockClicks = false;
 }
 
-void AJumpyFrogsHUD::StartGame()
+void AJumpyFrogsHUD::StartGame(uint8 InCurrentLevel)
 {
 	bStartMenu = false;
 	bDrawHudIcons = true;
+	CurrentLevel = InCurrentLevel;
 }
 
 void AJumpyFrogsHUD::LoadTextsAtStart()
@@ -3954,7 +3964,7 @@ void AJumpyFrogsHUD::LoadTextsAtStart()
 			UnlockedArray = IGameModeInterface::Execute_GetUnlockedArray(GM);
 			HighScoreArray = IGameModeInterface::Execute_GetHighScoreArray(GM);
 			//PlayTime = IGameModeInterface::Execute_GetPlayTime(GM);
-			CurrentLevel = IGameModeInterface::Execute_GetCurrentLevel(GM);
+			//CurrentLevel = IGameModeInterface::Execute_GetCurrentLevel(GM);
 			Score = IGameModeInterface::Execute_GetScore(GM);
 			//TimeBonus = IGameModeInterface::Execute_GetTimeBonus(GM);
 

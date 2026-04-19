@@ -34,6 +34,7 @@ AWizardFrog::AWizardFrog()
 	MagicWandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagicWandMesh"));
 	MagicWandMesh->SetStaticMesh(ConstructorStatics.MagicWand_Obj.Object);
 	MagicWandMesh->SetupAttachment(GetFrogMesh(), TEXT("b_WandSocket"));
+	MagicWandMesh->bHiddenInGame = true;
 
 	CastingSpell = ConstructorStatics.CastingSpellObj.Object;
 	
@@ -52,6 +53,10 @@ AWizardFrog::AWizardFrog()
 bool AWizardFrog::IsAWizard_Implementation() const
 {
 	return true;
+}
+void AWizardFrog::AttachWand_Implementation()
+{
+	MagicWandMesh->bHiddenInGame = false;
 }
 void AWizardFrog::CastSpell()
 {

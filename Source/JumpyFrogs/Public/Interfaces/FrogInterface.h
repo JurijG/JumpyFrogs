@@ -41,6 +41,9 @@ public:
 	void DestroyFrog();
 
 	UFUNCTION(BlueprintNativeEvent)
+	void AttachWand();
+
+	UFUNCTION(BlueprintNativeEvent)
 	void JumpAway();
 
 	UFUNCTION(BlueprintNativeEvent)

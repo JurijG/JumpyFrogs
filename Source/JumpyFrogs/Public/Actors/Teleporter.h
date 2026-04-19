@@ -19,8 +19,12 @@ public:
 	ATeleporter();
 
 	void RepositionTeleportersAndApplyMaterial(float StartRot, float EndRot, FVector TeleportEndLoc, int32 WhichMaterial, FVector EndLocation, FVector StartLocation);
-
+	
 protected:
+
+	bool bUsed = false;
+	bool AlreadyUsed_Implementation() const override;
+
 	void Deactivate_Implementation() override;
 	bool IsThisStart_Implementation(UObject* InComponent) const override;
 
@@ -61,7 +65,7 @@ protected:
 
 	bool IsTelDead;
 	/** Handle the slot being touched  */
-	UFUNCTION()
+	/*UFUNCTION()
 	void OnFingerPressedTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent);
 	UFUNCTION()
 	void OnFingerPressedEndTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent);
@@ -71,7 +75,7 @@ protected:
 	void TeleporterEndClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked);
 
 	void TeleporterStartTouchedOrClicked();
-	void TeleporterEndTouchedOrClicked();
+	void TeleporterEndTouchedOrClicked();*/
 
 //public:	
 	// Called every frame

@@ -25,7 +25,9 @@ protected:
 	void SpawnNiagara_Implementation(ENiagaraFX NiagaraType, FVector SpawnLoc) override;
 
 	UNiagaraSystem* TeleportIn;
+	UNiagaraSystem* TeleportInWizard;
 	UNiagaraSystem* TeleportOut;
+	UNiagaraSystem* TeleportOutWizard;
 	UNiagaraSystem* WaterMagic;
 	UNiagaraSystem* WaterMagicBuff;
 	UNiagaraSystem* WaterSplash;

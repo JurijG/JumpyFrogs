@@ -76,8 +76,9 @@ ATeleporter::ATeleporter()
 	TeleporterStartMesh->SetMaterial(0, TeleportMatBlue);
 	TeleporterStartMesh->SetupAttachment(DummyRoot);//TeleporterStartMesh->AttachTo(DummyRoot);
 	TeleporterStartMesh->bCastDynamicShadow = false;
-	TeleporterStartMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterStartClicked);
-	TeleporterStartMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedTeleport);
+	TeleporterStartMesh->SetGenerateOverlapEvents(false);
+	/*TeleporterStartMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterStartClicked);
+	TeleporterStartMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedTeleport);*/
 	TeleporterStartMesh->TeleporterType = ETeleporterType::Start;
 
 
@@ -90,8 +91,9 @@ ATeleporter::ATeleporter()
 	TeleporterEndMesh->SetMaterial(0, TeleportMatBlue);
 	TeleporterEndMesh->SetupAttachment(DummyRoot);//TeleporterEndMesh->AttachTo(DummyRoot);
 	TeleporterEndMesh->bCastDynamicShadow = false;
-	TeleporterEndMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterEndClicked);
-	TeleporterEndMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedEndTeleport);
+	TeleporterEndMesh->SetGenerateOverlapEvents(false);
+	/*TeleporterEndMesh->OnClicked.AddDynamic(this, &ATeleporter::TeleporterEndClicked);
+	TeleporterEndMesh->OnInputTouchBegin.AddDynamic(this, &ATeleporter::OnFingerPressedEndTeleport);*/
 	TeleporterEndMesh->TeleporterType = ETeleporterType::End;
 	
 	// Create Niagara component
@@ -181,9 +183,18 @@ void ATeleporter::RepositionTeleportersAndApplyMaterial(float StartRot, float En
 	//TeleporterStartMesh->SetMaterial WhichMaterial
 }
 
+bool ATeleporter::AlreadyUsed_Implementation() const
+{
+	return bUsed;
+}
+
 void ATeleporter::Deactivate_Implementation()
 {
+	bUsed = true;
+	//TeleporterStartMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	TeleporterStartMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//TeleporterStartMesh->SetCollisionProfile(ECollisionEnabled::NoCollision);
+	//TeleporterEndMesh->SetCollisionProfileName(TEXT("NoCollision"));
 	TeleporterEndMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	if (NiagaraEffectStart)
@@ -249,28 +260,28 @@ FVector ATeleporter::GetEndLocation_Implementation() const
 	//ReturnEndLoc.Z = 202.f;
 	//return ReturnEndLoc;
 }
+//
+//void ATeleporter::OnFingerPressedTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)
+//{
+//	TeleporterStartTouchedOrClicked(); //TeleporterStartClicked(TouchedComponent, FingerIndex);
+//}
+//
+//void ATeleporter::OnFingerPressedEndTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)
+//{
+//	TeleporterEndTouchedOrClicked(); //TeleporterEndClicked(TouchedComponent, FingerIndex);
+//}
+//void ATeleporter::TeleporterStartClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
+//{
+//	TeleporterStartTouchedOrClicked();
+//}
+//
+//void ATeleporter::TeleporterEndClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
+//{
+//	TeleporterEndTouchedOrClicked();
+//}
 
-void ATeleporter::OnFingerPressedTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)
-{
-	TeleporterStartTouchedOrClicked(); //TeleporterStartClicked(TouchedComponent, FingerIndex);
-}
-
-void ATeleporter::OnFingerPressedEndTeleport(ETouchIndex::Type FingerIndex, UPrimitiveComponent* TouchedComponent)
-{
-	TeleporterEndTouchedOrClicked(); //TeleporterEndClicked(TouchedComponent, FingerIndex);
-}
-void ATeleporter::TeleporterStartClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
-{
-	TeleporterStartTouchedOrClicked();
-}
-
-void ATeleporter::TeleporterEndClicked(UPrimitiveComponent* ClickedComp, FKey ButtonClicked)
-{
-	TeleporterEndTouchedOrClicked();
-}
-
-void ATeleporter::TeleporterStartTouchedOrClicked()
-{
+//void ATeleporter::TeleporterStartTouchedOrClicked()
+//{
 	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("TeleporterStartClicked! "));
 	/*	FVector TempV = this->GetActorLocation();
 	float x = TempV.X;
@@ -309,11 +320,11 @@ void ATeleporter::TeleporterStartTouchedOrClicked()
 	//		//}
 	//	}
 	//}
-}
+//}
 
 
-void ATeleporter::TeleporterEndTouchedOrClicked()
-{
+//void ATeleporter::TeleporterEndTouchedOrClicked()
+//{
 	//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("TeleporterEndClicked TeleporterEndClicked! "));
 	/*FVector TempV = this->GetActorLocation(); //EndPosition
 	float x = TempV.X;
@@ -337,7 +348,7 @@ void ATeleporter::TeleporterEndTouchedOrClicked()
 	//		//}
 	//	}
 	//}
-}
+//}
 
 // Called when the game starts or when spawned
 /*

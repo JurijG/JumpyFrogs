@@ -32,4 +32,5 @@ protected:
 
 	bool IsAWizard_Implementation() const override;
 
+	void AttachWand_Implementation() override;
 };

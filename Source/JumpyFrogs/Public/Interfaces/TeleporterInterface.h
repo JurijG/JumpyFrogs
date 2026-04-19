@@ -24,6 +24,9 @@ class JUMPYFROGS_API ITeleporterInterface
 public:
 
 	UFUNCTION(BlueprintNativeEvent)
+	bool AlreadyUsed() const;
+
+	UFUNCTION(BlueprintNativeEvent)
 	bool IsThisStart(UObject* InComponent) const;
 
 	UFUNCTION(BlueprintNativeEvent)
