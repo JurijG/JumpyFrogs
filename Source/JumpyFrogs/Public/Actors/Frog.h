@@ -178,6 +178,8 @@ protected:
 
 	void DestroyFrog_Implementation();
 	void JumpAway_Implementation();
+	void SpellCastTeleportOut_Implementation();
+
 	TArray<EJumpDirection> MarkedJumpDirections;
 
 	TArray<FFrogJump> RightJumps;

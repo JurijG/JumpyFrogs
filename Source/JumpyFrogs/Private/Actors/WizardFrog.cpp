@@ -11,7 +11,7 @@ AWizardFrog::AWizardFrog()
 	struct FConstructorStatics
 	{
 		ConstructorHelpers::FObjectFinder<UStaticMesh> WizardHat_Obj;
-		ConstructorHelpers::FObjectFinder<UStaticMesh> MagicWand_Obj;
+		ConstructorHelpers::FObjectFinderOptional<UStaticMesh> MagicWand_Obj;
 		ConstructorHelpers::FObjectFinder<UAnimMontage> CastingSpellObj;
 		//ConstructorHelpers::FObjectFinder<UNiagaraSystem> WaterMagic_Obj;
 		FConstructorStatics()
@@ -31,10 +31,11 @@ AWizardFrog::AWizardFrog()
 	WizardHatMesh->SetStaticMesh(ConstructorStatics.WizardHat_Obj.Object);
 	WizardHatMesh->SetupAttachment(GetFrogMesh(), TEXT("b_HatSocket"));
 	
-	MagicWandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagicWandMesh"));
+	/*MagicWandMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MagicWandMesh"));
 	MagicWandMesh->SetStaticMesh(ConstructorStatics.MagicWand_Obj.Object);
 	MagicWandMesh->SetupAttachment(GetFrogMesh(), TEXT("b_WandSocket"));
-	MagicWandMesh->bHiddenInGame = true;
+	MagicWandMesh->bHiddenInGame = true;*/
+	MagicWandMesh = ConstructorStatics.MagicWand_Obj.Get();
 
 	CastingSpell = ConstructorStatics.CastingSpellObj.Object;
 	
@@ -56,7 +57,12 @@ bool AWizardFrog::IsAWizard_Implementation() const
 }
 void AWizardFrog::AttachWand_Implementation()
 {
-	MagicWandMesh->bHiddenInGame = false;
+	UStaticMeshComponent* MagicWand = NewObject<UStaticMeshComponent>(this);
+	MagicWand->SetCollisionProfileName(TEXT("NoCollision"));
+	MagicWand->SetGenerateOverlapEvents(false);
+	MagicWand->SetStaticMesh(MagicWandMesh);
+	MagicWand->SetupAttachment(GetFrogMesh(), TEXT("b_WandSocket"));
+	MagicWand->RegisterComponent();
 }
 void AWizardFrog::CastSpell()
 {
@@ -73,3 +79,4 @@ void AWizardFrog::CastSpell()
 		}
 	}
 }
+

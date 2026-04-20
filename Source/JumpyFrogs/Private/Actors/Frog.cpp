@@ -1037,13 +1037,35 @@ void AFrog::BeginPlay()
 //		}
 //	}*/
 //}
+void AFrog::SpellCastTeleportOut_Implementation()
+{
+	UWorld* World = GetWorld();
+	if (World)
+	{
+		UObject* GM = (UObject*)World->GetAuthGameMode();
+		if (GM && GM->Implements<UGameModeInterface>())
+		{
+			IGameModeInterface::Execute_FrogsTeleportOut(GM, this);
+		}
+	}
+}
+
 void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OnAnyMontageEnded called for  %s, with bInterrupted = %s."), *Montage->GetName(), bInterrupted ? *FString(TEXT("True")) : *FString(TEXT("False")));
-
-	CurrentJumpIndex++;
-	//if (MarkedSlots.Num() > 0) //safety and to prevent below code to execute when non jump animation montages are played, like CastSpell etc
+	/*if (CurrentJumpIndex == 0 && Montage->GetName().Contains("CastingSpell"))
 	{
+		if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
+		{
+			if (GM->Implements<UGameModeInterface>())
+			{
+				IGameModeInterface::Execute_FrogsTeleportOut(GM, this);
+			}
+		}
+	}
+	else
+	{*/
+		CurrentJumpIndex++;
 		if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 		{
 			if (GM->Implements<UGameModeInterface>())
@@ -1072,9 +1094,8 @@ void AFrog::OnAnyMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 				IGameModeInterface::Execute_FrogJumpingEnded(GM, this, MarkedSlots[CurrentJumpIndex - 1]);
 				//IGameModeInterface::Execute_AddSlot(GM, (MarkedSlots[CurrentJumpIndex]));
 			}
-
 		}
-	}
+	//}
 }
 //void AMyCharacter::WarmupMontages() //TODO: Add preload to animations and effects
 //{

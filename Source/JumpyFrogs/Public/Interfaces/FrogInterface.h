@@ -38,6 +38,9 @@ public:
 	void Jump(const TArray<FVector>& InMarkedSlots);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void SpellCastTeleportOut();
+
+	UFUNCTION(BlueprintNativeEvent)
 	void DestroyFrog();
 
 	UFUNCTION(BlueprintNativeEvent)

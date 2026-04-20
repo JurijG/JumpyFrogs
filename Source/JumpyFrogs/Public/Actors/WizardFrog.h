@@ -24,7 +24,8 @@ public:
 
 protected:
 	TObjectPtr<UStaticMeshComponent> WizardHatMesh;
-	TObjectPtr<UStaticMeshComponent> MagicWandMesh;
+	UStaticMesh* MagicWandMesh;
+	//TObjectPtr<UStaticMeshComponent> MagicWand;
 	UAnimMontage* CastingSpell;
 
 	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "VFX")

@@ -33,6 +33,9 @@ public:
 	void LoadLevel(int32 LevelNumber);
 
 	UFUNCTION(BlueprintNativeEvent)
+	void FrogsTeleportOut(AActor* FrogWizard);
+
+	UFUNCTION(BlueprintNativeEvent)
 	bool SaveLanguage();
 
 	UFUNCTION(BlueprintNativeEvent)

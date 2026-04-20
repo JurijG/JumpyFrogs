@@ -12,13 +12,15 @@ enum ENiagaraFX : uint8
 {
 	TeleportIn,
 	TeleportOut,
+	TeleportOutWizardSpell,
 	TeleportInWizard,
 	TeleportOutWizard,
 	WaterMagic,
 	WaterMagicBuff,
 	WaterSplash,
 	WaterSplashRipple,
-	RippleShort
+	RippleShort,
+	JustBubbles
 };
 
 

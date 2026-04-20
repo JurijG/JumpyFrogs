@@ -950,7 +950,7 @@ void AJumpyFrogsGameMode::CastWizardFrogSpell_Implementation(AActor* WizardFrog)
 		FTimerHandle TimerHandle;
 		FTimerDelegate Delegate;
 		Delegate.BindUObject(this, &AJumpyFrogsGameMode::SpawnWaterSpell, WizardFrog);// , (AActor*)TelShadow);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 1.2f, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 2.f, false);
 		
 	}	
 
@@ -965,10 +965,10 @@ void AJumpyFrogsGameMode::SpawnWaterSpell(AActor* FrogWizard)//, FVector MoveToL
 		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, SpawnLoc);
 		//INiagaraSpawnInte-rface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::WaterMagic, FrogLoc);
 
-		FTimerHandle TimerHandle;
-		FTimerDelegate Delegate;
-		Delegate.BindUObject(this, &AJumpyFrogsGameMode::FrogsTeleportOut, FrogWizard);// , (AActor*)TelShadow);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 2.0f, false);
+		//FTimerHandle TimerHandle;
+		//FTimerDelegate Delegate;
+		//Delegate.BindUObject(this, &AJumpyFrogsGameMode::FrogsTeleportOut, FrogWizard);// , (AActor*)TelShadow);
+		//GetWorld()->GetTimerManager().SetTimer(TimerHandle, Delegate, 2.0f, false);
 	}
 
 	/*if (AJumpyFrogsPlayerController* PC = Cast<AJumpyFrogsPlayerController>(GetWorld()->GetFirstPlayerController()))
@@ -982,23 +982,27 @@ void AJumpyFrogsGameMode::SpawnWaterSpell(AActor* FrogWizard)//, FVector MoveToL
 //
 //
 //}
-void AJumpyFrogsGameMode::FrogsTeleportOut(AActor* FrogWizard)//, FVector MoveToLoc)
+void AJumpyFrogsGameMode::FrogsTeleportOut_Implementation(AActor* FrogWizard)//, FVector MoveToLoc)
 {
 	//find all frogs in the circle
 	FVector SpawnLoc = FrogWizard->GetActorLocation();
 	TArray<AActor*> FrogsToTeleport = GetFrogsInRadius(SpawnLoc, 300.f);
-
+	FrogsToTeleport.Remove(FrogWizard);
 	if (NiagaraSpawnerWPtr.IsValid())
 	{
 		for (AActor* Frog : FrogsToTeleport)
 		{
 			FVector FrogLoc = Frog->GetActorLocation();
 			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOut, FrogLoc);
+			INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::JustBubbles, FrogLoc);
 			FrogsArray.Remove(Frog);
 			Frog->Destroy();
 			AddSlot(FVector2D(FrogLoc.X, FrogLoc.Y));
 		}
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::TeleportOutWizardSpell, SpawnLoc);
+		INiagaraSpawnInterface::Execute_SpawnNiagara(NiagaraSpawnerWPtr.Get(), ENiagaraFX::JustBubbles, SpawnLoc);
 		FrogsArray.Remove(FrogWizard);
+		FrogWizard->Destroy();
 		AddSlot(FVector2D(SpawnLoc.X, SpawnLoc.Y));
 	}
 	ContinueGame();

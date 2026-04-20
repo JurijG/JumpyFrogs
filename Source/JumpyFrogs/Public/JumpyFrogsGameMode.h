@@ -107,7 +107,7 @@ protected:
 	void CastWizardFrogSpell_Implementation(AActor* WizardFrog);
 
 	void SpawnWaterSpell(AActor* FrogWizard);//, FVector MoveToLoc);
-	void FrogsTeleportOut(AActor* FrogWizard);//, FVector MoveToLoc);
+	void FrogsTeleportOut_Implementation(AActor* FrogWizard);//, FVector MoveToLoc);
 
 	TArray<AActor*> GetFrogsInRadius(const FVector& Center, float Radius);
 

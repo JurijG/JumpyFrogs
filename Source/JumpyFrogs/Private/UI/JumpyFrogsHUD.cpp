@@ -2619,6 +2619,11 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//uncomment31fs:GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT(" Pause clicked ..."));
 					//if (!GameModeReference->bIsFrogInAction)
 					{
+						/*APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+						if (MyPlayer != NULL)
+						{
+							MyPlayer->SetPause(true);
+						}*/
 						if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 						{
 							if (GM->Implements<UGameModeInterface>())
@@ -2682,11 +2687,11 @@ void AJumpyFrogsHUD::NotifyHitBoxClick(FName BoxName)
 					//UndoFrGgAnlytcs::]RecordGoogleScreen("bDrawPauseMenu-Continue clicked");
 					
 					
-					APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+					/*APlayerController* const MyPlayer = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 					if (MyPlayer != NULL)
 					{
 						MyPlayer->SetPause(false);
-					}
+					}*/
 					if (UObject* GM = (UObject*)GetWorld()->GetAuthGameMode())
 					{
 						if (GM->Implements<UGameModeInterface>())
