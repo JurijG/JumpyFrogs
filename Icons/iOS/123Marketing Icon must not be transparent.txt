@@ -1,0 +1,1 @@
+ERROR ITMS-90717: "Invalid App Store Icon. The App Store Icon in the asset catalog in 'JumpyFrogs.app' can't be transparent nor contain an alpha channel."
